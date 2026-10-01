@@ -1,0 +1,89 @@
+﻿@page "/plants"
+
+@using MyPlants.Models
+@using MyPlants.Interfaces.IServices
+
+@inject IPlantService _service
+
+<PageTitle>Plants</PageTitle>
+
+<h1>Plants</h1>
+
+<button class="btn btn-primary"
+        @onclick="AddPlant">
+    + Add plant
+</button>
+
+@if (plants is null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!plants.Any())
+{
+    <p><em>No plants found.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th aria-label="Name of plant">Name</th>
+                <th aria-label="Species of plant">Species</th>
+                <th aria-label="Date planted">Date Planted</th>
+                <th scope="col" aria-label="Actions"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var plant in plants)
+            {
+                <tr>
+                    <td>@plant.Name</td>
+                    <td>@plant.Species</td>
+                    <td>@(plant.DatePlanted?.ToShortDateString() ?? "Not specified")</td>
+                    <td class="text-end">
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="() => ShowDetails(plant.Id)"> Details </button>
+                        <button class="btn btn-primary btn-sm" @onclick="() => EditPlant(plant.Id)"> Edit </button>
+                        <button class="btn btn-secondary btn-sm" @onclick="() => WaterPlant(plant)"> Water </button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => ArchivePlant(plant)"> Archive </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Plant>? plants;
+
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        plants = _service.GetPlants();
+    }
+
+    private void WaterPlant(Plant plant)
+    {
+        _service.WaterPlant(plant);
+    }
+
+    private void EditPlant(int plantId)
+    {
+        Navigation.NavigateTo($"/plants/edit/{plantId}");
+    }
+
+    private void ArchivePlant(Plant plant)
+    {
+        plants.Remove(plant);
+    }
+
+    private void ShowDetails(int plantId)
+    {
+        Navigation.NavigateTo($"/plants/{plantId}");
+    }
+
+    private void AddPlant()
+    {
+        Navigation.NavigateTo("/plants/add");
+    }
+}

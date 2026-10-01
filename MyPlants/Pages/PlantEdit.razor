@@ -1,0 +1,138 @@
+﻿@page "/plants/edit/{Id:int}"
+
+@using MyPlants.Models
+
+<PageTitle>Edit Plant</PageTitle>
+
+@if (plant is null)
+{
+    <div class="container py-3">
+        <p><em>Loading...</em></p>
+    </div>
+}
+else
+{
+    <div class="container py-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1>Edit Plant</h1>
+                <p class="text-muted mb-0">
+                    Update the information about your plant.
+                </p>
+            </div>
+
+            <a href="@($"/plants/{plant.Id}")"
+               class="btn btn-outline-secondary">
+                Cancel
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@plant" OnValidSubmit="@SavePlant">
+                    <DataAnnotationsValidator />
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+
+                        <InputText id="name"
+                                   class="form-control"
+                                   @bind-Value="plant.Name" />
+
+                        <ValidationMessage For="@(() => plant.Name)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="species" class="form-label">Species</label>
+
+                        <InputText id="species"
+                                   class="form-control"
+                                   @bind-Value="plant.Species" />
+
+                        <ValidationMessage For="@(() => plant.Species)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="datePlanted" class="form-label">
+                            Date planted
+                        </label>
+
+                        <InputDate id="datePlanted"
+                                   class="form-control"
+                                   @bind-Value="plant.DatePlanted" />
+
+                        <ValidationMessage For="@(() => plant.DatePlanted)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="wateringInterval" class="form-label">
+                            Watering interval
+                        </label>
+
+                        <div class="input-group">
+                            <InputNumber id="wateringInterval"
+                                         class="form-control"
+                                         @bind-Value="plant.WateringInterval" />
+
+                            <span class="input-group-text">days</span>
+                        </div>
+
+                        <ValidationMessage For="@(() => plant.WateringInterval)" />
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <InputCheckbox id="archived"
+                                       class="form-check-input"
+                                       @bind-Value="plant.IsArchived" />
+
+                        <label for="archived" class="form-check-label">
+                            Archived
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="@($"/plants/{plant.Id}")"
+                           class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            Save changes
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Plant? plant;
+
+    protected override void OnInitialized()
+    {
+        // TODO:
+        // Replace with:
+        // plant = await PlantService.GetByIdAsync(Id);
+
+        // Temporary in-memory example.
+        plant = new Plant
+        {
+            Id = Id,
+            Name = "Rose",
+            Species = "Rosa",
+            DatePlanted = new DateTime(2023, 3, 15),
+            WateringInterval = 7,
+            IsArchived = false
+        };
+    }
+
+    private void SavePlant()
+    {
+        // TODO:
+        // Replace with PlantService.UpdateAsync(plant)
+    }
+}

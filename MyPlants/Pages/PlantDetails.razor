@@ -1,0 +1,235 @@
+﻿@page "/plants/{Id:int}"
+
+@using MyPlants.Models
+
+<PageTitle>@(plant?.Name ?? "Plant Details")</PageTitle>
+
+@if (plant is null)
+{
+    <div class="container py-3">
+        <p><em>Loading...</em></p>
+    </div>
+}
+else
+{
+    <div class="container py-3">
+
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h1>@plant.Name</h1>
+
+                <p class="text-muted mb-0">
+                    @plant.Species
+                </p>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    Actions
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item"
+                           href="@($"/plants/edit/{plant.Id}")">
+                            Edit
+                        </a>
+                    </li>
+
+                    <li>
+                        <button class="dropdown-item"
+                                @onclick="WaterPlant">
+                            Water plant
+                        </button>
+                    </li>
+
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+
+                    <li>
+                        <button class="dropdown-item text-danger"
+                                @onclick="ArchivePlant">
+                            Archive plant
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        @if (plant.IsArchived)
+        {
+            <div class="alert alert-warning" role="alert">
+                This plant is archived.
+            </div>
+        }
+
+        <div class="row g-4">
+
+            <div class="col-12 col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Plant information
+                    </div>
+
+                    <div class="card-body">
+                        <dl class="row mb-0">
+
+                            <dt class="col-sm-5">
+                                Name
+                            </dt>
+
+                            <dd class="col-sm-7">
+                                @plant.Name
+                            </dd>
+
+                            <dt class="col-sm-5">
+                                Species
+                            </dt>
+
+                            <dd class="col-sm-7">
+                                @plant.Species
+                            </dd>
+
+                            <dt class="col-sm-5">
+                                Date planted
+                            </dt>
+
+                            <dd class="col-sm-7">
+                                @plant.DatePlanted?.ToShortDateString()
+                            </dd>
+
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Watering
+                    </div>
+
+                    <div class="card-body">
+
+                        <dl class="row mb-4">
+
+                            <dt class="col-sm-6">
+                                Last watered
+                            </dt>
+
+                            <dd class="col-sm-6">
+                                @(plant.WateringHistory?.LastOrDefault()?.LastWatered?.ToShortDateString() ?? "Never")
+                            </dd>
+
+                            <dt class="col-sm-6">
+                                Watering interval
+                            </dt>
+
+                            <dd class="col-sm-6">
+                                @if (plant.WateringInterval.HasValue)
+                                {
+                                    @($"{plant.WateringInterval} days")
+                                }
+                                else
+                                {
+                                    <span>Not configured</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-6">
+                                Next watering
+                            </dt>
+
+                            <dd class="col-sm-6">
+                                @GetNextWateringDate()
+                            </dd>
+
+                        </dl>
+
+                        <button class="btn btn-primary w-100"
+                                @onclick="WaterPlant"
+                                disabled="@plant.IsArchived">
+                            Water plant
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <a href="/plants" class="btn btn-outline-secondary">
+                ← Back to plants
+            </a>
+        </div>
+
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Plant? plant;
+
+    protected override void OnInitialized()
+    {
+        // TODO:
+        // Replace with:
+        // plant = await PlantService.GetByIdAsync(Id);
+
+        plant = new Plant
+        {
+            Id = Id,
+            Name = "Rose",
+            Species = "Rosa",
+            DatePlanted = new DateTime(2023, 3, 15),
+            WateringInterval = 7,
+            IsArchived = false
+        };
+    }
+
+    private void WaterPlant()
+    {
+        if (plant is null || plant.IsArchived)
+            return;
+
+        // plant.LastWatered = DateTime.Now;
+    }
+
+    private void ArchivePlant()
+    {
+        if (plant is null)
+            return;
+
+        plant.IsArchived = true;
+
+        // TODO:
+        // Replace with:
+        // await PlantService.ArchiveAsync(plant.Id);
+    }
+
+    private string GetNextWateringDate()
+    {
+        if (
+            //plant?.LastWatered is null || //TODO: Uncomment this line when LastWatered is implemented
+            plant.WateringInterval is null)
+        {
+            return "Not configured";
+        }
+
+/*
+        var nextWatering =
+            plant.LastWatered.Value.Date
+                .AddDays(plant.WateringIntervalDays.Value);
+                        */
+        // return nextWatering.ToShortDateString();
+
+        return plant.WateringHistory?.LastOrDefault()?.NextWater?.ToShortDateString() ?? "Not configured";
+    }
+}
