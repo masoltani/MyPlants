@@ -1,55 +1,81 @@
-﻿using MyPlants.Interfaces.IServices;
+﻿using MyPlants.Interfaces.IRepositories;
+using MyPlants.Interfaces.IServices;
 using MyPlants.Models;
 
 namespace MyPlants.Services;
 
-public class PlantService : IPlantService
+public sealed class PlantService : IPlantService
 {
-    public Plant GetPlantDetails(string plantName)
+    private readonly IPlantRepository _repository;
+
+    public PlantService(IPlantRepository repository)
     {
-        // For demonstration purposes, returning a hardcoded plant.
-        // In a real application, this would fetch data from a database or an API.
-        return new Plant
-        {
-            Name = plantName,
-            Species = "Ficus lyrata",
-            DatePlanted = new DateTime(2022, 5, 15),
-            IsArchived = false
-        };
+        _repository = repository;
     }
 
-    public List<Plant> GetPlants()
+    public Task<IReadOnlyList<Plant>> GetPlantsAsync()
     {
-        // For demonstration purposes, returning a hardcoded list of plants.
-        // In a real application, this would fetch data from a database or an API.
-        return new List<Plant>
-        {
-            new Plant { Name = "Fiddle Leaf Fig", Species = "Ficus lyrata", DatePlanted = new DateTime(2022, 5, 15), IsArchived = false },
-            new Plant { Name = "Snake Plant", Species = "Sansevieria trifasciata", DatePlanted = new DateTime(2021, 3, 10), IsArchived = false },
-            new Plant { Name = "Peace Lily", Species = "Spathiphyllum", DatePlanted = new DateTime(2020, 8, 20), IsArchived = true }
-        };
+        return _repository.GetAllAsync();
     }
 
-    public Water GetWateringInfo(string plantName)
+    public Task<Plant?> GetPlantAsync(Guid id)
     {
-        // For demonstration purposes, returning hardcoded watering info.
-        // In a real application, this would fetch data from a database or an API.
-        return new Water
-        {
-            LastWatered = new DateTime(2024, 6, 1),
-            NextWater = new DateTime(2024, 6, 8)
-        };
+        return _repository.GetByIdAsync(id);
     }
 
-    public void WaterPlant(Plant plant)
+    public Task AddPlantAsync(Plant plant)
     {
-        // For demonstration purposes, this method does not perform any action.
-        // In a real application, this would update the watering information in a database or an API.
-        Console.WriteLine($"Watering plant: {plant.Name}");
-        plant.WateringHistory.Add(new Water
+        if (plant.Id == Guid.Empty)
         {
-            LastWatered = DateTime.Now,
-            NextWater = DateTime.Now.AddDays(plant.WateringInterval ?? 7) // Example interval
-        });
+            plant.Id = Guid.NewGuid();
+        }
+
+        return _repository.AddAsync(plant);
+    }
+
+    public Task UpdatePlantAsync(Plant plant)
+    {
+        return _repository.UpdateAsync(plant);
+    }
+
+    public async Task ArchivePlantAsync(Guid id)
+    {
+        var plant = await _repository.GetByIdAsync(id);
+
+        if (plant is null)
+        {
+            return;
+        }
+
+        plant.IsArchived = true;
+
+        await _repository.UpdateAsync(plant);
+    }
+    
+    public async Task<bool> WaterPlantAsync(Guid id)
+    {
+        var plant = await _repository.GetByIdAsync(id);
+
+        if (plant is null || plant.IsArchived)
+            return false;
+
+        var watering = new Watering
+        {
+            PlantId = plant.Id,
+            Date = DateTime.Now
+        };
+
+        await _repository.AddWateringAsync(watering);
+
+        plant.LastWatered = watering.Date;
+
+        await _repository.UpdateAsync(plant);
+
+        return true;
+    }
+
+    public Task<IReadOnlyList<Watering>> GetWateringHistoryAsync(Guid plantId)
+    {
+        return _repository.GetWateringHistoryAsync(plantId);
     }
 }

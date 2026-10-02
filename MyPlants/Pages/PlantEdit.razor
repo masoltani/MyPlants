@@ -1,18 +1,36 @@
-﻿@page "/plants/edit/{Id:int}"
+﻿@page "/plants/edit/{Id:guid}"
 
 @using MyPlants.Models
+@using MyPlants.Interfaces.IServices
 
-<PageTitle>Edit Plant</PageTitle>
+@inject IPlantService PlantService
+@inject NavigationManager Navigation
 
-@if (plant is null)
-{
-    <div class="container py-3">
-        <p><em>Loading...</em></p>
-    </div>
-}
-else
-{
-    <div class="container py-3">
+<PageTitle>@(plant?.Name is null ? "Edit Plant" : $"Edit {plant.Name}")</PageTitle>
+
+<div class="container py-3">
+
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (plant is null)
+    {
+        <div class="alert alert-warning" role="alert">
+            Plant not found.
+        </div>
+
+        <button class="btn btn-outline-secondary"
+                @onclick="BackToPlants">
+            ← Back to plants
+        </button>
+    }
+    else
+    {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1>Edit Plant</h1>
@@ -21,19 +39,26 @@ else
                 </p>
             </div>
 
-            <a href="@($"/plants/{plant.Id}")"
-               class="btn btn-outline-secondary">
+            <button class="btn btn-outline-secondary"
+                    @onclick="Cancel">
                 Cancel
-            </a>
+            </button>
         </div>
 
         <div class="card">
             <div class="card-body">
-                <EditForm Model="@plant" OnValidSubmit="@SavePlant">
+
+                <EditForm Model="@plant"
+                          OnValidSubmit="@SavePlant">
+
                     <DataAnnotationsValidator />
 
+                    <ValidationSummary />
+
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
+                        <label for="name" class="form-label">
+                            Name
+                        </label>
 
                         <InputText id="name"
                                    class="form-control"
@@ -43,7 +68,9 @@ else
                     </div>
 
                     <div class="mb-3">
-                        <label for="species" class="form-label">Species</label>
+                        <label for="species" class="form-label">
+                            Species
+                        </label>
 
                         <InputText id="species"
                                    class="form-control"
@@ -74,7 +101,9 @@ else
                                          class="form-control"
                                          @bind-Value="plant.WateringInterval" />
 
-                            <span class="input-group-text">days</span>
+                            <span class="input-group-text">
+                                days
+                            </span>
                         </div>
 
                         <ValidationMessage For="@(() => plant.WateringInterval)" />
@@ -85,54 +114,105 @@ else
                                        class="form-check-input"
                                        @bind-Value="plant.IsArchived" />
 
-                        <label for="archived" class="form-check-label">
+                        <label for="archived"
+                               class="form-check-label">
                             Archived
                         </label>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="@($"/plants/{plant.Id}")"
-                           class="btn btn-outline-secondary">
-                            Cancel
-                        </a>
 
-                        <button type="submit" class="btn btn-primary">
-                            Save changes
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                @onclick="Cancel">
+                            Cancel
                         </button>
+
+                        <button type="submit"
+                                class="btn btn-primary"
+                                disabled="@saving">
+                            @if (saving)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"
+                                      aria-hidden="true">
+                                </span>
+
+                                <span>Saving...</span>
+                            }
+                            else
+                            {
+                                <span>Save changes</span>
+                            }
+                        </button>
+
                     </div>
+
                 </EditForm>
+
             </div>
         </div>
-    </div>
-}
+    }
+</div>
 
 @code {
+
     [Parameter]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     private Plant? plant;
 
-    protected override void OnInitialized()
-    {
-        // TODO:
-        // Replace with:
-        // plant = await PlantService.GetByIdAsync(Id);
+    private bool loading = true;
+    private bool saving;
 
-        // Temporary in-memory example.
-        plant = new Plant
-        {
-            Id = Id,
-            Name = "Rose",
-            Species = "Rosa",
-            DatePlanted = new DateTime(2023, 3, 15),
-            WateringInterval = 7,
-            IsArchived = false
-        };
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadPlant();
     }
 
-    private void SavePlant()
+    private async Task LoadPlant()
     {
-        // TODO:
-        // Replace with PlantService.UpdateAsync(plant)
+        loading = true;
+        plant = null;
+
+        plant = await PlantService.GetPlantAsync(Id);
+
+        loading = false;
+    }
+
+    private async Task SavePlant()
+    {
+        if (plant is null)
+        {
+            return;
+        }
+
+        saving = true;
+
+        try
+        {
+            await PlantService.UpdatePlantAsync(plant);
+
+            Navigation.NavigateTo($"/plants/{plant.Id}");
+        }
+        finally
+        {
+            saving = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        if (plant is null)
+        {
+            BackToPlants();
+            return;
+        }
+
+        Navigation.NavigateTo($"/plants/{plant.Id}");
+    }
+
+    private void BackToPlants()
+    {
+        Navigation.NavigateTo("/plants");
     }
 }

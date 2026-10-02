@@ -3,87 +3,340 @@
 @using MyPlants.Models
 @using MyPlants.Interfaces.IServices
 
-@inject IPlantService _service
+@inject IPlantService PlantService
+@inject NavigationManager Navigation
 
 <PageTitle>Plants</PageTitle>
 
-<h1>Plants</h1>
+<div class="container py-3">
 
-<button class="btn btn-primary"
-        @onclick="AddPlant">
-    + Add plant
-</button>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">Plants</h1>
+            <p class="text-muted mb-0">
+                @plants.Count plant@(plants.Count > 1 ? "s" : "")
+            </p>
+        </div>
 
-@if (plants is null)
-{
-    <p><em>Loading...</em></p>
-}
-else if (!plants.Any())
-{
-    <p><em>No plants found.</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th aria-label="Name of plant">Name</th>
-                <th aria-label="Species of plant">Species</th>
-                <th aria-label="Date planted">Date Planted</th>
-                <th scope="col" aria-label="Actions"></th>
-            </tr>
-        </thead>
-        <tbody>
+        <button class="btn btn-primary"
+                @onclick="AddPlant">
+            <span aria-hidden="true">+</span>
+            <span class="d-none d-sm-inline ms-1">Add plant</span>
+        </button>
+    </div>
+
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center py-5">
+            <div class="spinner-border"
+                 role="status">
+                <span class="visually-hidden">
+                    Loading...
+                </span>
+            </div>
+        </div>
+    }
+    else if (plants.Count == 0)
+    {
+        <div class="text-center py-5">
+
+            <div class="display-4 mb-3"
+                 aria-hidden="true">
+                🌱
+            </div>
+
+            <h2 class="h4">
+                No plants yet
+            </h2>
+
+            <p class="text-muted">
+                Add your first plant to start managing it.
+            </p>
+
+            <button class="btn btn-primary"
+                    @onclick="AddPlant">
+                Add your first plant
+            </button>
+
+        </div>
+    }
+    else
+    {
+        <div class="plants-list">
+
             @foreach (var plant in plants)
             {
-                <tr>
-                    <td>@plant.Name</td>
-                    <td>@plant.Species</td>
-                    <td>@(plant.DatePlanted?.ToShortDateString() ?? "Not specified")</td>
-                    <td class="text-end">
-                        <button class="btn btn-outline-secondary btn-sm" @onclick="() => ShowDetails(plant.Id)"> Details </button>
-                        <button class="btn btn-primary btn-sm" @onclick="() => EditPlant(plant.Id)"> Edit </button>
-                        <button class="btn btn-secondary btn-sm" @onclick="() => WaterPlant(plant)"> Water </button>
-                        <button class="btn btn-danger btn-sm" @onclick="() => ArchivePlant(plant)"> Archive </button>
-                    </td>
-                </tr>
+                <article class="plant-card">
+
+                    <!-- Header -->
+                    <div class="plant-card-header">
+
+                        <div class="plant-title">
+                            <h2 class="plant-name">
+                                @plant.Name
+                            </h2>
+
+                            <div class="plant-species">
+                                @plant.Species
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Information -->
+                    <div class="plant-info">
+
+                        <div class="plant-info-item">
+                            <span class="plant-info-label">
+                                Planted
+                            </span>
+
+                            <span class="plant-info-value">
+                                @plant.DatePlanted?.ToShortDateString()
+                            </span>
+                        </div>
+
+                        <div class="plant-info-item">
+                            <span class="plant-info-label">
+                                Last watered
+                            </span>
+
+                            <span class="plant-info-value">
+                                @GetLastWateredText(plant)
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="plant-actions">
+
+                        <button class="btn btn-secondary"
+                                @onclick="() => WaterPlant(plant.Id)"
+                                disabled="@(wateringPlantId == plant.Id)">
+
+                            @if (wateringPlantId == plant.Id)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1"
+                                      aria-hidden="true"></span>
+
+                                <span>Watering...</span>
+                            }
+                            else
+                            {
+                                <span aria-hidden="true">💧</span>
+                                <span>Water</span>
+                            }
+
+                        </button>
+
+                        <button class="btn btn-outline-primary"
+                                @onclick="() => ShowDetails(plant.Id)">
+                            Details
+                            <span aria-hidden="true">→</span>
+                        </button>
+
+                    </div>
+
+                </article>
             }
-        </tbody>
-    </table>
-}
+
+        </div>
+    }
+</div>
+
+<style>
+
+    .plants-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .plant-card {
+        background: var(--bs-body-bg);
+        border: 1px solid var(--bs-border-color);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+        .plant-card:hover {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
+        }
+
+    .plant-card-header {
+        margin-bottom: 1rem;
+    }
+
+    .plant-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .plant-species {
+        color: var(--bs-secondary-color);
+        font-style: italic;
+        margin-top: 0.15rem;
+    }
+
+    .plant-info {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--bs-border-color);
+    }
+
+    .plant-info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .plant-info-label {
+        color: var(--bs-secondary-color);
+        font-size: 0.8rem;
+    }
+
+    .plant-info-value {
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .plant-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+        .plant-actions .btn {
+            flex: 1;
+        }
+
+    @@media (min-width: 768px) {
+
+        .plant-card {
+            display: grid;
+            grid-template-columns: minmax(180px, 1fr) auto auto;
+            align-items: center;
+            column-gap: 2rem;
+        }
+
+        .plant-card-header {
+            margin-bottom: 0;
+        }
+
+        .plant-info {
+            border-top: 0;
+            padding-top: 0;
+            min-width: 260px;
+        }
+
+        .plant-actions {
+            margin-top: 0;
+            min-width: 180px;
+        }
+
+            .plant-actions .btn {
+                flex: initial;
+            }
+    }
+
+    @@media (max-width: 400px) {
+
+        .plant-card {
+            padding: 0.85rem;
+        }
+
+        .plant-info {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+
+        .plant-actions {
+            flex-direction: column;
+        }
+
+            .plant-actions .btn {
+                width: 100%;
+            }
+    }
+
+</style>
 
 @code {
-    private List<Plant>? plants;
+    private Guid? wateringPlantId;
 
-    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    private List<Plant> plants = new();
+
+    private bool loading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        plants = _service.GetPlants();
+        await LoadPlants();
     }
 
-    private void WaterPlant(Plant plant)
+    private async Task LoadPlants()
     {
-        _service.WaterPlant(plant);
-    }
+        loading = true;
 
-    private void EditPlant(int plantId)
-    {
-        Navigation.NavigateTo($"/plants/edit/{plantId}");
-    }
+        plants = (await PlantService.GetPlantsAsync())
+            .Where(p => !p.IsArchived)
+            .ToList();
 
-    private void ArchivePlant(Plant plant)
-    {
-        plants.Remove(plant);
-    }
-
-    private void ShowDetails(int plantId)
-    {
-        Navigation.NavigateTo($"/plants/{plantId}");
+        loading = false;
     }
 
     private void AddPlant()
     {
         Navigation.NavigateTo("/plants/add");
+    }
+
+    private void ShowDetails(Guid id)
+    {
+        Navigation.NavigateTo($"/plants/{id}");
+    }
+
+    private async Task WaterPlant(Guid id)
+    {
+        if (wateringPlantId is not null)
+            // Already watering a plant, ignore this request
+            return;
+
+        wateringPlantId = id;
+        try
+        {
+            var success = await PlantService.WaterPlantAsync(id);
+
+            if (success)
+                await LoadPlants();
+            else
+            {
+                // Handle error (e.g., show a notification)
+            }
+        }
+        finally
+        {
+            wateringPlantId = null;
+        }
+    }
+
+    private static string GetLastWateredText(Plant plant)
+    {
+        if (plant.LastWatered is null)
+            return "Never";
+
+        var days = (DateTime.Today - plant.LastWatered.Value.Date).Days;
+
+        return days switch
+        {
+            0 => "Today",
+            1 => "Yesterday",
+            _ => $"There are {days} days"
+        };
     }
 }

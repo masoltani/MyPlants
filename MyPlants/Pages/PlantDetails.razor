@@ -1,13 +1,30 @@
-﻿@page "/plants/{Id:int}"
+﻿@page "/plants/{Id:guid}"
 
 @using MyPlants.Models
+@using MyPlants.Interfaces.IServices
+
+@inject IPlantService PlantService
+@inject NavigationManager Navigation
 
 <PageTitle>@(plant?.Name ?? "Plant Details")</PageTitle>
 
-@if (plant is null)
+@if (loading)
 {
     <div class="container py-3">
         <p><em>Loading...</em></p>
+    </div>
+}
+else if (plant is null)
+{
+    <div class="container py-3">
+        <div class="alert alert-warning" role="alert">
+            Plant not found.
+        </div>
+
+        <button class="btn btn-outline-secondary"
+                @onclick="BackToPlants">
+            ← Back to plants
+        </button>
     </div>
 }
 else
@@ -23,40 +40,16 @@ else
                 </p>
             </div>
 
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                    Actions
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary"
+                        @onclick="EditPlant">
+                    Edit
                 </button>
 
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item"
-                           href="@($"/plants/edit/{plant.Id}")">
-                            Edit
-                        </a>
-                    </li>
-
-                    <li>
-                        <button class="dropdown-item"
-                                @onclick="WaterPlant">
-                            Water plant
-                        </button>
-                    </li>
-
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-
-                    <li>
-                        <button class="dropdown-item text-danger"
-                                @onclick="ArchivePlant">
-                            Archive plant
-                        </button>
-                    </li>
-                </ul>
+                <button class="btn btn-outline-secondary"
+                        @onclick="BackToPlants">
+                    Back
+                </button>
             </div>
         </div>
 
@@ -71,11 +64,13 @@ else
 
             <div class="col-12 col-lg-6">
                 <div class="card h-100">
+
                     <div class="card-header">
                         Plant information
                     </div>
 
                     <div class="card-body">
+
                         <dl class="row mb-0">
 
                             <dt class="col-sm-5">
@@ -103,12 +98,14 @@ else
                             </dd>
 
                         </dl>
+
                     </div>
                 </div>
             </div>
 
             <div class="col-12 col-lg-6">
                 <div class="card h-100">
+
                     <div class="card-header">
                         Watering
                     </div>
@@ -122,7 +119,7 @@ else
                             </dt>
 
                             <dd class="col-sm-6">
-                                @(plant.WateringHistory?.LastOrDefault()?.LastWatered?.ToShortDateString() ?? "Never")
+                                @(plant.LastWatered?.ToShortDateString() ?? "Never")
                             </dd>
 
                             <dt class="col-sm-6">
@@ -150,10 +147,75 @@ else
 
                         </dl>
 
+                        <div class="card mt-4">
+
+                            <div class="card-header">
+                                <h2 class="h5 mb-0">
+                                    Watering history
+                                </h2>
+                            </div>
+
+                            <div class="card-body p-0">
+
+                                @if (wateringHistory.Count == 0)
+                                {
+                                    <div class="p-3 text-muted">
+                                        This plant has not been watered yet.
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="list-group list-group-flush">
+
+                                        @foreach (var watering in wateringHistory)
+                                        {
+                                            <div class="list-group-item
+                                                d-flex
+                                                justify-content-between
+                                                align-items-center">
+
+                                                <div>
+                                                    <div class="fw-medium">
+                                                        @GetWateringDate(watering.Date)
+                                                    </div>
+
+                                                    @if (!string.IsNullOrWhiteSpace(watering.Note))
+                                                    {
+                                                        <div class="small text-muted">
+                                                            @watering.Note
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                <span class="text-muted small">
+                                                    @watering.Date.ToShortTimeString()
+                                                </span>
+
+                                            </div>
+                                        }
+
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+
                         <button class="btn btn-primary w-100"
                                 @onclick="WaterPlant"
-                                disabled="@plant.IsArchived">
-                            Water plant
+                                disabled="@(plant.IsArchived || watering)">
+
+                            @if (watering)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"
+                                      aria-hidden="true"></span>
+
+                                <span>Watering...</span>
+                            }
+                            else
+                            {
+                                <span>💧 Water plant</span>
+                            }
+
                         </button>
 
                     </div>
@@ -162,74 +224,110 @@ else
 
         </div>
 
-        <div class="mt-4">
-            <a href="/plants" class="btn btn-outline-secondary">
-                ← Back to plants
-            </a>
-        </div>
-
     </div>
 }
 
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     private Plant? plant;
 
-    protected override void OnInitialized()
-    {
-        // TODO:
-        // Replace with:
-        // plant = await PlantService.GetByIdAsync(Id);
+    private bool loading = true;
 
-        plant = new Plant
+    private bool watering;
+
+    private IReadOnlyList<Watering> wateringHistory = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPlant();
+    }
+
+    private async Task LoadPlant()
+    {
+        loading = true;
+
+        plant = null;
+        wateringHistory = [];
+
+        plant = await PlantService.GetPlantAsync(Id);
+
+        if (plant is not null)
+            wateringHistory = await PlantService.GetWateringHistoryAsync(Id);
+
+        loading = false;
+    }
+
+    private async Task WaterPlant()
+    {
+        if (plant is null || plant.IsArchived || watering)
         {
-            Id = Id,
-            Name = "Rose",
-            Species = "Rosa",
-            DatePlanted = new DateTime(2023, 3, 15),
-            WateringInterval = 7,
-            IsArchived = false
-        };
-    }
-
-    private void WaterPlant()
-    {
-        if (plant is null || plant.IsArchived)
             return;
+        }
 
-        // plant.LastWatered = DateTime.Now;
+        watering = true;
+
+        try
+        {
+            var success = await PlantService.WaterPlantAsync(plant.Id);
+
+            if (success)
+            {
+                await LoadPlant();
+            }
+        }
+        finally
+        {
+            watering = false;
+        }
     }
 
-    private void ArchivePlant()
+    private void EditPlant()
     {
         if (plant is null)
+        {
             return;
+        }
 
-        plant.IsArchived = true;
+        Navigation.NavigateTo($"/plants/edit/{plant.Id}");
+    }
 
-        // TODO:
-        // Replace with:
-        // await PlantService.ArchiveAsync(plant.Id);
+    private void BackToPlants()
+    {
+        Navigation.NavigateTo("/plants");
     }
 
     private string GetNextWateringDate()
     {
-        if (
-            //plant?.LastWatered is null || //TODO: Uncomment this line when LastWatered is implemented
+        if (plant?.LastWatered is null ||
             plant.WateringInterval is null)
         {
             return "Not configured";
         }
 
-/*
         var nextWatering =
             plant.LastWatered.Value.Date
-                .AddDays(plant.WateringIntervalDays.Value);
-                        */
-        // return nextWatering.ToShortDateString();
+                .AddDays(plant.WateringInterval.Value);
 
-        return plant.WateringHistory?.LastOrDefault()?.NextWater?.ToShortDateString() ?? "Not configured";
+        return nextWatering.ToShortDateString();
+    }
+
+    private static string GetWateringDate(DateTime date)
+    {
+        var today = DateTime.Today;
+        var wateringDate = date.Date;
+
+        if (wateringDate == today)
+        {
+            return "Today";
+        }
+
+        if (wateringDate == today.AddDays(-1))
+        {
+            return "Yesterday";
+        }
+
+        return date.ToShortDateString();
     }
 }

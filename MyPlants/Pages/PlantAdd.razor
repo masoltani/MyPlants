@@ -1,6 +1,10 @@
 ﻿@page "/plants/add"
 
 @using MyPlants.Models
+@using MyPlants.Interfaces.IServices
+
+@inject IPlantService PlantService
+@inject NavigationManager Navigation
 
 <PageTitle>Add Plant</PageTitle>
 
@@ -85,14 +89,10 @@
         WateringInterval = 7
     };
 
-    private void SavePlant()
+    private async Task SavePlant()
     {
-        // TODO:
-        // Replace with PlantService.AddAsync(plant)
-
-        // For now, this is only the UI layer.
-
-
+        await PlantService.AddPlantAsync(plant);
+        Navigation.NavigateTo("/plants");
     }
 }
 
