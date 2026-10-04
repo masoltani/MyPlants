@@ -3,9 +3,13 @@
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
+@using MyPlants.Resources
+@using MyPlants.Services
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
+
+@inject LocalizationService Localization
 
 <PageTitle>Plants</PageTitle>
 
@@ -14,7 +18,7 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="mb-1">Plants</h1>
+            <h1 class="mb-1">@SharedResource.Plants_Plants</h1>
             <p class="text-muted mb-0">
                 @plants.Count plant@(plants.Count > 1 ? "s" : "")
             </p>
@@ -329,15 +333,15 @@
     private static string GetLastWateredText(Plant plant)
     {
         if (plant.LastWatered is null)
-            return "Never";
+            return SharedResource.Plants_LastWatered_Never;
 
         var days = (DateTime.Today - plant.LastWatered.Value.Date).Days;
 
         return days switch
         {
-            0 => "Today",
-            1 => "Yesterday",
-            _ => $"There are {days} days"
+            0 => SharedResource.Plants_LastWatered_Today,
+            1 => SharedResource.Plants_LastWatered_Yesterday,
+            _ => string.Format(SharedResource.Plants_LastWatered_DaysAgo, days)
         };
     }
 }

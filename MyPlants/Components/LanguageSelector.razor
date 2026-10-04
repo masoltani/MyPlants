@@ -1,0 +1,38 @@
+﻿@using MyPlants.Services
+
+@inject LocalizationService Localization
+
+<select class="form-select form-select-sm"
+        value="@Localization.CurrentCulture.Name"
+        @onchange="ChangeLanguage">
+
+    <option value="en-US">English</option>
+    <option value="fr-FR">Français</option>
+
+</select>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        Localization.OnCultureChanged += OnCultureChanged;
+    }
+
+    private void ChangeLanguage(ChangeEventArgs e)
+    {
+        if (e.Value is string culture)
+        {
+            Localization.SetCulture(culture);
+        }
+    }
+
+    private void OnCultureChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Localization.OnCultureChanged -= OnCultureChanged;
+    }
+}
