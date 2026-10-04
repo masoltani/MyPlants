@@ -192,7 +192,7 @@
         {
             await PlantService.UpdatePlantAsync(plant);
 
-            Navigation.NavigateTo($"/plants/{plant.Id}");
+            Navigation.NavigateTo($"plants/{plant.Id}");
         }
         finally
         {
@@ -213,6 +213,6 @@
 
     private void BackToPlants()
     {
-        Navigation.NavigateTo("/plants");
+        Navigation.NavigateTo("plants");
     }
 }

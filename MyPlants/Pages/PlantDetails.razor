@@ -290,12 +290,12 @@ else
             return;
         }
 
-        Navigation.NavigateTo($"/plants/edit/{plant.Id}");
+        Navigation.NavigateTo($"plants/edit/{plant.Id}");
     }
 
     private void BackToPlants()
     {
-        Navigation.NavigateTo("/plants");
+        Navigation.NavigateTo("plants");
     }
 
     private string GetNextWateringDate()
