@@ -32,7 +32,7 @@ jobs:
 
       - name: Configure base href for GitHub Pages
         run: |
-          sed -i 's|<base href="/" />|<base href="/MyPlants/" />|' ./publish/wwwroot/index.html
+          sed -i 's|<base href="/" />|<base href="/MyPlants/" />|' ./release/wwwroot/index.html
 
       - name: Fix permissions
         run: chmod -R +rX release/wwwroot
