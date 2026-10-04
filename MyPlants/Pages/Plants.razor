@@ -1,7 +1,8 @@
 ﻿@page "/plants"
 
-@using MyPlants.Models
+@using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
+@using MyPlants.Models
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
@@ -293,12 +294,12 @@
 
     private void AddPlant()
     {
-        Navigation.NavigateTo("plants/add");
+        Navigation.NavigateToWithBaseUrl("plants/add");
     }
 
     private void ShowDetails(Guid id)
     {
-        Navigation.NavigateTo($"plants/{id}");
+        Navigation.NavigateToWithBaseUrl($"plants/{id}");
     }
 
     private async Task WaterPlant(Guid id)

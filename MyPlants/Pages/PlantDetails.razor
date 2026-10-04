@@ -1,7 +1,8 @@
 ﻿@page "/plants/{Id:guid}"
 
-@using MyPlants.Models
+@using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
+@using MyPlants.Models
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
@@ -290,12 +291,12 @@ else
             return;
         }
 
-        Navigation.NavigateTo($"plants/edit/{plant.Id}");
+        Navigation.NavigateToWithBaseUrl($"plants/edit/{plant.Id}");
     }
 
     private void BackToPlants()
     {
-        Navigation.NavigateTo("plants");
+        Navigation.NavigateToWithBaseUrl("plants");
     }
 
     private string GetNextWateringDate()

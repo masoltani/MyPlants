@@ -1,7 +1,8 @@
 ﻿@page "/plants/edit/{Id:guid}"
 
-@using MyPlants.Models
+@using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
+@using MyPlants.Models
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
@@ -192,7 +193,7 @@
         {
             await PlantService.UpdatePlantAsync(plant);
 
-            Navigation.NavigateTo($"plants/{plant.Id}");
+            Navigation.NavigateToWithBaseUrl($"plants/{plant.Id}");
         }
         finally
         {
@@ -208,11 +209,11 @@
             return;
         }
 
-        Navigation.NavigateTo($"/plants/{plant.Id}");
+        Navigation.NavigateToWithBaseUrl($"plants/{plant.Id}");
     }
 
     private void BackToPlants()
     {
-        Navigation.NavigateTo("plants");
+        Navigation.NavigateToWithBaseUrl("plants");
     }
 }
