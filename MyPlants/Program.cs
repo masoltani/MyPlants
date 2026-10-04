@@ -15,5 +15,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddScoped<IPlantRepository, IndexedDbPlantRepository>();
 builder.Services.AddScoped<IPlantService, PlantService>();
+builder.Services.AddSingleton<AppInfoService>();
 
 await builder.Build().RunAsync();
