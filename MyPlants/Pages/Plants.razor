@@ -293,12 +293,12 @@
 
     private void AddPlant()
     {
-        Navigation.NavigateTo("/plants/add");
+        Navigation.NavigateTo("plants/add");
     }
 
     private void ShowDetails(Guid id)
     {
-        Navigation.NavigateTo($"/plants/{id}");
+        Navigation.NavigateTo($"plants/{id}");
     }
 
     private async Task WaterPlant(Guid id)
