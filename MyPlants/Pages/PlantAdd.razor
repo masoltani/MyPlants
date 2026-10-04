@@ -16,9 +16,10 @@
             <p class="text-muted mb-0">Add a new plant to your collection.</p>
         </div>
 
-        <a href="/plants" class="btn btn-outline-secondary">
+        <button class="btn btn-outline-secondary"
+                @onclick="Cancel">
             Cancel
-        </a>
+        </button>
     </div>
 
     <div class="card">
@@ -93,6 +94,13 @@
     private async Task SavePlant()
     {
         await PlantService.AddPlantAsync(plant);
+        Navigation.NavigateToWithBaseUrl("plants");
+    }
+
+    
+
+    private void Cancel()
+    {
         Navigation.NavigateToWithBaseUrl("plants");
     }
 }
