@@ -1,13 +1,18 @@
 ﻿@page "/settings"
 
 @using MyPlants.Components
+@using MyPlants.Resources
+@using MyPlants.Services
 
-<title>Settings - MyPlants</title>
+@inject LocalizationService Localization
 
-<h1>Settings</h1>
+<PageTitle>@SharedResource.Settings_Title</PageTitle>
+
+<title>@SharedResource.Settings_Title</title>
+
+<h1>@SharedResource.Settings_Title</h1>
 
 <LanguageSelector />
 
 @code {
-
 }

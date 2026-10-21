@@ -18,4 +18,9 @@ builder.Services.AddScoped<IPlantService, PlantService>();
 builder.Services.AddSingleton<AppInfoService>();
 builder.Services.AddSingleton<LocalizationService>();
 
-await builder.Build().RunAsync();
+var app = builder.Build();
+
+var localizationService = app.Services.GetRequiredService<LocalizationService>();
+await localizationService.InitializeAsync();
+
+await app.RunAsync();

@@ -61,6 +61,42 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à MyPlants.
+        /// </summary>
+        public static string About_ApplicationName {
+            get {
+                return ResourceManager.GetString("About_ApplicationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Plant management application.
+        /// </summary>
+        public static string About_Description {
+            get {
+                return ResourceManager.GetString("About_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à About.
+        /// </summary>
+        public static string About_Title {
+            get {
+                return ResourceManager.GetString("About_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Home.
+        /// </summary>
+        public static string Home_Title {
+            get {
+                return ResourceManager.GetString("Home_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à About.
         /// </summary>
         public static string NavMenu_About {
@@ -88,11 +124,425 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sorry, the content you are looking for does not exist..
+        /// </summary>
+        public static string NotFound_Description {
+            get {
+                return ResourceManager.GetString("NotFound_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Not found.
+        /// </summary>
+        public static string NotFound_Title {
+            get {
+                return ResourceManager.GetString("NotFound_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Name.
+        /// </summary>
+        public static string Plant_Name {
+            get {
+                return ResourceManager.GetString("Plant_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Plant not found.
+        /// </summary>
+        public static string Plant_NotFound {
+            get {
+                return ResourceManager.GetString("Plant_NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Add a new plant to your collection..
+        /// </summary>
+        public static string PlantAdd_DescriptionPage {
+            get {
+                return ResourceManager.GetString("PlantAdd_DescriptionPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Add plant.
+        /// </summary>
+        public static string PlantAdd_SubTitle {
+            get {
+                return ResourceManager.GetString("PlantAdd_SubTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Add plant.
+        /// </summary>
+        public static string PlantAdd_Title {
+            get {
+                return ResourceManager.GetString("PlantAdd_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à days.
+        /// </summary>
+        public static string PlantAdd_WateringInterval_Days {
+            get {
+                return ResourceManager.GetString("PlantAdd_WateringInterval_Days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This plant is archived..
+        /// </summary>
+        public static string PlantDetails_ArchivedPlant {
+            get {
+                return ResourceManager.GetString("PlantDetails_ArchivedPlant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ← Back to plants.
+        /// </summary>
+        public static string PlantDetails_BackToPlants {
+            get {
+                return ResourceManager.GetString("PlantDetails_BackToPlants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Back.
+        /// </summary>
+        public static string PlantDetails_Button_Back {
+            get {
+                return ResourceManager.GetString("PlantDetails_Button_Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Edit.
+        /// </summary>
+        public static string PlantDetails_Button_Edit {
+            get {
+                return ResourceManager.GetString("PlantDetails_Button_Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Date planted.
+        /// </summary>
+        public static string PlantDetails_DatePlanted {
+            get {
+                return ResourceManager.GetString("PlantDetails_DatePlanted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Last watered.
+        /// </summary>
+        public static string PlantDetails_LastWatered {
+            get {
+                return ResourceManager.GetString("PlantDetails_LastWatered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Never.
+        /// </summary>
+        public static string PlantDetails_LastWatered_Never {
+            get {
+                return ResourceManager.GetString("PlantDetails_LastWatered_Never", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Loading....
+        /// </summary>
+        public static string PlantDetails_Loading {
+            get {
+                return ResourceManager.GetString("PlantDetails_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Name.
+        /// </summary>
+        public static string PlantDetails_Name {
+            get {
+                return ResourceManager.GetString("PlantDetails_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Next watering.
+        /// </summary>
+        public static string PlantDetails_NextWatering {
+            get {
+                return ResourceManager.GetString("PlantDetails_NextWatering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Plant details.
+        /// </summary>
+        public static string PlantDetails_PageTitle {
+            get {
+                return ResourceManager.GetString("PlantDetails_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Plant information.
+        /// </summary>
+        public static string PlantDetails_PlantInformation {
+            get {
+                return ResourceManager.GetString("PlantDetails_PlantInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Plant not found..
+        /// </summary>
+        public static string PlantDetails_PlantNotFound {
+            get {
+                return ResourceManager.GetString("PlantDetails_PlantNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Species.
+        /// </summary>
+        public static string PlantDetails_Species {
+            get {
+                return ResourceManager.GetString("PlantDetails_Species", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering.
+        /// </summary>
+        public static string PlantDetails_Watering {
+            get {
+                return ResourceManager.GetString("PlantDetails_Watering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Today.
+        /// </summary>
+        public static string PlantDetails_WateringDate_Today {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringDate_Today", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Yesterday.
+        /// </summary>
+        public static string PlantDetails_WateringDate_Yesterday {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringDate_Yesterday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering history.
+        /// </summary>
+        public static string PlantDetails_WateringHistory {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This plant has not been watered yet..
+        /// </summary>
+        public static string PlantDetails_WateringHistory_Empty {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringHistory_Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering....
+        /// </summary>
+        public static string PlantDetails_WateringInProgress {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering interval.
+        /// </summary>
+        public static string PlantDetails_WateringInterval {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à days.
+        /// </summary>
+        public static string PlantDetails_WateringInterval_Days {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringInterval_Days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Not configured.
+        /// </summary>
+        public static string PlantDetails_WateringInterval_NotConfigured {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringInterval_NotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 💧 Water plant.
+        /// </summary>
+        public static string PlantDetails_WaterPlant {
+            get {
+                return ResourceManager.GetString("PlantDetails_WaterPlant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ← Back to plants.
+        /// </summary>
+        public static string PlantEdit_Button_BackToPlants {
+            get {
+                return ResourceManager.GetString("PlantEdit_Button_BackToPlants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Cancel.
+        /// </summary>
+        public static string PlantEdit_Button_Cancel {
+            get {
+                return ResourceManager.GetString("PlantEdit_Button_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Save changes.
+        /// </summary>
+        public static string PlantEdit_Button_SaveChanges {
+            get {
+                return ResourceManager.GetString("PlantEdit_Button_SaveChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Saving....
+        /// </summary>
+        public static string PlantEdit_Button_Saving {
+            get {
+                return ResourceManager.GetString("PlantEdit_Button_Saving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Archived.
+        /// </summary>
+        public static string PlantEdit_Checkbox_Archived {
+            get {
+                return ResourceManager.GetString("PlantEdit_Checkbox_Archived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Date planted.
+        /// </summary>
+        public static string PlantEdit_DatePlanted {
+            get {
+                return ResourceManager.GetString("PlantEdit_DatePlanted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Loading....
+        /// </summary>
+        public static string PlantEdit_Loading {
+            get {
+                return ResourceManager.GetString("PlantEdit_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Edit {0}.
+        /// </summary>
+        public static string PlantEdit_Title {
+            get {
+                return ResourceManager.GetString("PlantEdit_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Edit plant.
+        /// </summary>
+        public static string PlantEdit_TitleNotFound {
+            get {
+                return ResourceManager.GetString("PlantEdit_TitleNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Update the information about the plant..
+        /// </summary>
+        public static string PlantEdit_UpdatePlantInformations {
+            get {
+                return ResourceManager.GetString("PlantEdit_UpdatePlantInformations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering interval.
+        /// </summary>
+        public static string PlantEdit_WateringInterval {
+            get {
+                return ResourceManager.GetString("PlantEdit_WateringInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à days.
+        /// </summary>
+        public static string PlantEdit_WateringInterval_Days {
+            get {
+                return ResourceManager.GetString("PlantEdit_WateringInterval_Days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Add plant.
         /// </summary>
         public static string Plants_AddPlant {
             get {
                 return ResourceManager.GetString("Plants_AddPlant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Add your first plant.
+        /// </summary>
+        public static string Plants_AddYourFirstPlant {
+            get {
+                return ResourceManager.GetString("Plants_AddYourFirstPlant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Add your first plant to start managing it.
+        /// </summary>
+        public static string Plants_AddYourFirstPlantToStartManagingIt {
+            get {
+                return ResourceManager.GetString("Plants_AddYourFirstPlantToStartManagingIt", resourceCulture);
             }
         }
         
@@ -115,7 +565,34 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Date planted.
+        ///   Recherche une chaîne localisée semblable à {0} plants.
+        /// </summary>
+        public static string Plants_Count_Multiple {
+            get {
+                return ResourceManager.GetString("Plants_Count_Multiple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 1 plant.
+        /// </summary>
+        public static string Plants_Count_One {
+            get {
+                return ResourceManager.GetString("Plants_Count_One", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 0 plant.
+        /// </summary>
+        public static string Plants_Count_Zero {
+            get {
+                return ResourceManager.GetString("Plants_Count_Zero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Planted.
         /// </summary>
         public static string Plants_DatePlanted {
             get {
@@ -246,6 +723,33 @@ namespace MyPlants.Resources {
         public static string Plants_Water {
             get {
                 return ResourceManager.GetString("Plants_Water", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering....
+        /// </summary>
+        public static string Plants_Watering {
+            get {
+                return ResourceManager.GetString("Plants_Watering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering interval.
+        /// </summary>
+        public static string Plants_WateringInterval {
+            get {
+                return ResourceManager.GetString("Plants_WateringInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Settings.
+        /// </summary>
+        public static string Settings_Title {
+            get {
+                return ResourceManager.GetString("Settings_Title", resourceCulture);
             }
         }
     }

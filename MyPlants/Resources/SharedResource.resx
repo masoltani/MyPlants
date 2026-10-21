@@ -126,8 +126,26 @@
   <data name="NavMenu_Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="PlantAdd_Title" xml:space="preserve">
+    <value>Add plant</value>
+  </data>
+  <data name="Plant_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PlantEdit_Title" xml:space="preserve">
+    <value>Edit {0}</value>
+  </data>
+  <data name="PlantEdit_TitleNotFound" xml:space="preserve">
+    <value>Edit plant</value>
+  </data>
   <data name="Plants_AddPlant" xml:space="preserve">
     <value>Add plant</value>
+  </data>
+  <data name="Plants_AddYourFirstPlant" xml:space="preserve">
+    <value>Add your first plant</value>
+  </data>
+  <data name="Plants_AddYourFirstPlantToStartManagingIt" xml:space="preserve">
+    <value>Add your first plant to start managing it</value>
   </data>
   <data name="Plants_Archive" xml:space="preserve">
     <value>Archive</value>
@@ -136,7 +154,7 @@
     <value>Cancel</value>
   </data>
   <data name="Plants_DatePlanted" xml:space="preserve">
-    <value>Date planted</value>
+    <value>Planted</value>
   </data>
   <data name="Plants_Description" xml:space="preserve">
     <value>Description</value>
@@ -179,5 +197,155 @@
   </data>
   <data name="Plants_Water" xml:space="preserve">
     <value>Water</value>
+  </data>
+  <data name="Plants_Watering" xml:space="preserve">
+    <value>Watering...</value>
+  </data>
+  <data name="Plants_WateringInterval" xml:space="preserve">
+    <value>Watering interval</value>
+  </data>
+  <data name="Plant_NotFound" xml:space="preserve">
+    <value>Plant not found</value>
+  </data>
+  <data name="PlantAdd_DescriptionPage" xml:space="preserve">
+    <value>Add a new plant to your collection.</value>
+  </data>
+  <data name="Settings_Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="About_Title" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="About_ApplicationName" xml:space="preserve">
+    <value>MyPlants</value>
+  </data>
+  <data name="About_Description" xml:space="preserve">
+    <value>Plant management application</value>
+  </data>
+  <data name="Home_Title" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="NotFound_Title" xml:space="preserve">
+    <value>Not found</value>
+  </data>
+  <data name="NotFound_Description" xml:space="preserve">
+    <value>Sorry, the content you are looking for does not exist.</value>
+  </data>
+  <data name="PlantAdd_SubTitle" xml:space="preserve">
+    <value>Add plant</value>
+  </data>
+  <data name="PlantDetails_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="PlantDetails_PlantNotFound" xml:space="preserve">
+    <value>Plant not found.</value>
+  </data>
+  <data name="PlantDetails_BackToPlants" xml:space="preserve">
+    <value>← Back to plants</value>
+  </data>
+  <data name="PlantDetails_Button_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="PlantDetails_Button_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="PlantDetails_ArchivedPlant" xml:space="preserve">
+    <value>This plant is archived.</value>
+  </data>
+  <data name="PlantDetails_PlantInformation" xml:space="preserve">
+    <value>Plant information</value>
+  </data>
+  <data name="PlantDetails_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PlantDetails_DatePlanted" xml:space="preserve">
+    <value>Date planted</value>
+  </data>
+  <data name="PlantDetails_Species" xml:space="preserve">
+    <value>Species</value>
+  </data>
+  <data name="PlantDetails_Watering" xml:space="preserve">
+    <value>Watering</value>
+  </data>
+  <data name="PlantDetails_LastWatered" xml:space="preserve">
+    <value>Last watered</value>
+  </data>
+  <data name="PlantDetails_WateringInterval" xml:space="preserve">
+    <value>Watering interval</value>
+  </data>
+  <data name="PlantDetails_LastWatered_Never" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="PlantDetails_WateringInterval_Days" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="PlantDetails_WateringInterval_NotConfigured" xml:space="preserve">
+    <value>Not configured</value>
+  </data>
+  <data name="PlantDetails_NextWatering" xml:space="preserve">
+    <value>Next watering</value>
+  </data>
+  <data name="PlantDetails_WateringHistory" xml:space="preserve">
+    <value>Watering history</value>
+  </data>
+  <data name="PlantDetails_WateringHistory_Empty" xml:space="preserve">
+    <value>This plant has not been watered yet.</value>
+  </data>
+  <data name="PlantDetails_WateringInProgress" xml:space="preserve">
+    <value>Watering...</value>
+  </data>
+  <data name="PlantDetails_WaterPlant" xml:space="preserve">
+    <value>💧 Water plant</value>
+  </data>
+  <data name="PlantDetails_WateringDate_Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="PlantDetails_WateringDate_Yesterday" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
+  <data name="PlantDetails_PageTitle" xml:space="preserve">
+    <value>Plant details</value>
+  </data>
+  <data name="PlantEdit_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="PlantEdit_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="PlantEdit_Checkbox_Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="PlantEdit_Button_Saving" xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+  <data name="PlantEdit_Button_SaveChanges" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="PlantEdit_DatePlanted" xml:space="preserve">
+    <value>Date planted</value>
+  </data>
+  <data name="PlantEdit_WateringInterval" xml:space="preserve">
+    <value>Watering interval</value>
+  </data>
+  <data name="PlantEdit_WateringInterval_Days" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="PlantEdit_UpdatePlantInformations" xml:space="preserve">
+    <value>Update the information about the plant.</value>
+  </data>
+  <data name="PlantEdit_Button_BackToPlants" xml:space="preserve">
+    <value>← Back to plants</value>
+  </data>
+  <data name="PlantAdd_WateringInterval_Days" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="Plants_Count_Zero" xml:space="preserve">
+    <value>0 plant</value>
+  </data>
+  <data name="Plants_Count_One" xml:space="preserve">
+    <value>1 plant</value>
+  </data>
+  <data name="Plants_Count_Multiple" xml:space="preserve">
+    <value>{0} plants</value>
   </data>
 </root>

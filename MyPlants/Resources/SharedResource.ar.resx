@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavMenu_About" xml:space="preserve">
+    <value>حول التطبيق</value>
+  </data>
+  <data name="NavMenu_Plants" xml:space="preserve">
+    <value>النباتات</value>
+  </data>
+  <data name="NavMenu_Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="PlantAdd_Title" xml:space="preserve">
+    <value>أضف نبتة</value>
+  </data>
+  <data name="Plant_Name" xml:space="preserve">
+    <value>اسم النبتة</value>
+  </data>
+  <data name="PlantEdit_Title" xml:space="preserve">
+    <value>تعديل معطيات الـ {0}</value>
+  </data>
+  <data name="PlantEdit_TitleNotFound" xml:space="preserve">
+    <value>تعديل معطيات النبتة</value>
+  </data>
+  <data name="Plants_AddPlant" xml:space="preserve">
+    <value>أضف نبتة</value>
+  </data>
+  <data name="Plants_AddYourFirstPlant" xml:space="preserve">
+    <value>أضف نبتتك الأولى</value>
+  </data>
+  <data name="Plants_AddYourFirstPlantToStartManagingIt" xml:space="preserve">
+    <value>أضف نبتتك الأولى لرعايتها</value>
+  </data>
+  <data name="Plants_Archive" xml:space="preserve">
+    <value>أرشفة</value>
+  </data>
+  <data name="Plants_Cancel" xml:space="preserve">
+    <value>ألغي</value>
+  </data>
+  <data name="Plants_DatePlanted" xml:space="preserve">
+    <value>تاريخ الزراعة/الغرس</value>
+  </data>
+  <data name="Plants_Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Plants_Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="Plants_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Plants_LastWatered" xml:space="preserve">
+    <value>آخر سقي</value>
+  </data>
+  <data name="Plants_LastWatered_DaysAgo" xml:space="preserve">
+    <value>مضى {0} يوم</value>
+  </data>
+  <data name="Plants_LastWatered_Never" xml:space="preserve">
+    <value>أبدا</value>
+  </data>
+  <data name="Plants_LastWatered_Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="Plants_LastWatered_Yesterday" xml:space="preserve">
+    <value>البارحة</value>
+  </data>
+  <data name="Plants_NoPlants" xml:space="preserve">
+    <value>لا توجد نباتات</value>
+  </data>
+  <data name="Plants_Plants" xml:space="preserve">
+    <value>النباتات</value>
+  </data>
+  <data name="Plants_Save" xml:space="preserve">
+    <value>سجل</value>
+  </data>
+  <data name="Plants_Species" xml:space="preserve">
+    <value>الأصناف</value>
+  </data>
+  <data name="Plants_TitlePage" xml:space="preserve">
+    <value>النباتات</value>
+  </data>
+  <data name="Plants_Water" xml:space="preserve">
+    <value>اسق</value>
+  </data>
+  <data name="Plants_Watering" xml:space="preserve">
+    <value>بصدد السقي...</value>
+  </data>
+  <data name="Plants_WateringInterval" xml:space="preserve">
+    <value>الفاصل بين السقي</value>
+  </data>
+  <data name="Plant_NotFound" xml:space="preserve">
+    <value>بيانات النبتة غير متوفرة</value>
+  </data>
+  <data name="PlantAdd_DescriptionPage" xml:space="preserve">
+    <value>أضف نبتة جديدة إلى مجموعتك</value>
+  </data>
+  <data name="Settings_Title" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="About_Title" xml:space="preserve">
+    <value>حول التطبيق</value>
+  </data>
+  <data name="About_ApplicationName" xml:space="preserve">
+    <value>MyPlants</value>
+  </data>
+  <data name="About_Description" xml:space="preserve">
+    <value>تطبيق التصرف في النباتات</value>
+  </data>
+  <data name="Home_Title" xml:space="preserve">
+    <value>الإستقبال</value>
+  </data>
+  <data name="NotFound_Title" xml:space="preserve">
+    <value>مفقود</value>
+  </data>
+  <data name="NotFound_Description" xml:space="preserve">
+    <value>المعذرة، المحتوى غير متوفر.</value>
+  </data>
+  <data name="PlantAdd_SubTitle" xml:space="preserve">
+    <value>أضف نبتة</value>
+  </data>
+  <data name="PlantDetails_Loading" xml:space="preserve">
+    <value>جاري التحميل...</value>
+  </data>
+  <data name="PlantDetails_PlantNotFound" xml:space="preserve">
+    <value>النبتة غير موجودة</value>
+  </data>
+  <data name="PlantDetails_BackToPlants" xml:space="preserve">
+    <value>← عودة إلى قائمة النباتات</value>
+  </data>
+  <data name="PlantDetails_Button_Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="PlantDetails_Button_Back" xml:space="preserve">
+    <value>عودة إلى الوراء</value>
+  </data>
+  <data name="PlantDetails_ArchivedPlant" xml:space="preserve">
+    <value>تم أرشفة النبتة</value>
+  </data>
+  <data name="PlantDetails_PlantInformation" xml:space="preserve">
+    <value>معطيات النبتة</value>
+  </data>
+  <data name="PlantDetails_Name" xml:space="preserve">
+    <value>الإسم</value>
+  </data>
+  <data name="PlantDetails_DatePlanted" xml:space="preserve">
+    <value>تاريخ الغرس/الزرع</value>
+  </data>
+  <data name="PlantDetails_Species" xml:space="preserve">
+    <value>الأصناف</value>
+  </data>
+  <data name="PlantDetails_Watering" xml:space="preserve">
+    <value>السقي</value>
+  </data>
+  <data name="PlantDetails_LastWatered" xml:space="preserve">
+    <value>آخر سقي</value>
+  </data>
+  <data name="PlantDetails_WateringInterval" xml:space="preserve">
+    <value>الفاصل بين السقي</value>
+  </data>
+  <data name="PlantDetails_LastWatered_Never" xml:space="preserve">
+    <value>أبدا</value>
+  </data>
+  <data name="PlantDetails_WateringInterval_Days" xml:space="preserve">
+    <value>يوم</value>
+  </data>
+  <data name="PlantDetails_WateringInterval_NotConfigured" xml:space="preserve">
+    <value>غير مبرمج</value>
+  </data>
+  <data name="PlantDetails_NextWatering" xml:space="preserve">
+    <value>السقي القادم</value>
+  </data>
+  <data name="PlantDetails_WateringHistory" xml:space="preserve">
+    <value>تاريخ السقي</value>
+  </data>
+  <data name="PlantDetails_WateringHistory_Empty" xml:space="preserve">
+    <value>لم تتم قط سقاية هذه النبتة.</value>
+  </data>
+  <data name="PlantDetails_WateringInProgress" xml:space="preserve">
+    <value>جاري السقي...</value>
+  </data>
+  <data name="PlantDetails_WaterPlant" xml:space="preserve">
+    <value>💧 اسق النبتة</value>
+  </data>
+  <data name="PlantDetails_WateringDate_Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="PlantDetails_WateringDate_Yesterday" xml:space="preserve">
+    <value>البارحة</value>
+  </data>
+  <data name="PlantDetails_PageTitle" xml:space="preserve">
+    <value>تفاصيل النبتة</value>
+  </data>
+  <data name="PlantEdit_Loading" xml:space="preserve">
+    <value>جاري التحميل...</value>
+  </data>
+  <data name="PlantEdit_Button_Cancel" xml:space="preserve">
+    <value>ألغي</value>
+  </data>
+  <data name="PlantEdit_Checkbox_Archived" xml:space="preserve">
+    <value>مؤرشفة</value>
+  </data>
+  <data name="PlantEdit_Button_Saving" xml:space="preserve">
+    <value>جاري الحفظ...</value>
+  </data>
+  <data name="PlantEdit_Button_SaveChanges" xml:space="preserve">
+    <value>حفظ التغييرات</value>
+  </data>
+  <data name="PlantEdit_DatePlanted" xml:space="preserve">
+    <value>تاريخ الزراعة/الغرس</value>
+  </data>
+  <data name="PlantEdit_WateringInterval" xml:space="preserve">
+    <value>الفاصل بين السقي</value>
+  </data>
+  <data name="PlantEdit_WateringInterval_Days" xml:space="preserve">
+    <value>يوم</value>
+  </data>
+  <data name="PlantEdit_UpdatePlantInformations" xml:space="preserve">
+    <value>تعديل معطيات النبتة</value>
+  </data>
+  <data name="PlantEdit_Button_BackToPlants" xml:space="preserve">
+    <value>← عودة إلى قائمة النباتات</value>
+  </data>
+  <data name="PlantAdd_WateringInterval_Days" xml:space="preserve">
+    <value>يوم</value>
+  </data>
+  <data name="Plants_Count_Zero" xml:space="preserve">
+    <value>0 نبتة</value>
+  </data>
+  <data name="Plants_Count_One" xml:space="preserve">
+    <value>1 نبتة</value>
+  </data>
+  <data name="Plants_Count_Multiple" xml:space="preserve">
+    <value>{0} نبتة</value>
+  </data>
+</root>

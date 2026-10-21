@@ -3,11 +3,14 @@
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
+@using MyPlants.Resources
+@using MyPlants.Services
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
+@inject LocalizationService Localization
 
-<PageTitle>@(plant?.Name is null ? "Edit Plant" : $"Edit {plant.Name}")</PageTitle>
+<PageTitle>@(plant?.Name is null ? @SharedResource.PlantEdit_TitleNotFound : string.Format(SharedResource.PlantEdit_Title, plant.Name))</PageTitle>
 
 <div class="container py-3">
 
@@ -15,34 +18,34 @@
     {
         <div class="d-flex justify-content-center py-5">
             <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">@SharedResource.PlantEdit_Loading</span>
             </div>
         </div>
     }
     else if (plant is null)
     {
         <div class="alert alert-warning" role="alert">
-            Plant not found.
+            @SharedResource.Plant_NotFound
         </div>
 
         <button class="btn btn-outline-secondary"
                 @onclick="BackToPlants">
-            ← Back to plants
+            @SharedResource.PlantEdit_Button_BackToPlants
         </button>
     }
     else
     {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h1>Edit Plant</h1>
+                <h1>@SharedResource.Plants_Edit</h1>
                 <p class="text-muted mb-0">
-                    Update the information about your plant.
+                    @SharedResource.PlantEdit_UpdatePlantInformations
                 </p>
             </div>
 
             <button class="btn btn-outline-secondary"
                     @onclick="Cancel">
-                Cancel
+                @SharedResource.PlantEdit_Button_Cancel
             </button>
         </div>
 
@@ -58,7 +61,7 @@
 
                     <div class="mb-3">
                         <label for="name" class="form-label">
-                            Name
+                            @SharedResource.Plant_Name
                         </label>
 
                         <InputText id="name"
@@ -70,7 +73,7 @@
 
                     <div class="mb-3">
                         <label for="species" class="form-label">
-                            Species
+                            @SharedResource.Plants_Species
                         </label>
 
                         <InputText id="species"
@@ -82,7 +85,7 @@
 
                     <div class="mb-3">
                         <label for="datePlanted" class="form-label">
-                            Date planted
+                            @SharedResource.PlantEdit_DatePlanted
                         </label>
 
                         <InputDate id="datePlanted"
@@ -94,7 +97,7 @@
 
                     <div class="mb-3">
                         <label for="wateringInterval" class="form-label">
-                            Watering interval
+                            @SharedResource.PlantEdit_WateringInterval
                         </label>
 
                         <div class="input-group">
@@ -103,7 +106,7 @@
                                          @bind-Value="plant.WateringInterval" />
 
                             <span class="input-group-text">
-                                days
+                                @SharedResource.PlantEdit_WateringInterval_Days
                             </span>
                         </div>
 
@@ -117,7 +120,7 @@
 
                         <label for="archived"
                                class="form-check-label">
-                            Archived
+                            @SharedResource.PlantEdit_Checkbox_Archived
                         </label>
                     </div>
 
@@ -126,7 +129,7 @@
                         <button type="button"
                                 class="btn btn-outline-secondary"
                                 @onclick="Cancel">
-                            Cancel
+                            @SharedResource.PlantEdit_Button_Cancel
                         </button>
 
                         <button type="submit"
@@ -138,11 +141,11 @@
                                       aria-hidden="true">
                                 </span>
 
-                                <span>Saving...</span>
+                                <span>@SharedResource.PlantEdit_Button_Saving</span>
                             }
                             else
                             {
-                                <span>Save changes</span>
+                                <span>@SharedResource.PlantEdit_Button_SaveChanges</span>
                             }
                         </button>
 

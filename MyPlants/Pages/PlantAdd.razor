@@ -3,22 +3,25 @@
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
+@using MyPlants.Services
+@using MyPlants.Resources
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
+@inject LocalizationService Localization
 
-<PageTitle>Add Plant</PageTitle>
+<PageTitle>@SharedResource.PlantAdd_Title</PageTitle>
 
 <div class="container py-3">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1>Add Plant</h1>
-            <p class="text-muted mb-0">Add a new plant to your collection.</p>
+            <h1>@SharedResource.PlantAdd_SubTitle</h1>
+            <p class="text-muted mb-0">@SharedResource.PlantAdd_DescriptionPage</p>
         </div>
 
         <button class="btn btn-outline-secondary"
                 @onclick="Cancel">
-            Cancel
+            @SharedResource.Plants_Cancel
         </button>
     </div>
 
@@ -28,7 +31,7 @@
                 <DataAnnotationsValidator />
 
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">@SharedResource.Plant_Name</label>
                     <InputText id="name"
                                class="form-control"
                                @bind-Value="plant.Name" />
@@ -37,7 +40,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="species" class="form-label">Species</label>
+                    <label for="species" class="form-label">@SharedResource.Plants_Species</label>
                     <InputText id="species"
                                class="form-control"
                                @bind-Value="plant.Species" />
@@ -46,7 +49,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="datePlanted" class="form-label">Date planted</label>
+                    <label for="datePlanted" class="form-label">@SharedResource.Plants_DatePlanted</label>
                     <InputDate id="datePlanted"
                                class="form-control"
                                @bind-Value="plant.DatePlanted" />
@@ -56,7 +59,7 @@
 
                 <div class="mb-3">
                     <label for="wateringInterval" class="form-label">
-                        Watering interval
+                        @SharedResource.Plants_WateringInterval
                     </label>
 
                     <div class="input-group">
@@ -64,7 +67,7 @@
                                      class="form-control"
                                      @bind-Value="plant.WateringInterval" />
 
-                        <span class="input-group-text">days</span>
+                        <span class="input-group-text">@SharedResource.PlantAdd_WateringInterval_Days</span>
                     </div>
 
                     <ValidationMessage For="@(() => plant.WateringInterval)" />
@@ -73,11 +76,11 @@
                 <div class="d-flex justify-content-end gap-2">
                     <button class="btn btn-outline-secondary"
                             @onclick="Cancel">
-                        Cancel
+                        @SharedResource.Plants_Cancel
                     </button>
 
                     <button type="submit" class="btn btn-primary">
-                        Add plant
+                        @SharedResource.Plants_Save
                     </button>
                 </div>
             </EditForm>

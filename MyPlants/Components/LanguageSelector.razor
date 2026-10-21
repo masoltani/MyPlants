@@ -1,13 +1,14 @@
 ﻿@using MyPlants.Services
 
 @inject LocalizationService Localization
+@inject NavigationManager Navigation
 
 <select class="form-select form-select-sm"
-        value="@Localization.CurrentCulture.Name"
         @onchange="ChangeLanguage">
 
-    <option value="en-US">English</option>
-    <option value="fr-FR">Français</option>
+    <option value="en-US" selected="@(Localization.CurrentCulture.Name == "en-US")">English</option>
+    <option value="fr-FR" selected="@(Localization.CurrentCulture.Name == "fr-FR")">Français</option>
+    <option value="ar-SA" selected="@(Localization.CurrentCulture.Name == "ar-SA")">العربية</option>
 
 </select>
 
@@ -18,11 +19,15 @@
         Localization.OnCultureChanged += OnCultureChanged;
     }
 
-    private void ChangeLanguage(ChangeEventArgs e)
+    private async Task ChangeLanguage(ChangeEventArgs e)
     {
         if (e.Value is string culture)
         {
-            Localization.SetCulture(culture);
+            Console.WriteLine($"Culture sélectionnée: {culture}");
+            await Localization.SetCultureAsync(culture);
+            Console.WriteLine($"Culture appliquée : {Localization.CurrentCulture.Name}");
+
+            Navigation.NavigateTo(Navigation.Uri, forceLoad: true); // Force full page reload to apply the new culture
         }
     }
 

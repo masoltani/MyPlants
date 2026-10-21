@@ -3,28 +3,29 @@
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
+@using MyPlants.Resources
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
 
-<PageTitle>@(plant?.Name ?? "Plant Details")</PageTitle>
+<PageTitle>@(plant?.Name ?? SharedResource.PlantDetails_PageTitle)</PageTitle>
 
 @if (loading)
 {
     <div class="container py-3">
-        <p><em>Loading...</em></p>
+        <p><em>@SharedResource.PlantDetails_Loading</em></p>
     </div>
 }
 else if (plant is null)
 {
     <div class="container py-3">
         <div class="alert alert-warning" role="alert">
-            Plant not found.
+            @SharedResource.PlantDetails_PlantNotFound
         </div>
 
         <button class="btn btn-outline-secondary"
                 @onclick="BackToPlants">
-            ← Back to plants
+            ← @SharedResource.PlantDetails_BackToPlants
         </button>
     </div>
 }
@@ -44,12 +45,12 @@ else
             <div class="d-flex gap-2">
                 <button class="btn btn-primary"
                         @onclick="EditPlant">
-                    Edit
+                    @SharedResource.PlantDetails_Button_Edit
                 </button>
 
                 <button class="btn btn-outline-secondary"
                         @onclick="BackToPlants">
-                    Back
+                    @SharedResource.PlantDetails_Button_Back
                 </button>
             </div>
         </div>
@@ -57,7 +58,7 @@ else
         @if (plant.IsArchived)
         {
             <div class="alert alert-warning" role="alert">
-                This plant is archived.
+                @SharedResource.PlantDetails_ArchivedPlant
             </div>
         }
 
@@ -67,7 +68,7 @@ else
                 <div class="card h-100">
 
                     <div class="card-header">
-                        Plant information
+                        @SharedResource.PlantDetails_PlantInformation
                     </div>
 
                     <div class="card-body">
@@ -75,7 +76,7 @@ else
                         <dl class="row mb-0">
 
                             <dt class="col-sm-5">
-                                Name
+                                @SharedResource.PlantDetails_Name
                             </dt>
 
                             <dd class="col-sm-7">
@@ -83,7 +84,7 @@ else
                             </dd>
 
                             <dt class="col-sm-5">
-                                Species
+                                @SharedResource.PlantDetails_Species
                             </dt>
 
                             <dd class="col-sm-7">
@@ -91,7 +92,7 @@ else
                             </dd>
 
                             <dt class="col-sm-5">
-                                Date planted
+                                @SharedResource.PlantDetails_DatePlanted
                             </dt>
 
                             <dd class="col-sm-7">
@@ -108,7 +109,7 @@ else
                 <div class="card h-100">
 
                     <div class="card-header">
-                        Watering
+                        @SharedResource.PlantDetails_Watering
                     </div>
 
                     <div class="card-body">
@@ -116,30 +117,30 @@ else
                         <dl class="row mb-4">
 
                             <dt class="col-sm-6">
-                                Last watered
+                                @SharedResource.PlantDetails_LastWatered
                             </dt>
 
                             <dd class="col-sm-6">
-                                @(plant.LastWatered?.ToShortDateString() ?? "Never")
+                                @(plant.LastWatered?.ToShortDateString() ?? SharedResource.PlantDetails_LastWatered_Never)
                             </dd>
 
                             <dt class="col-sm-6">
-                                Watering interval
+                                @SharedResource.PlantDetails_WateringInterval
                             </dt>
 
                             <dd class="col-sm-6">
                                 @if (plant.WateringInterval.HasValue)
                                 {
-                                    @($"{plant.WateringInterval} days")
+                                    @($"{plant.WateringInterval} {SharedResource.PlantDetails_WateringInterval_Days}")
                                 }
                                 else
                                 {
-                                    <span>Not configured</span>
+                                    <span>@SharedResource.PlantDetails_WateringInterval_NotConfigured</span>
                                 }
                             </dd>
 
                             <dt class="col-sm-6">
-                                Next watering
+                                @SharedResource.PlantDetails_NextWatering
                             </dt>
 
                             <dd class="col-sm-6">
@@ -152,7 +153,7 @@ else
 
                             <div class="card-header">
                                 <h2 class="h5 mb-0">
-                                    Watering history
+                                    @SharedResource.PlantDetails_WateringHistory
                                 </h2>
                             </div>
 
@@ -161,7 +162,7 @@ else
                                 @if (wateringHistory.Count == 0)
                                 {
                                     <div class="p-3 text-muted">
-                                        This plant has not been watered yet.
+                                        @SharedResource.PlantDetails_WateringHistory_Empty
                                     </div>
                                 }
                                 else
@@ -210,11 +211,11 @@ else
                                 <span class="spinner-border spinner-border-sm me-2"
                                       aria-hidden="true"></span>
 
-                                <span>Watering...</span>
+                                <span>@SharedResource.PlantDetails_WateringInProgress</span>
                             }
                             else
                             {
-                                <span>💧 Water plant</span>
+                                <span>@SharedResource.PlantDetails_WaterPlant</span>
                             }
 
                         </button>
@@ -304,7 +305,7 @@ else
         if (plant?.LastWatered is null ||
             plant.WateringInterval is null)
         {
-            return "Not configured";
+            return SharedResource.PlantDetails_WateringInterval_NotConfigured;
         }
 
         var nextWatering =
@@ -321,12 +322,12 @@ else
 
         if (wateringDate == today)
         {
-            return "Today";
+            return SharedResource.PlantDetails_WateringDate_Today;
         }
 
         if (wateringDate == today.AddDays(-1))
         {
-            return "Yesterday";
+            return SharedResource.PlantDetails_WateringDate_Yesterday;
         }
 
         return date.ToShortDateString();

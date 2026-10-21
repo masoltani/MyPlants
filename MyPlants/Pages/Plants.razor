@@ -8,10 +8,9 @@
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
-
 @inject LocalizationService Localization
 
-<PageTitle>Plants</PageTitle>
+<PageTitle>@SharedResource.Plants_TitlePage</PageTitle>
 
 <div class="container py-3">
 
@@ -20,14 +19,14 @@
         <div>
             <h1 class="mb-1">@SharedResource.Plants_Plants</h1>
             <p class="text-muted mb-0">
-                @plants.Count plant@(plants.Count > 1 ? "s" : "")
+                @plantsCount
             </p>
         </div>
 
         <button class="btn btn-primary"
                 @onclick="AddPlant">
             <span aria-hidden="true">+</span>
-            <span class="d-none d-sm-inline ms-1">Add plant</span>
+            <span class="d-none d-sm-inline ms-1">@SharedResource.Plants_AddPlant</span>
         </button>
     </div>
 
@@ -52,16 +51,16 @@
             </div>
 
             <h2 class="h4">
-                No plants yet
+                @SharedResource.Plants_NoPlants
             </h2>
 
             <p class="text-muted">
-                Add your first plant to start managing it.
+                @SharedResource.Plants_AddYourFirstPlantToStartManagingIt
             </p>
 
             <button class="btn btn-primary"
                     @onclick="AddPlant">
-                Add your first plant
+                @SharedResource.Plants_AddYourFirstPlant
             </button>
 
         </div>
@@ -94,7 +93,7 @@
 
                         <div class="plant-info-item">
                             <span class="plant-info-label">
-                                Planted
+                                @SharedResource.Plants_DatePlanted
                             </span>
 
                             <span class="plant-info-value">
@@ -104,7 +103,7 @@
 
                         <div class="plant-info-item">
                             <span class="plant-info-label">
-                                Last watered
+                                @SharedResource.Plants_LastWatered
                             </span>
 
                             <span class="plant-info-value">
@@ -126,19 +125,19 @@
                                 <span class="spinner-border spinner-border-sm me-1"
                                       aria-hidden="true"></span>
 
-                                <span>Watering...</span>
+                                <span>@SharedResource.Plants_Watering</span>
                             }
                             else
                             {
                                 <span aria-hidden="true">💧</span>
-                                <span>Water</span>
+                                <span>@SharedResource.Plants_Water</span>
                             }
 
                         </button>
 
                         <button class="btn btn-outline-primary"
                                 @onclick="() => ShowDetails(plant.Id)">
-                            Details
+                            @SharedResource.Plants_Details
                             <span aria-hidden="true">→</span>
                         </button>
 
@@ -279,6 +278,13 @@
     private List<Plant> plants = new();
 
     private bool loading = true;
+
+    private string plantsCount => plants.Count switch
+    {
+        0 => SharedResource.Plants_Count_Zero,
+        1 => SharedResource.Plants_Count_One,
+        _ => string.Format(SharedResource.Plants_Count_Multiple, plants.Count)
+    };
 
     protected override async Task OnInitializedAsync()
     {

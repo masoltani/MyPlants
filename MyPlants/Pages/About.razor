@@ -1,17 +1,18 @@
 ﻿@page "/about"
 
 @using MyPlants.Services
+@using MyPlants.Resources
 
 @inject AppInfoService AppInfo
 
-<PageTitle>About</PageTitle>
+<PageTitle>@SharedResource.About_Title</PageTitle>
 
 <div class="container">
 
-    <h1>MyPlants</h1>
+    <h1>@SharedResource.About_ApplicationName</h1>
 
     <p class="text-muted">
-        Plant management application
+        @SharedResource.About_Description
     </p>
 
     <dl class="row">
