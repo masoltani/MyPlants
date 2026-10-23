@@ -23,11 +23,8 @@
     {
         if (e.Value is string culture)
         {
-            Console.WriteLine($"Culture sélectionnée: {culture}");
             await Localization.SetCultureAsync(culture);
-            Console.WriteLine($"Culture appliquée : {Localization.CurrentCulture.Name}");
-
-            Navigation.NavigateTo(Navigation.Uri, forceLoad: true); // Force full page reload to apply the new culture
+            Navigation.NavigateTo(Navigation.BaseUri, forceLoad: true); // Force full page reload to apply the new culture
         }
     }
 
