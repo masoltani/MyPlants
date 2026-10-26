@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ApplicationVersion>0.3.0</ApplicationVersion>
+    <ApplicationVersion>0.3.1</ApplicationVersion>
     <AssemblyVersion>$(ApplicationVersion)</AssemblyVersion>
     <FileVersion>$(ApplicationVersion)</FileVersion>
     <InformationalVersion>$(ApplicationVersion)</InformationalVersion>

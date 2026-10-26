@@ -265,6 +265,7 @@ else
                 <input id="wateringDate"
                        type="date"
                        class="form-control"
+                       max="@GetMaxWateringDate"
                        @bind="selectedWateringDate" />
 
                 <div class="d-flex justify-content-end gap-2 mt-4">
@@ -380,6 +381,11 @@ else
         return nextWatering.ToShortDateString();
     }
 
+    private string GetMaxWateringDate()
+    {
+        return DateTime.Today.ToShortDateString();
+    }
+
     private static string GetWateringDate(DateTime date)
     {
         var today = DateTime.Today;
@@ -426,18 +432,10 @@ else
         {
             var chosenDate = selectedWateringDate.Date;
 
-            // À implémenter avec ton service :
-            // enregistrer l'arrosage dans l'historique
-            // en utilisant chosenDate.
+            if (chosenDate > DateTime.Today)
+                return;
 
             await PlantService.WaterPlantAsync(plant.Id, chosenDate);
-
-            if (plant.LastWatered is null ||
-                chosenDate > plant.LastWatered.Value.Date)
-            {
-                // Mettre à jour LastWatered avec chosenDate
-                // et sauvegarder la plante.
-            }
 
             showWateringDialog = false;
             await LoadPlant();
