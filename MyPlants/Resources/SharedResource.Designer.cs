@@ -403,11 +403,20 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à 💧 Water plant on a past date.
+        /// </summary>
+        public static string PlantDetails_WaterPlantDateOnPastDate {
+            get {
+                return ResourceManager.GetString("PlantDetails_WaterPlantDateOnPastDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à 💧 Water plant.
         /// </summary>
-        public static string PlantDetails_WaterPlant {
+        public static string PlantDetails_WaterPlantNow {
             get {
-                return ResourceManager.GetString("PlantDetails_WaterPlant", resourceCulture);
+                return ResourceManager.GetString("PlantDetails_WaterPlantNow", resourceCulture);
             }
         }
         

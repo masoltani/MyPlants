@@ -149,7 +149,7 @@ else
 
                         </dl>
 
-                        <div class="card mt-4">
+                        <div class="card mt-4 mb-2">
 
                             <div class="card-header">
                                 <h2 class="h5 mb-0">
@@ -202,8 +202,8 @@ else
                             </div>
                         </div>
 
-                        <button class="btn btn-primary w-100"
-                                @onclick="WaterPlant"
+                        <button class="btn btn-primary w-100 mb-2"
+                                @onclick="WaterPlantNow"
                                 disabled="@(plant.IsArchived || watering)">
 
                             @if (watering)
@@ -215,7 +215,25 @@ else
                             }
                             else
                             {
-                                <span>@SharedResource.PlantDetails_WaterPlant</span>
+                                <span>@SharedResource.PlantDetails_WaterPlantNow</span>
+                            }
+
+                        </button>
+
+                        <button class="btn btn-secondary w-100"
+                                @onclick="OpenWateringDialog"
+                                disabled="@(plant.IsArchived || watering)">
+
+                            @if (watering)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"
+                                      aria-hidden="true"></span>
+
+                                <span>@SharedResource.PlantDetails_WateringInProgress</span>
+                            }
+                            else
+                            {
+                                <span>@SharedResource.PlantDetails_WaterPlantDateOnPastDate</span>
                             }
 
                         </button>
@@ -227,6 +245,49 @@ else
         </div>
 
     </div>
+
+    @if (showWateringDialog && plant is not null)
+    {
+        <div class="watering-modal-backdrop">
+            <div class="watering-modal"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="watering-modal-title">
+
+                <h2 id="watering-modal-title" class="h5 mb-3">
+                    @SharedResource.PlantDetails_WaterPlantDateOnPastDate
+                </h2>
+
+                <label for="wateringDate" class="form-label">
+                    Date de l'arrosage
+                </label>
+
+                <input id="wateringDate"
+                       type="date"
+                       class="form-control"
+                       @bind="selectedWateringDate" />
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button class="btn btn-outline-secondary"
+                            @onclick="CancelWateringDialog"
+                            disabled="@savingWatering">
+                        Annuler
+                    </button>
+
+                    <button class="btn btn-primary"
+                            @onclick="SaveWatering"
+                            disabled="@savingWatering">
+                        @if (savingWatering)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"
+                                  aria-hidden="true"></span>
+                        }
+                        Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
 }
 
 @code {
@@ -240,6 +301,12 @@ else
     private bool watering;
 
     private IReadOnlyList<Watering> wateringHistory = [];
+
+    private bool showWateringDialog;
+    
+    private bool savingWatering;
+    
+    private DateTime selectedWateringDate = DateTime.Today;
 
     protected override async Task OnInitializedAsync()
     {
@@ -261,12 +328,10 @@ else
         loading = false;
     }
 
-    private async Task WaterPlant()
+    private async Task WaterPlantNow()
     {
         if (plant is null || plant.IsArchived || watering)
-        {
             return;
-        }
 
         watering = true;
 
@@ -331,5 +396,55 @@ else
         }
 
         return date.ToShortDateString();
+    }
+
+    private void OpenWateringDialog()
+    {
+        if (plant is null || plant.IsArchived || watering)
+            return;
+
+        selectedWateringDate = DateTime.Today;
+        showWateringDialog = true;
+    }
+
+    private void CancelWateringDialog()
+    {
+        if (savingWatering)
+            return;
+
+        showWateringDialog = false;
+    }
+
+    private async Task SaveWatering()
+    {
+        if (plant is null || plant.IsArchived || savingWatering)
+            return;
+
+        savingWatering = true;
+
+        try
+        {
+            var chosenDate = selectedWateringDate.Date;
+
+            // À implémenter avec ton service :
+            // enregistrer l'arrosage dans l'historique
+            // en utilisant chosenDate.
+
+            await PlantService.WaterPlantAsync(plant.Id, chosenDate);
+
+            if (plant.LastWatered is null ||
+                chosenDate > plant.LastWatered.Value.Date)
+            {
+                // Mettre à jour LastWatered avec chosenDate
+                // et sauvegarder la plante.
+            }
+
+            showWateringDialog = false;
+            await LoadPlant();
+        }
+        finally
+        {
+            savingWatering = false;
+        }
     }
 }

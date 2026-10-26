@@ -294,8 +294,11 @@
   <data name="PlantDetails_WateringInProgress" xml:space="preserve">
     <value>جاري السقي...</value>
   </data>
-  <data name="PlantDetails_WaterPlant" xml:space="preserve">
-    <value>💧 اسق النبتة</value>
+  <data name="PlantDetails_WaterPlantDateOnPastDate" xml:space="preserve">
+    <value>💧 تاريخ سقي سابق</value>
+  </data>
+  <data name="PlantDetails_WaterPlantNow" xml:space="preserve">
+    <value>💧 اسق النبتة الآن</value>
   </data>
   <data name="PlantDetails_WateringDate_Today" xml:space="preserve">
     <value>اليوم</value>

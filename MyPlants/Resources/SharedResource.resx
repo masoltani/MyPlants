@@ -294,7 +294,10 @@
   <data name="PlantDetails_WateringInProgress" xml:space="preserve">
     <value>Watering...</value>
   </data>
-  <data name="PlantDetails_WaterPlant" xml:space="preserve">
+  <data name="PlantDetails_WaterPlantDateOnPastDate" xml:space="preserve">
+    <value>💧 Water plant on a past date</value>
+  </data>
+  <data name="PlantDetails_WaterPlantNow" xml:space="preserve">
     <value>💧 Water plant</value>
   </data>
   <data name="PlantDetails_WateringDate_Today" xml:space="preserve">

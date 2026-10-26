@@ -10,8 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ApplicationVersion>0.2.1</ApplicationVersion>
-
+    <ApplicationVersion>0.3.0</ApplicationVersion>
     <AssemblyVersion>$(ApplicationVersion)</AssemblyVersion>
     <FileVersion>$(ApplicationVersion)</FileVersion>
     <InformationalVersion>$(ApplicationVersion)</InformationalVersion>
@@ -24,11 +23,6 @@
 
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Businesses\" />
-    <Folder Include="Interfaces\IBusinesses\" />
   </ItemGroup>
 
   <ItemGroup>

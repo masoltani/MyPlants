@@ -17,4 +17,5 @@ public interface IPlantService
     Task<bool> WaterPlantAsync(Guid id);
 
     Task<IReadOnlyList<Watering>> GetWateringHistoryAsync(Guid plantId);
+    Task<bool> WaterPlantAsync(Guid id, DateTime date);
 }

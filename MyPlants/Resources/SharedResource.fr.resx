@@ -294,8 +294,11 @@
   <data name="PlantDetails_WateringInProgress" xml:space="preserve">
     <value>Arrosage en cours...</value>
   </data>
-  <data name="PlantDetails_WaterPlant" xml:space="preserve">
-    <value>💧 Arroser la plante</value>
+  <data name="PlantDetails_WaterPlantDateOnPastDate" xml:space="preserve">
+    <value>💧 Date d'arrosage ancien</value>
+  </data>
+  <data name="PlantDetails_WaterPlantNow" xml:space="preserve">
+    <value>💧 Arroser la plante maintenant</value>
   </data>
   <data name="PlantDetails_WateringDate_Today" xml:space="preserve">
     <value>Aujourd'hui</value>
