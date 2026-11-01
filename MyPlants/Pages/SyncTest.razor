@@ -1,0 +1,38 @@
+﻿@page "/sync-test"
+
+@using MyPlants.Interfaces.IServices
+
+@inject IPlantSyncService PlantSyncService
+
+<h3>Test de synchronisation</h3>
+
+<button @onclick="SynchronizeAsync" disabled="@isSyncing">
+    @(isSyncing ? "Synchronisation..." : "Synchroniser")
+</button>
+
+<p>@message</p>
+
+@code {
+    private bool isSyncing;
+    private string message = "";
+
+    private async Task SynchronizeAsync()
+    {
+        isSyncing = true;
+        message = "Synchronisation en cours...";
+
+        try
+        {
+            await PlantSyncService.SyncAsync();
+            message = "Synchronisation terminée avec succès.";
+        }
+        catch (Exception ex)
+        {
+            message = $"Erreur : {ex.Message}";
+        }
+        finally
+        {
+            isSyncing = false;
+        }
+    }
+}

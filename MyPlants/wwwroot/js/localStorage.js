@@ -6,5 +6,13 @@
     setLanguage: function (language, direction) {
         localStorage.setItem("myplants-language", language);
         localStorage.setItem("myplants-direction", direction);
+    },
+
+    getProfile: function () {
+        return localStorage.getItem("myplants-profile");
+    },
+
+    setProfile: function (profileId) {
+        localStorage.setItem("myplants-profile", profileId);
     }
 };
