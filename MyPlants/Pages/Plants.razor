@@ -4,11 +4,9 @@
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
 @using MyPlants.Resources
-@using MyPlants.Services
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
-@inject LocalizationService Localization
 
 <PageTitle>@SharedResource.Plants_TitlePage</PageTitle>
 
@@ -23,12 +21,32 @@
             </p>
         </div>
 
-        <button class="btn btn-primary"
+        <button type="button"
+                class="btn btn-primary"
                 @onclick="AddPlant">
             <span aria-hidden="true">+</span>
             <span class="d-none d-sm-inline ms-1">@SharedResource.Plants_AddPlant</span>
         </button>
     </div>
+
+    <div class="form-check mb-3">
+        <input id="showArchived"
+               type="checkbox"
+               class="form-check-input"
+               @bind="showArchived"
+               @bind:after="ApplyFilter" />
+
+        <label for="showArchived" class="form-check-label">
+            @SharedResource.Plants_ShowArchived
+        </label>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+    }
 
     @if (loading)
     {
@@ -36,7 +54,7 @@
             <div class="spinner-border"
                  role="status">
                 <span class="visually-hidden">
-                    Loading...
+                    @SharedResource.PlantEdit_Loading
                 </span>
             </div>
         </div>
@@ -58,7 +76,8 @@
                 @SharedResource.Plants_AddYourFirstPlantToStartManagingIt
             </p>
 
-            <button class="btn btn-primary"
+            <button type="button"
+                    class="btn btn-primary"
                     @onclick="AddPlant">
                 @SharedResource.Plants_AddYourFirstPlant
             </button>
@@ -71,7 +90,7 @@
 
             @foreach (var plant in plants)
             {
-                <article class="plant-card">
+                <article class="plant-card @(plant.IsArchived ? "plant-card-archived" : null)">
 
                     <!-- Header -->
                     <div class="plant-card-header">
@@ -79,6 +98,13 @@
                         <div class="plant-title">
                             <h2 class="plant-name">
                                 @plant.Name
+
+                                @if (plant.IsArchived)
+                                {
+                                    <span class="badge text-bg-secondary ms-2">
+                                        @SharedResource.Plants_ArchivedBadge
+                                    </span>
+                                }
                             </h2>
 
                             <div class="plant-species">
@@ -116,9 +142,10 @@
                     <!-- Actions -->
                     <div class="plant-actions">
 
-                        <button class="btn btn-secondary"
+                        <button type="button"
+                                class="btn btn-secondary"
                                 @onclick="() => WaterPlant(plant.Id)"
-                                disabled="@(wateringPlantId == plant.Id)">
+                                disabled="@(plant.IsArchived || wateringPlantId == plant.Id)">
 
                             @if (wateringPlantId == plant.Id)
                             {
@@ -135,7 +162,8 @@
 
                         </button>
 
-                        <button class="btn btn-outline-primary"
+                        <button type="button"
+                                class="btn btn-outline-primary"
                                 @onclick="() => ShowDetails(plant.Id)">
                             @SharedResource.Plants_Details
                             <span aria-hidden="true">→</span>
@@ -170,6 +198,10 @@
             border-color: var(--bs-primary);
             box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
         }
+
+    .plant-card-archived {
+        opacity: 0.65;
+    }
 
     .plant-card-header {
         margin-bottom: 1rem;
@@ -275,9 +307,13 @@
 @code {
     private Guid? wateringPlantId;
 
+    // Toutes les plantes du profil (archivées comprises) ; `plants` est la liste affichée.
+    private List<Plant> allPlants = new();
     private List<Plant> plants = new();
 
     private bool loading = true;
+    private bool showArchived;
+    private string? errorMessage;
 
     private string plantsCount => plants.Count switch
     {
@@ -293,13 +329,27 @@
 
     private async Task LoadPlants()
     {
-        loading = true;
+        try
+        {
+            allPlants = (await PlantService.GetPlantsAsync()).ToList();
+            errorMessage = null;
+        }
+        catch (Exception)
+        {
+            errorMessage = SharedResource.Error_Generic;
+        }
+        finally
+        {
+            ApplyFilter();
+            loading = false;
+        }
+    }
 
-        plants = (await PlantService.GetPlantsAsync())
-            .Where(p => !p.IsArchived)
-            .ToList();
-
-        loading = false;
+    private void ApplyFilter()
+    {
+        plants = showArchived
+            ? allPlants
+            : allPlants.Where(plant => !plant.IsArchived).ToList();
     }
 
     private void AddPlant()
@@ -319,6 +369,7 @@
             return;
 
         wateringPlantId = id;
+
         try
         {
             var success = await PlantService.WaterPlantAsync(id);
@@ -326,9 +377,11 @@
             if (success)
                 await LoadPlants();
             else
-            {
-                // Handle error (e.g., show a notification)
-            }
+                errorMessage = SharedResource.Error_Generic;
+        }
+        catch (Exception)
+        {
+            errorMessage = SharedResource.Error_Generic;
         }
         finally
         {

@@ -9,11 +9,13 @@ public sealed class PlantService : IPlantService
 {
     private readonly IPlantRepository _repository;
     private readonly IPlantBusiness _business;
+    private readonly IUserSessionService _userSessionService;
 
-    public PlantService(IPlantRepository repository, IPlantBusiness business)
+    public PlantService(IPlantRepository repository, IPlantBusiness business, IUserSessionService userSessionService)
     {
         _repository = repository;
         _business = business;
+        _userSessionService = userSessionService;
     }
 
     public Task<IReadOnlyList<Plant>> GetPlantsAsync()
@@ -90,5 +92,28 @@ public sealed class PlantService : IPlantService
     public Task<IReadOnlyList<Watering>> GetWateringHistoryAsync(Guid plantId)
     {
         return _repository.GetWateringHistoryAsync(plantId);
+    }
+
+    public async Task<int> ImportGuestPlantsAsync()
+    {
+        await _userSessionService.InitializeAsync();
+
+        if (!_userSessionService.IsLoggedIn)
+        {
+            throw new InvalidOperationException(
+                "Il faut être connecté pour importer les plantes invitées.");
+        }
+
+        return await _repository.ImportGuestPlantsAsync(_userSessionService.ProfileId);
+    }
+
+    public async Task<bool> HasGuestPlantsAsync()
+    {
+        await _userSessionService.InitializeAsync();
+
+        if (!_userSessionService.IsLoggedIn)
+            return false;
+
+        return await _repository.HasGuestPlantsAsync();
     }
 }

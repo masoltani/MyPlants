@@ -1,9 +1,138 @@
 ﻿@page "/"
 
+@using MyPlants.Interfaces.IServices
 @using MyPlants.Resources
+
+@implements IDisposable
+
+@inject IPlantService PlantService
+@inject IUserSessionService UserSessionService
 
 <PageTitle>@SharedResource.About_ApplicationName</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+@if (isCheckingSession)
+{
+    <p>Chargement...</p>
+}
+else if (showGuestImport)
+{
+    <div class="guest-import-popup" role="dialog"
+    aria-labelledby="guest-import-title"
+    aria-describedby="guest-import-description">
+
+        <div class="guest-import-content">
+            <div class="guest-import-icon">🪴</div>
+
+            <div class="guest-import-text">
+                <h3 id="guest-import-title">Vos plantes vous attendent !</h3>
+
+                <p id="guest-import-description">
+                    Retrouvez vos plantes invitées dans votre compte.
+                    Vos données originales seront conservées.
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(importMessage))
+                {
+                    <p role="status">@importMessage</p>
+                }
+            </div>
+        </div>
+
+        <div class="guest-import-actions">
+            <button class="guest-import-primary"
+            @onclick="ImportGuestPlants"
+            disabled="@isImporting">
+                @(isImporting ? "Import..." : "Importer")
+            </button>
+
+            <button class="guest-import-secondary"
+            @onclick="RemindLater"
+            disabled="@isImporting">
+                Plus tard
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    private bool isCheckingSession = true;
+    private bool showGuestImport;
+    private bool isImporting;
+    private string? importMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserSessionService.OnSessionChanged += OnSessionChanged;
+
+        try
+        {
+            await UserSessionService.InitializeAsync();
+            await UpdateGuestImportVisibilityAsync();
+        }
+        finally
+        {
+            isCheckingSession = false;
+        }
+    }
+
+    private async void OnSessionChanged()
+    {
+        await InvokeAsync(async () =>
+        {
+            if (!UserSessionService.IsLoggedIn)
+            {
+                showGuestImport = false;
+                importMessage = null;
+            }
+            else
+            {
+                await UpdateGuestImportVisibilityAsync();
+            }
+
+            StateHasChanged();
+        });
+    }
+
+    private async Task UpdateGuestImportVisibilityAsync()
+    {
+        showGuestImport = UserSessionService.IsLoggedIn
+            && await PlantService.HasGuestPlantsAsync();
+    }
+
+    private void RemindLater()
+    {
+        showGuestImport = false;
+    }
+
+    private async Task ImportGuestPlants()
+    {
+        isImporting = true;
+        importMessage = null;
+
+        try
+        {
+            var count = await PlantService.ImportGuestPlantsAsync();
+
+            showGuestImport = false;
+            importMessage = $"{count} plante(s) importée(s).";
+        }
+        catch (Exception)
+        {
+            importMessage =
+                "L'import a échoué. Vos plantes invitées sont conservées.";
+        }
+        finally
+        {
+            isImporting = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        UserSessionService.OnSessionChanged -= OnSessionChanged;
+    }
+}

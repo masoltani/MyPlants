@@ -1,0 +1,104 @@
+﻿@page "/login"
+
+@using MyPlants.Interfaces.IServices
+@using MyPlants.Extensions
+
+@inject IUserSessionService UserSession
+@inject NavigationManager Navigation
+
+<PageTitle>Connexion - MyPlants</PageTitle>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-4">
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+
+                    <h1 class="h3 mb-4 text-center">
+                        Connexion
+                    </h1>
+
+                    <form @onsubmit="LoginAsync"
+                          @onsubmit:preventDefault="true">
+
+                        <div class="mb-3">
+                            <label for="username"
+                                   class="form-label">
+                                Identifiant
+                            </label>
+
+                            <input id="username"
+                                   class="form-control"
+                                   @bind="email"
+                                   autocomplete="username"
+                                   required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password"
+                                   class="form-label">
+                                Mot de passe
+                            </label>
+
+                            <input id="password"
+                                   type="password"
+                                   class="form-control"
+                                   @bind="password"
+                                   autocomplete="current-password"
+                                   required />
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger"
+                                 role="alert">
+                                @errorMessage
+                            </div>
+                        }
+
+                        <button type="submit"
+                                class="btn btn-primary w-100 mb-2">
+                            Se connecter
+                        </button>
+
+                    </form>
+
+                    <button class="btn btn-outline-secondary w-100"
+                            @onclick="ContinueAsGuest">
+                        Continuer sans compte
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private string email = string.Empty;
+    private string password = string.Empty;
+    private string? errorMessage;
+
+    private async Task LoginAsync()
+    {
+        errorMessage = null;
+
+        var success = await UserSession.LoginAsync(email, password);
+
+        if (success)
+        {
+            Navigation.NavigateToWithBaseUrl("");
+        }
+        else
+        {
+            errorMessage = UserSession.LastError ?? "Connexion échouée.";
+        }
+    }
+
+    private void ContinueAsGuest()
+    {
+        Navigation.NavigateToWithBaseUrl("");
+    }
+}

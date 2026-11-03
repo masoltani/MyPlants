@@ -15,15 +15,29 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-builder.Services.AddScoped<IPlantRepository, IndexedDbPlantRepository>();
+// Repositories
+builder.Services
+    .AddScoped<IPlantRepository, IndexedDbPlantRepository>()
+    .AddScoped<ISupabasePlantRepository, SupabasePlantRepository>()
+    .AddScoped<ISupabaseWateringRepository, SupabaseWateringRepository>();
+
+// Businesses
 builder.Services.AddScoped<IPlantBusiness, PlantBusiness>();
-builder.Services.AddScoped<IPlantService, PlantService>();
-builder.Services.AddSingleton<AppInfoService>();
-builder.Services.AddSingleton<LocalizationService>();
+
+// Services
+builder.Services
+    .AddScoped<IPlantService, PlantService>()
+    .AddSingleton<AppInfoService>()
+    .AddSingleton<LocalizationService>()
+    .AddScoped<IUserSessionService, UserSessionService>()
+    .AddScoped<IPlantSyncService, PlantSyncService>();
 
 var app = builder.Build();
 
 var localizationService = app.Services.GetRequiredService<LocalizationService>();
 await localizationService.InitializeAsync();
+
+var userSessionService = app.Services.GetRequiredService<IUserSessionService>();
+await userSessionService.InitializeAsync();
 
 await app.RunAsync();

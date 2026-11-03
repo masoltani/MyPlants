@@ -351,4 +351,22 @@
   <data name="Plants_Count_Multiple" xml:space="preserve">
     <value>{0} plantes</value>
   </data>
+  <data name="Validation_NameRequired" xml:space="preserve">
+    <value>Le nom est obligatoire.</value>
+  </data>
+  <data name="Validation_WateringIntervalRange" xml:space="preserve">
+    <value>L’intervalle doit être compris entre 1 et 365 jours.</value>
+  </data>
+  <data name="Plants_ShowArchived" xml:space="preserve">
+    <value>Afficher les plantes archivées</value>
+  </data>
+  <data name="Plants_ArchivedBadge" xml:space="preserve">
+    <value>Archivée</value>
+  </data>
+  <data name="Error_Generic" xml:space="preserve">
+    <value>Une erreur est survenue. Réessaie.</value>
+  </data>
+  <data name="PlantDetails_WateringDate_Label" xml:space="preserve">
+    <value>Date de l’arrosage</value>
+  </data>
 </root>
