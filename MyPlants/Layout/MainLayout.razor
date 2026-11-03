@@ -1,8 +1,12 @@
 ﻿@inherits LayoutComponentBase
 
+@using MyPlants.Extensions
+@using MyPlants.Interfaces.IServices
 @using MyPlants.Services
 
 @inject LocalizationService Localization
+@inject IUserSessionService UserSession
+@inject NavigationManager Navigation
 
 <div class="page">
     <div class="sidebar">
@@ -14,8 +18,43 @@
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div> *@
 
+        <div class="top-row px-4 d-flex justify-content-end">
+            @if (UserSession.IsLoggedIn)
+            {
+                <button class="btn btn-outline-secondary"
+                        @onclick="LogoutAsync">
+                    Se déconnecter
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-primary"
+                        @onclick="GoToLogin">
+                    Se connecter
+                </button>
+            }
+        </div>
+
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+@code {
+    private void GoToLogin()
+    {
+        Navigation.NavigateToWithBaseUrl("login");
+    }
+
+    private async Task LogoutAsync()
+    {
+        await UserSession.LogoutAsync();
+        Navigation.NavigateToWithBaseUrl("");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UserSession.InitializeAsync();
+    }
+}
