@@ -1,464 +1,366 @@
-﻿window.myPlantsIndexedDb = {
-    databaseName: "MyPlantsDb",
-    databaseVersion: 3,
-    storeName: "plants",
+﻿// Persistance locale des plantes et des arrosages (IndexedDB).
+// Chaque enregistrement appartient à un profil : "guest" ou "account:<id>".
+//
+// La version de la base reste à 3 volontairement : l'augmenter empêcherait de
+// revenir à une version précédente de l'application (erreur VersionError).
+// Les anciens enregistrements sont donc lus de façon tolérante (voir getUnsynced
+// et getWateringHistory) plutôt que migrés.
 
-    openDatabase: function () {
+window.myPlantsIndexedDb = (function () {
+    const DATABASE_NAME = "MyPlantsDb";
+    const DATABASE_VERSION = 3;
+    const PLANTS = "plants";
+    const WATERINGS = "waterings";
+    const GUEST = "guest";
+
+    let databasePromise = null;
+
+    // ---------------------------------------------------------------- Outils
+
+    const now = () => new Date().toISOString();
+
+    function promisify(request) {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(
-                this.databaseName,
-                3
-            );
-
-            request.onupgradeneeded = function (event) {
-                const db = event.target.result;
-                const tx = event.target.transaction;
-                const oldVersion = event.oldVersion;
-
-                if (!db.objectStoreNames.contains("plants")) {
-                    db.createObjectStore("plants", {
-                        keyPath: "id"
-                    });
-                }
-
-                if (!db.objectStoreNames.contains("waterings")) {
-                    const store = db.createObjectStore("waterings", {
-                        keyPath: "id"
-                    });
-
-                    store.createIndex("plantId", "plantId", {
-                        unique: false
-                    });
-
-                    store.createIndex("date", "date", {
-                        unique: false
-                    });
-                }
-
-                if (oldVersion < 3) {
-                    const plantStore = tx.objectStore("plants");
-                    const plantCursor = plantStore.openCursor();
-
-                    plantCursor.onsuccess = function (event) {
-                        const cursor = event.target.result;
-                        if (!cursor)
-                            return;
-                        cursor.update({
-                            ...cursor.value,
-                            profileId: "guest"
-                        });
-                        cursor.continue();
-                    };
-                }
-            };
-
-            request.onsuccess = event =>
-                resolve(event.target.result);
-
-            request.onerror = event =>
-                reject(event.target.error);
-
-            request.onblocked = () =>
-                reject(new Error(
-                    "La migration IndexedDB est bloquée par un autre onglet. Ferme les autres onglets MyPlants puis réessaie."
-                ));
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
         });
-    },
+    }
 
-    getAll: async function (profileId) {
-        const db = await this.openDatabase();
-
+    function transactionCompleted(transaction) {
         return new Promise((resolve, reject) => {
-            const request = db
-                .transaction(this.storeName, "readonly")
-                .objectStore(this.storeName)
-                .getAll();
-
-            request.onsuccess = () =>
-                resolve(request.result.filter(
-                    (plant) =>
-                        plant.profileId === profileId
-                        && !plant.deletedAt
-                ));
-            request.onerror = event => reject(event.target.error);
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
+            transaction.onabort = () => reject(
+                transaction.error ?? new Error("Transaction IndexedDB annulée."));
         });
-    },
+    }
 
-    getById: async function (id, profileId) {
-        const db = await this.openDatabase();
+    // Exécute `work` dans une transaction et ne rend la main qu'une fois les
+    // données réellement écrites. Toute erreur annule la transaction.
+    async function inTransaction(storeNames, mode, work) {
+        const database = await openDatabase();
+        const transaction = database.transaction(storeNames, mode);
+        const completed = transactionCompleted(transaction);
 
-        return new Promise((resolve, reject) => {
-            const request = db
-                .transaction(this.storeName, "readonly")
-                .objectStore(this.storeName)
-                .get(id);
+        try {
+            const result = await work(transaction);
+            await completed;
+            return result;
+        } catch (error) {
+            completed.catch(() => { });
 
-            request.onsuccess = () => {
-                const plant = request.result;
-                if (!plant || plant.profileId !== profileId || plant.deletedAt) {
-                    resolve(null);
-                    return;
-                }
-                resolve(plant);
-            };
-
-            request.onerror = event =>
-                reject(event.target.error);
-        });
-    },
-
-    add: async function (plant, profileId) {
-        const db = await this.openDatabase();
-
-        return new Promise((resolve, reject) => {
-            const request = db
-                .transaction(this.storeName, "readwrite")
-                .objectStore(this.storeName)
-                .add({
-                    ...plant,
-                    id: plant.id.toString(),
-                    profileId: profileId,
-                    updatedAt: new Date().toISOString(),
-                    deletedAt: null,
-                    isSynced: false
-                });
-
-            request.onsuccess = () => resolve();
-            request.onerror = event => reject(event.target.error);
-        });
-    },
-
-    update: async function (plant, profileId) {
-        const db = await this.openDatabase();
-
-        return new Promise((resolve, reject) => {
-            const request = db
-                .transaction(this.storeName, "readwrite")
-                .objectStore(this.storeName)
-                .put({
-                    ...plant,
-                    id: plant.id.toString(),
-                    profileId: profileId,
-                    updatedAt: new Date().toISOString(),
-                    isSynced: false
-                });
-
-            request.onsuccess = () => resolve();
-            request.onerror = event => reject(event.target.error);
-        });
-    },
-
-    delete: async function (id, profileId) {
-        const db = await this.openDatabase();
-
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(this.storeName, "readwrite");
-            const store = tx.objectStore(this.storeName);
-            const request = store.get(id);
-
-            request.onsuccess = () => {
-                const plant = request.result;
-                if (!plant || plant.profileId !== profileId) {
-                    return;
-                }
-                store.put({
-                    ...plant,
-                    updatedAt: new Date().toISOString(),
-                    deletedAt: new Date().toISOString(),
-                    isSynced: false
-                });
-            };
-
-            tx.oncomplete = () => resolve();
-            tx.onerror = event => reject(event.error);
-            tx.onabort = event => reject(
-                event.error ?? new Error("Suppression annulée.")
-            );
-        });
-    },
-
-    addWatering: async function (watering, profileId) {
-        const db = await this.openDatabase();
-
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(["plants", "waterings"], "readwrite");
-            const plants = tx.objectStore("plants");
-            const waterings = tx.objectStore("waterings");
-            const request = plants.get(watering.plantId.toString());
-
-            request.onsuccess = () => {
-                const plant = request.result;
-                if (!plant || plant.profileId !== profileId) {
-                    tx.abort();
-                    return;
-                }
-                waterings.add({
-                    ...watering,
-                    id: watering.id.toString(),
-                    plantId: watering.plantId.toString(),
-                    profileId
-                });
-            };
-
-            tx.oncomplete = () => resolve();
-            tx.onerror = event => reject(event.error);
-            tx.onabort = event => reject(event.error);
-        });
-    },
-
-    getWateringHistory: async function (plantId, profileId) {
-        const db = await this.openDatabase();
-
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(
-                ["plants", "waterings"],
-                "readonly"
-            );
-
-            const plantRequest = tx
-                .objectStore("plants")
-                .get(plantId.toString());
-
-            const wateringRequest = tx
-                .objectStore("waterings")
-                .index("plantId")
-                .getAll(plantId.toString());
-
-            let plant;
-            let history;
-
-            plantRequest.onsuccess = () => {
-                plant = plantRequest.result;
-            };
-
-            wateringRequest.onsuccess = () => {
-                history = wateringRequest.result;
-            };
-
-            tx.oncomplete = () => {
-                if (!plant || plant.profileId !== profileId) {
-                    resolve([]);
-                    return;
-                }
-
-                resolve(
-                    history
-                        .filter(w => w.profileId === profileId)
-                        .sort((a, b) =>
-                            new Date(b.date) - new Date(a.date)
-                        )
-                );
-            };
-
-            tx.onerror = () => reject(tx.error);
-        });
-    },
-
-    importGuestPlants: async function (targetProfileId) {
-        if (!targetProfileId || targetProfileId === "guest") {
-            throw new Error("Profil cible invalide.");
-        }
-
-        const db = await this.openDatabase();
-
-        const [allPlants, allWaterings] = await Promise.all([
-            new Promise((resolve, reject) => {
-                const request = db
-                    .transaction("plants", "readonly")
-                    .objectStore("plants")
-                    .getAll();
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = e => reject(e.target.error);
-            }),
-
-            new Promise((resolve, reject) => {
-                const request = db
-                    .transaction("waterings", "readonly")
-                    .objectStore("waterings")
-                    .getAll();
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = e => reject(e.target.error);
-            })
-        ]);
-
-        const guestPlants = allPlants.filter(
-            p => p.profileId === "guest"
-        );
-
-        const targetPlants = allPlants.filter(
-            p => p.profileId === targetProfileId
-        );
-
-        const alreadyImported = new Set(
-            targetPlants
-                .map(p => p.importedFromGuestId)
-                .filter(Boolean)
-        );
-
-        const guestWateringsByPlant = new Map();
-
-        for (const watering of allWaterings) {
-            if (watering.profileId !== "guest") continue;
-
-            const list = guestWateringsByPlant.get(watering.plantId) ?? [];
-            list.push(watering);
-            guestWateringsByPlant.set(watering.plantId, list);
-        }
-
-        const plantsToAdd = [];
-        const wateringsToAdd = [];
-
-        for (const plant of guestPlants) {
-            const originalId = plant.id.toString();
-
-            if (alreadyImported.has(originalId)) continue;
-
-            const newPlantId = crypto.randomUUID();
-
-            plantsToAdd.push({
-                ...plant,
-                id: newPlantId,
-                profileId: targetProfileId,
-                importedFromGuestId: originalId
-            });
-
-            const history = guestWateringsByPlant.get(originalId) ?? [];
-
-            for (const watering of history) {
-                wateringsToAdd.push({
-                    ...watering,
-                    id: crypto.randomUUID(),
-                    plantId: newPlantId,
-                    profileId: targetProfileId
-                });
-            }
-        }
-
-        if (plantsToAdd.length === 0)
-            return 0;
-
-        return await new Promise((resolve, reject) => {
-            const tx = db.transaction(
-                ["plants", "waterings"],
-                "readwrite"
-            );
-
-            const plantsStore = tx.objectStore("plants");
-            const wateringsStore = tx.objectStore("waterings");
-
-            for (const plant of plantsToAdd) {
-                plantsStore.add(plant);
+            try {
+                transaction.abort();
+            } catch {
+                // La transaction est déjà terminée.
             }
 
-            for (const watering of wateringsToAdd) {
-                wateringsStore.add(watering);
-            }
+            throw error;
+        }
+    }
 
-            tx.oncomplete = () => resolve(plantsToAdd.length);
-            tx.onerror = () => reject(tx.error);
-            tx.onabort = () => reject(
-                tx.error ?? new Error("Import annulé.")
-            );
-        });
-    },
+    // ------------------------------------------------------------ Connexion
 
-    async hasGuestPlants() {
-        const db = await this.openDatabase();
+    function upgradeDatabase(event) {
+        const database = event.target.result;
+        const transaction = event.target.transaction;
 
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(["plants"], "readonly");
-            const request = tx.objectStore("plants").getAll();
+        if (!database.objectStoreNames.contains(PLANTS)) {
+            database.createObjectStore(PLANTS, { keyPath: "id" });
+        }
+
+        if (!database.objectStoreNames.contains(WATERINGS)) {
+            const store = database.createObjectStore(WATERINGS, { keyPath: "id" });
+            store.createIndex("plantId", "plantId", { unique: false });
+            store.createIndex("date", "date", { unique: false });
+        }
+
+        // Avant la version 3, il n'y avait pas de profils : tout est "guest".
+        if (event.oldVersion < 3) {
+            const cursorRequest = transaction.objectStore(PLANTS).openCursor();
+
+            cursorRequest.onsuccess = function (cursorEvent) {
+                const cursor = cursorEvent.target.result;
+
+                if (!cursor) {
+                    return;
+                }
+
+                cursor.update({ ...cursor.value, profileId: GUEST });
+                cursor.continue();
+            };
+        }
+    }
+
+    // Une seule connexion partagée, rouverte automatiquement si besoin.
+    function openDatabase() {
+        databasePromise ??= new Promise((resolve, reject) => {
+            const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
+
+            request.onupgradeneeded = upgradeDatabase;
 
             request.onsuccess = () => {
-                const plants = request.result ?? [];
-                resolve(plants.some(p => p.profileId === "guest"));
+                const database = request.result;
+
+                // Un autre onglet demande une migration : on libère la base.
+                database.onversionchange = () => {
+                    database.close();
+                    databasePromise = null;
+                };
+
+                resolve(database);
             };
 
             request.onerror = () => reject(request.error);
+
+            request.onblocked = () => reject(new Error(
+                "La migration IndexedDB est bloquée par un autre onglet. " +
+                "Ferme les autres onglets MyPlants puis réessaie."));
         });
-    },
 
-    getUnsynced: async function (profileId) {
-        const db = await this.openDatabase();
+        // Une ouverture échouée ne doit pas rester en cache.
+        databasePromise.catch(() => { databasePromise = null; });
 
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(
-                this.storeName,
-                "readonly"
-            );
+        return databasePromise;
+    }
 
-            const request = transaction
-                .objectStore(this.storeName)
-                .getAll();
+    // --------------------------------------------------------------- Plantes
 
-            request.onsuccess = () => {
-                const plants = request.result.filter(
-                    plant =>
-                        plant.profileId === profileId &&
-                        plant.isSynced === false
-                );
+    async function getAll(profileId) {
+        const plants = await inTransaction(PLANTS, "readonly", transaction =>
+            promisify(transaction.objectStore(PLANTS).getAll()));
 
-                resolve(plants);
-            };
+        return plants.filter(plant =>
+            plant.profileId === profileId && !plant.deletedAt);
+    }
 
-            request.onerror = event => reject(event.target.error);
-        });
-    },
+    async function getById(id, profileId) {
+        const plant = await inTransaction(PLANTS, "readonly", transaction =>
+            promisify(transaction.objectStore(PLANTS).get(id)));
 
-    markAsSynced: async function (id, profileId) {
-        const db = await this.openDatabase();
+        const isVisible = plant
+            && plant.profileId === profileId
+            && !plant.deletedAt;
 
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(
-                this.storeName,
-                "readwrite"
-            );
+        return isVisible ? plant : null;
+    }
 
-            const store = transaction.objectStore(this.storeName);
-            const request = store.get(id);
-
-            request.onsuccess = () => {
-                const plant = request.result;
-
-                if (!plant || plant.profileId !== profileId) {
-                    return;
-                }
-
-                store.put({
-                    ...plant,
-                    isSynced: true
-                });
-            };
-
-            transaction.oncomplete = () => resolve();
-            transaction.onerror = event => reject(event.target.error);
-            transaction.onabort = event => reject(event.target.error);
-        });
-    },
-
-    upsertFromCloud: async function (plant, profileId) {
-        const db = await this.openDatabase();
-
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(
-                this.storeName,
-                "readwrite"
-            );
-
-            const store = transaction.objectStore(this.storeName);
-
-            store.put({
+    async function add(plant, profileId) {
+        await inTransaction(PLANTS, "readwrite", transaction =>
+            promisify(transaction.objectStore(PLANTS).add({
                 ...plant,
                 id: plant.id.toString(),
-                profileId: profileId,
-                isSynced: true
-            });
+                profileId,
+                updatedAt: now(),
+                deletedAt: null,
+                isSynced: false
+            })));
+    }
 
-            transaction.oncomplete = () => resolve();
-            transaction.onerror = event => reject(event.target.error);
-            transaction.onabort = event => reject(event.target.error);
+    async function update(plant, profileId) {
+        await inTransaction(PLANTS, "readwrite", async transaction => {
+            const store = transaction.objectStore(PLANTS);
+            const id = plant.id.toString();
+            const existing = await promisify(store.get(id));
+
+            if (existing && existing.profileId !== profileId) {
+                throw new Error("Plante introuvable pour ce profil.");
+            }
+
+            await promisify(store.put({
+                ...existing, // conserve les champs inconnus du modèle C# (ex. importedFromGuestId)
+                ...plant,
+                id,
+                profileId,
+                updatedAt: now(),
+                isSynced: false
+            }));
         });
-    },
-};
+    }
+
+    // Suppression logique : l'enregistrement reste pour pouvoir être synchronisé.
+    async function remove(id, profileId) {
+        await inTransaction(PLANTS, "readwrite", async transaction => {
+            const store = transaction.objectStore(PLANTS);
+            const plant = await promisify(store.get(id));
+
+            if (!plant || plant.profileId !== profileId) {
+                return;
+            }
+
+            const timestamp = now();
+
+            await promisify(store.put({
+                ...plant,
+                updatedAt: timestamp,
+                deletedAt: timestamp,
+                isSynced: false
+            }));
+        });
+    }
+
+    // -------------------------------------------------------------- Arrosages
+
+    async function addWatering(watering, profileId) {
+        await inTransaction([PLANTS, WATERINGS], "readwrite", async transaction => {
+            const plantId = watering.plantId.toString();
+            const plant = await promisify(
+                transaction.objectStore(PLANTS).get(plantId));
+
+            if (!plant || plant.profileId !== profileId) {
+                throw new Error("Plante introuvable pour ce profil.");
+            }
+
+            await promisify(transaction.objectStore(WATERINGS).add({
+                ...watering,
+                id: watering.id.toString(),
+                plantId,
+                profileId
+            }));
+        });
+    }
+
+    async function getWateringHistory(plantId, profileId) {
+        return await inTransaction([PLANTS, WATERINGS], "readonly", async transaction => {
+            const id = plantId.toString();
+            const plant = await promisify(transaction.objectStore(PLANTS).get(id));
+
+            if (!plant || plant.profileId !== profileId) {
+                return [];
+            }
+
+            const history = await promisify(
+                transaction.objectStore(WATERINGS).index("plantId").getAll(id));
+
+            // Les arrosages d'avant les profils n'ont pas de profileId : ils sont "guest".
+            return history
+                .filter(watering => (watering.profileId ?? GUEST) === profileId)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+        });
+    }
+
+    // ------------------------------------------------------ Invité -> compte
+
+    async function hasGuestPlants() {
+        const plants = await inTransaction(PLANTS, "readonly", transaction =>
+            promisify(transaction.objectStore(PLANTS).getAll()));
+
+        return plants.some(plant => plant.profileId === GUEST && !plant.deletedAt);
+    }
+
+    // Copie les plantes invitées (et leur historique) vers le compte.
+    // Tout se fait dans une seule transaction : pas de doublon si on clique deux fois.
+    async function importGuestPlants(targetProfileId) {
+        if (!targetProfileId || targetProfileId === GUEST) {
+            throw new Error("Profil cible invalide.");
+        }
+
+        return await inTransaction([PLANTS, WATERINGS], "readwrite", async transaction => {
+            const plantsStore = transaction.objectStore(PLANTS);
+            const wateringsStore = transaction.objectStore(WATERINGS);
+
+            const [allPlants, allWaterings] = await Promise.all([
+                promisify(plantsStore.getAll()),
+                promisify(wateringsStore.getAll())
+            ]);
+
+            const alreadyImported = new Set(
+                allPlants
+                    .filter(plant => plant.profileId === targetProfileId)
+                    .map(plant => plant.importedFromGuestId)
+                    .filter(Boolean));
+
+            const guestPlants = allPlants.filter(plant =>
+                plant.profileId === GUEST
+                && !plant.deletedAt
+                && !alreadyImported.has(plant.id.toString()));
+
+            const guestWateringsByPlant = new Map();
+
+            for (const watering of allWaterings) {
+                if ((watering.profileId ?? GUEST) !== GUEST) {
+                    continue;
+                }
+
+                const list = guestWateringsByPlant.get(watering.plantId) ?? [];
+                list.push(watering);
+                guestWateringsByPlant.set(watering.plantId, list);
+            }
+
+            for (const plant of guestPlants) {
+                const originalId = plant.id.toString();
+                const newPlantId = crypto.randomUUID();
+
+                plantsStore.add({
+                    ...plant,
+                    id: newPlantId,
+                    profileId: targetProfileId,
+                    importedFromGuestId: originalId,
+                    isSynced: false
+                });
+
+                for (const watering of guestWateringsByPlant.get(originalId) ?? []) {
+                    wateringsStore.add({
+                        ...watering,
+                        id: crypto.randomUUID(),
+                        plantId: newPlantId,
+                        profileId: targetProfileId,
+                        isSynced: false
+                    });
+                }
+            }
+
+            return guestPlants.length;
+        });
+    }
+
+    // --------------------------------------------------------- Synchronisation
+
+    // Les plantes d'avant la synchronisation n'ont pas de champ isSynced :
+    // tout ce qui n'est pas explicitement synchronisé reste à envoyer.
+    async function getUnsynced(profileId) {
+        const plants = await inTransaction(PLANTS, "readonly", transaction =>
+            promisify(transaction.objectStore(PLANTS).getAll()));
+
+        return plants.filter(plant =>
+            plant.profileId === profileId && plant.isSynced !== true);
+    }
+
+    async function markAsSynced(id, profileId) {
+        await inTransaction(PLANTS, "readwrite", async transaction => {
+            const store = transaction.objectStore(PLANTS);
+            const plant = await promisify(store.get(id));
+
+            if (!plant || plant.profileId !== profileId) {
+                return;
+            }
+
+            await promisify(store.put({ ...plant, isSynced: true }));
+        });
+    }
+
+    async function upsertFromCloud(plant, profileId) {
+        await inTransaction(PLANTS, "readwrite", transaction =>
+            promisify(transaction.objectStore(PLANTS).put({
+                ...plant,
+                id: plant.id.toString(),
+                profileId,
+                isSynced: true
+            })));
+    }
+
+    return {
+        getAll,
+        getById,
+        add,
+        update,
+        delete: remove,
+        addWatering,
+        getWateringHistory,
+        hasGuestPlants,
+        importGuestPlants,
+        getUnsynced,
+        markAsSynced,
+        upsertFromCloud
+    };
+})();
