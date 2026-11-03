@@ -24,4 +24,15 @@ public class SupabasePlantDto
 
     [JsonPropertyName("watering_interval")]
     public int? WateringInterval { get; set; }
+
+    /// <summary>Heure de la dernière modification faite par l'utilisateur.</summary>
+    [JsonPropertyName("client_updated_at")]
+    public DateTime? ClientUpdatedAt { get; set; }
+
+    /// <summary>Heure du serveur, posée par le trigger.</summary>
+    [JsonPropertyName("updated_at")]
+    public DateTime UpdatedAt { get; set; }
+
+    [JsonPropertyName("deleted_at")]
+    public DateTime? DeletedAt { get; set; }
 }

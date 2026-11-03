@@ -1,5 +1,7 @@
-﻿using MyPlants.Interfaces.IRepositories;
+﻿using MyPlants.Businesses;
+using MyPlants.Interfaces.IRepositories;
 using MyPlants.Interfaces.IServices;
+using MyPlants.Models;
 
 namespace MyPlants.Services;
 
@@ -29,41 +31,37 @@ public sealed class PlantSyncService : IPlantSyncService
                 "Une connexion est nécessaire pour synchroniser les plantes.");
         }
 
-        // 1. Envoyer les modifications locales vers Supabase.
-        var unsyncedPlants = await _localRepository.GetUnsyncedAsync();
+        // 1. Lire les deux côtés avant de modifier quoi que ce soit.
+        var cloudPlants = await _cloudRepository.GetAllAsync();
+        var localPlants = await GetLocalPlantsAsync();
 
-        foreach (var plant in unsyncedPlants)
+        // 2. Décider : la version modifiée le plus récemment l'emporte.
+        var plan = PlantSyncPlanner.Plan(localPlants, cloudPlants);
+
+        // 3. Appliquer.
+        foreach (var plant in plan.ToPush)
         {
             await _cloudRepository.UpsertAsync(plant);
             await _localRepository.MarkAsSyncedAsync(plant.Id);
         }
 
-        // 2. Récupérer les plantes présentes dans Supabase.
-        var cloudPlants = await _cloudRepository.GetAllAsync();
-
-        // 3. Intégrer les plantes distantes dans IndexedDB.
-        var localPlants = await _localRepository.GetAllAsync();
-
-        var localById = localPlants.ToDictionary(p => p.Id);
-
-        foreach (var cloudPlant in cloudPlants)
+        foreach (var plant in plan.ToPull)
         {
-            if (localById.TryGetValue(cloudPlant.Id, out var localPlant))
-            {
-                // Ne jamais écraser une modification locale en attente.
-                if (!localPlant.IsSynced)
-                    continue;
-
-                // Ne remplacer que si la version distante est plus récente.
-                if (cloudPlant.UpdatedAt > localPlant.UpdatedAt)
-                {
-                    await _localRepository.UpsertFromCloudAsync(cloudPlant);
-                }
-            }
-            else
-            {
-                await _localRepository.UpsertFromCloudAsync(cloudPlant);
-            }
+            await _localRepository.UpsertFromCloudAsync(plant);
         }
+    }
+
+    // Plantes visibles + modifications en attente (y compris les suppressions
+    // locales, qui ne sont plus visibles mais doivent encore être envoyées).
+    private async Task<IReadOnlyList<Plant>> GetLocalPlantsAsync()
+    {
+        var visible = await _localRepository.GetAllAsync();
+        var unsynced = await _localRepository.GetUnsyncedAsync();
+
+        return visible
+            .Concat(unsynced)
+            .GroupBy(plant => plant.Id)
+            .Select(group => group.Last())
+            .ToList();
     }
 }

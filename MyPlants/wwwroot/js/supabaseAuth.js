@@ -5,12 +5,9 @@
 
 export { initialize };
 
-let supabase;
-
 export async function signIn(email, password) {
-    const supabase = getSupabase();
     const { data, error } =
-        await supabase.auth.signInWithPassword({
+        await getSupabase().auth.signInWithPassword({
             email,
             password
         });
@@ -32,28 +29,27 @@ export async function signIn(email, password) {
     };
 }
 
+// status : "authenticated" | "anonymous" | "unavailable"
+// "unavailable" = impossible de savoir (réseau coupé) : l'appelant garde son état.
 export async function getSession() {
-    const supabase = getSupabase();
-    const { data, error } = await supabase.auth.getSession();
+    const { data, error } = await getSupabase().auth.getSession();
 
     if (error) {
-        return {
-            isLoggedIn: false,
-            userId: null,
-            email: null
-        };
+        return { status: "unavailable", userId: null, email: null };
     }
 
+    const user = data.session?.user;
+
     return {
-        isLoggedIn: !!data.session,
-        userId: data.session?.user?.id ?? null,
-        email: data.session?.user?.email ?? null
+        status: user ? "authenticated" : "anonymous",
+        userId: user?.id ?? null,
+        email: user?.email ?? null
     };
 }
 
+// Portée "local" : déconnexion sans appel réseau, donc possible hors ligne.
 export async function signOut() {
-    const supabase = getSupabase();
-    const { error } = await supabase.auth.signOut();
+    const { error } = await getSupabase().auth.signOut({ scope: "local" });
 
     if (error) {
         throw new Error(error.message);

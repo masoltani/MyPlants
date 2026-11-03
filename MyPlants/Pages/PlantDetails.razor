@@ -23,7 +23,8 @@ else if (plant is null)
             @SharedResource.PlantDetails_PlantNotFound
         </div>
 
-        <button class="btn btn-outline-secondary"
+        <button type="button"
+                class="btn btn-outline-secondary"
                 @onclick="BackToPlants">
             ← @SharedResource.PlantDetails_BackToPlants
         </button>
@@ -43,12 +44,14 @@ else
             </div>
 
             <div class="d-flex gap-2">
-                <button class="btn btn-primary"
+                <button type="button"
+                        class="btn btn-primary"
                         @onclick="EditPlant">
                     @SharedResource.PlantDetails_Button_Edit
                 </button>
 
-                <button class="btn btn-outline-secondary"
+                <button type="button"
+                        class="btn btn-outline-secondary"
                         @onclick="BackToPlants">
                     @SharedResource.PlantDetails_Button_Back
                 </button>
@@ -169,7 +172,7 @@ else
                                 {
                                     <div class="list-group list-group-flush">
 
-                                        @foreach (var watering in wateringHistory)
+                                        @foreach (var wateringEntry in wateringHistory)
                                         {
                                             <div class="list-group-item
                                                 d-flex
@@ -178,20 +181,24 @@ else
 
                                                 <div>
                                                     <div class="fw-medium">
-                                                        @GetWateringDate(watering.Date)
+                                                        @GetWateringDate(wateringEntry.Date)
                                                     </div>
 
-                                                    @if (!string.IsNullOrWhiteSpace(watering.Note))
+                                                    @if (!string.IsNullOrWhiteSpace(wateringEntry.Note))
                                                     {
                                                         <div class="small text-muted">
-                                                            @watering.Note
+                                                            @wateringEntry.Note
                                                         </div>
                                                     }
                                                 </div>
 
-                                                <span class="text-muted small">
-                                                    @watering.Date.ToShortTimeString()
-                                                </span>
+                                                @* Un arrosage saisi à une date passée n'a pas d'heure : on n'affiche pas "00:00". *@
+                                                @if (HasTime(wateringEntry.Date))
+                                                {
+                                                    <span class="text-muted small">
+                                                        @wateringEntry.Date.ToShortTimeString()
+                                                    </span>
+                                                }
 
                                             </div>
                                         }
@@ -202,7 +209,8 @@ else
                             </div>
                         </div>
 
-                        <button class="btn btn-primary w-100 mb-2"
+                        <button type="button"
+                                class="btn btn-primary w-100 mb-2"
                                 @onclick="WaterPlantNow"
                                 disabled="@(plant.IsArchived || watering)">
 
@@ -220,7 +228,8 @@ else
 
                         </button>
 
-                        <button class="btn btn-secondary w-100"
+                        <button type="button"
+                                class="btn btn-secondary w-100"
                                 @onclick="OpenWateringDialog"
                                 disabled="@(plant.IsArchived || watering)">
 
@@ -265,17 +274,19 @@ else
                 <input id="wateringDate"
                        type="date"
                        class="form-control"
-                       max="@GetMaxWateringDate"
+                       max="@MaxWateringDate"
                        @bind="selectedWateringDate" />
 
                 <div class="d-flex justify-content-end gap-2 mt-4">
-                    <button class="btn btn-outline-secondary"
+                    <button type="button"
+                            class="btn btn-outline-secondary"
                             @onclick="CancelWateringDialog"
                             disabled="@savingWatering">
-                        Annuler
+                        @SharedResource.Plants_Cancel
                     </button>
 
-                    <button class="btn btn-primary"
+                    <button type="button"
+                            class="btn btn-primary"
                             @onclick="SaveWatering"
                             disabled="@savingWatering">
                         @if (savingWatering)
@@ -283,7 +294,7 @@ else
                             <span class="spinner-border spinner-border-sm me-2"
                                   aria-hidden="true"></span>
                         }
-                        Enregistrer
+                        @SharedResource.Plants_Save
                     </button>
                 </div>
             </div>
@@ -292,6 +303,9 @@ else
 }
 
 @code {
+    // Format attendu par <input type="date"> (indépendant de la langue de l'application).
+    private const string HtmlDateFormat = "yyyy-MM-dd";
+
     [Parameter]
     public Guid Id { get; set; }
 
@@ -304,27 +318,34 @@ else
     private IReadOnlyList<Watering> wateringHistory = [];
 
     private bool showWateringDialog;
-    
+
     private bool savingWatering;
-    
+
     private DateTime selectedWateringDate = DateTime.Today;
+
+    private static string MaxWateringDate => DateTime.Today.ToString(HtmlDateFormat);
 
     protected override async Task OnInitializedAsync()
     {
         await LoadPlant();
     }
 
-    private async Task LoadPlant()
+    // showLoader = false : rafraîchit les données sans remplacer toute la page par
+    // le message de chargement (évite le clignotement après un arrosage).
+    private async Task LoadPlant(bool showLoader = true)
     {
-        loading = true;
-
-        plant = null;
-        wateringHistory = [];
+        if (showLoader)
+        {
+            loading = true;
+            plant = null;
+            wateringHistory = [];
+        }
 
         plant = await PlantService.GetPlantAsync(Id);
 
-        if (plant is not null)
-            wateringHistory = await PlantService.GetWateringHistoryAsync(Id);
+        wateringHistory = plant is null
+            ? []
+            : await PlantService.GetWateringHistoryAsync(Id);
 
         loading = false;
     }
@@ -342,7 +363,7 @@ else
 
             if (success)
             {
-                await LoadPlant();
+                await LoadPlant(showLoader: false);
             }
         }
         finally
@@ -381,9 +402,9 @@ else
         return nextWatering.ToShortDateString();
     }
 
-    private string GetMaxWateringDate()
+    private static bool HasTime(DateTime date)
     {
-        return DateTime.Today.ToShortDateString();
+        return date.TimeOfDay != TimeSpan.Zero;
     }
 
     private static string GetWateringDate(DateTime date)
@@ -426,19 +447,24 @@ else
         if (plant is null || plant.IsArchived || savingWatering)
             return;
 
+        var chosenDate = selectedWateringDate.Date;
+
+        if (chosenDate > DateTime.Today)
+            return;
+
         savingWatering = true;
 
         try
         {
-            var chosenDate = selectedWateringDate.Date;
+            // Pour aujourd'hui, on garde l'heure réelle ; pour une date passée, la date seule.
+            var wateringDate = chosenDate == DateTime.Today
+                ? DateTime.Now
+                : chosenDate;
 
-            if (chosenDate > DateTime.Today)
-                return;
-
-            await PlantService.WaterPlantAsync(plant.Id, chosenDate);
+            await PlantService.WaterPlantAsync(plant.Id, wateringDate);
 
             showWateringDialog = false;
-            await LoadPlant();
+            await LoadPlant(showLoader: false);
         }
         finally
         {

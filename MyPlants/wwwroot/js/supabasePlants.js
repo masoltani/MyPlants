@@ -1,30 +1,39 @@
-﻿
-import { getSupabase } from "./supabaseClient.js";
+﻿import { getSupabase } from "./supabaseClient.js";
 
-export async function getAll() {
-    const supabase = getSupabase();
+const COLUMNS = `
+    id,
+    name,
+    species,
+    date_planted,
+    last_watered,
+    is_archived,
+    watering_interval,
+    client_updated_at,
+    updated_at,
+    deleted_at
+`;
 
-    const { data: userData, error: userError } =
-        await supabase.auth.getUser();
+// Lit l'identifiant de l'utilisateur dans la session locale (sans appel réseau).
+// La sécurité reste assurée côté serveur par les politiques RLS.
+async function requireUserId(supabase) {
+    const { data, error } = await supabase.auth.getSession();
 
-    if (userError || !userData.user) {
+    if (error || !data.session) {
         throw new Error("Une connexion est nécessaire.");
     }
 
+    return data.session.user.id;
+}
+
+// Renvoie aussi les plantes supprimées : c'est ce qui propage une suppression
+// faite sur un appareil vers les autres.
+export async function getAll() {
+    const supabase = getSupabase();
+    await requireUserId(supabase);
+
     const { data, error } = await supabase
         .from("plants")
-        .select(`
-            id,
-            name,
-            species,
-            date_planted,
-            last_watered,
-            is_archived,
-            watering_interval,
-            updated_at,
-            deleted_at
-        `)
-        .is("deleted_at", null)
+        .select(COLUMNS)
         .order("updated_at", { ascending: false });
 
     if (error) {
@@ -34,83 +43,21 @@ export async function getAll() {
     return data ?? [];
 }
 
-export async function save(plant) {
+export async function upsert(plant) {
     const supabase = getSupabase();
+    const userId = await requireUserId(supabase);
 
-    const { data: userData, error: userError } =
-        await supabase.auth.getUser();
-
-    if (userError || !userData.user) {
-        throw new Error("Une connexion est nécessaire.");
-    }
-
-    const payload = {
+    const row = {
         id: plant.id,
-        user_id: userData.user.id,
+        user_id: userId,
         name: plant.name ?? null,
         species: plant.species ?? null,
         date_planted: plant.datePlanted ?? null,
         last_watered: plant.lastWatered ?? null,
         is_archived: plant.isArchived ?? false,
-        watering_interval: plant.wateringInterval ?? null
-    };
-
-    const { data, error } = await supabase
-        .from("plants")
-        .upsert(payload, { onConflict: "id" })
-        .select()
-        .single();
-
-    if (error) {
-        throw new Error(error.message);
-    }
-
-    return data;
-}
-
-export async function remove(id) {
-    const supabase = getSupabase();
-    await requireAuthenticatedUser(supabase);
-
-    const { error } = await supabase
-        .from("plants")
-        .update({
-            deleted_at: new Date().toISOString()
-        })
-        .eq("id", id);
-
-    if (error) {
-        throw new Error(error.message);
-    }
-}
-
-export async function upsert(plant) {
-    const supabase = getSupabase();
-
-    const {
-        data: { user },
-        error: userError
-    } = await supabase.auth.getUser();
-
-    if (userError) {
-        throw new Error(userError.message);
-    }
-
-    if (!user) {
-        throw new Error("Aucun utilisateur Supabase connecté.");
-    }
-
-    const row = {
-        id: plant.id,
-        user_id: user.id,
-        name: plant.name,
-        species: plant.species,
-        date_planted: plant.datePlanted,
-        last_watered: plant.lastWatered,
-        is_archived: plant.isArchived,
-        watering_interval: plant.wateringInterval,
-        updated_at: plant.updatedAt,
-        deleted_at: plant.deletedAt
+        watering_interval: plant.wateringInterval ?? null,
+        client_updated_at: plant.updatedAt,
+        deleted_at: plant.deletedAt ?? null
     };
 
     const { error } = await supabase

@@ -88,6 +88,15 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Something went wrong. Please try again..
+        /// </summary>
+        public static string Error_Generic {
+            get {
+                return ResourceManager.GetString("Error_Generic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Home.
         /// </summary>
         public static string Home_Title {
@@ -331,6 +340,15 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering date.
+        /// </summary>
+        public static string PlantDetails_WateringDate_Label {
+            get {
+                return ResourceManager.GetString("PlantDetails_WateringDate_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Today.
         /// </summary>
         public static string PlantDetails_WateringDate_Today {
@@ -565,6 +583,15 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Archived.
+        /// </summary>
+        public static string Plants_ArchivedBadge {
+            get {
+                return ResourceManager.GetString("Plants_ArchivedBadge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Cancel.
         /// </summary>
         public static string Plants_Cancel {
@@ -709,6 +736,15 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Show archived plants.
+        /// </summary>
+        public static string Plants_ShowArchived {
+            get {
+                return ResourceManager.GetString("Plants_ShowArchived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Species.
         /// </summary>
         public static string Plants_Species {
@@ -759,6 +795,24 @@ namespace MyPlants.Resources {
         public static string Settings_Title {
             get {
                 return ResourceManager.GetString("Settings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The name is required..
+        /// </summary>
+        public static string Validation_NameRequired {
+            get {
+                return ResourceManager.GetString("Validation_NameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The interval must be between 1 and 365 days..
+        /// </summary>
+        public static string Validation_WateringIntervalRange {
+            get {
+                return ResourceManager.GetString("Validation_WateringIntervalRange", resourceCulture);
             }
         }
     }
