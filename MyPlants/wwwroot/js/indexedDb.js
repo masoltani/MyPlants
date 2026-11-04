@@ -241,11 +241,32 @@ window.myPlantsIndexedDb = (function () {
 
     // ------------------------------------------------------ Invité -> compte
 
-    async function hasGuestPlants() {
+    // Plantes invitées qui n'ont pas encore été copiées dans le profil cible.
+    // Une plante déjà importée garde la trace de son origine (importedFromGuestId),
+    // même si elle a ensuite été modifiée ou supprimée dans le compte.
+    function findPendingGuestPlants(allPlants, targetProfileId) {
+        const alreadyImported = new Set(
+            allPlants
+                .filter(plant => plant.profileId === targetProfileId)
+                .map(plant => plant.importedFromGuestId)
+                .filter(Boolean));
+
+        return allPlants.filter(plant =>
+            plant.profileId === GUEST
+            && !plant.deletedAt
+            && !alreadyImported.has(plant.id.toString()));
+    }
+
+    // Vrai seulement s'il reste des plantes invitées à importer dans ce compte.
+    async function hasGuestPlants(targetProfileId) {
+        if (!targetProfileId || targetProfileId === GUEST) {
+            return false;
+        }
+
         const plants = await inTransaction(PLANTS, "readonly", transaction =>
             promisify(transaction.objectStore(PLANTS).getAll()));
 
-        return plants.some(plant => plant.profileId === GUEST && !plant.deletedAt);
+        return findPendingGuestPlants(plants, targetProfileId).length > 0;
     }
 
     // Copie les plantes invitées (et leur historique) vers le compte.
@@ -264,16 +285,7 @@ window.myPlantsIndexedDb = (function () {
                 promisify(wateringsStore.getAll())
             ]);
 
-            const alreadyImported = new Set(
-                allPlants
-                    .filter(plant => plant.profileId === targetProfileId)
-                    .map(plant => plant.importedFromGuestId)
-                    .filter(Boolean));
-
-            const guestPlants = allPlants.filter(plant =>
-                plant.profileId === GUEST
-                && !plant.deletedAt
-                && !alreadyImported.has(plant.id.toString()));
+            const guestPlants = findPendingGuestPlants(allPlants, targetProfileId);
 
             const guestWateringsByPlant = new Map();
 

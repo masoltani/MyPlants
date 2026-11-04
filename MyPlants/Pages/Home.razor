@@ -21,8 +21,8 @@ Welcome to your new app.
 else if (showGuestImport)
 {
     <div class="guest-import-popup" role="dialog"
-    aria-labelledby="guest-import-title"
-    aria-describedby="guest-import-description">
+         aria-labelledby="guest-import-title"
+         aria-describedby="guest-import-description">
 
         <div class="guest-import-content">
             <div class="guest-import-icon">🪴</div>
@@ -44,17 +44,24 @@ else if (showGuestImport)
 
         <div class="guest-import-actions">
             <button class="guest-import-primary"
-            @onclick="ImportGuestPlants"
-            disabled="@isImporting">
+                    @onclick="ImportGuestPlants"
+                    disabled="@isImporting">
                 @(isImporting ? "Import..." : "Importer")
             </button>
 
             <button class="guest-import-secondary"
-            @onclick="RemindLater"
-            disabled="@isImporting">
+                    @onclick="RemindLater"
+                    disabled="@isImporting">
                 Plus tard
             </button>
         </div>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(importMessage))
+{
+    @* Résultat de l'import, affiché une fois la fenêtre refermée. *@
+    <div class="alert alert-success" role="status">
+        @importMessage
     </div>
 }
 
@@ -79,28 +86,45 @@ else if (showGuestImport)
         }
     }
 
+    // async void est imposé par le type de l'événement : toute exception doit être
+    // rattrapée ici, sinon elle ferait planter l'application.
     private async void OnSessionChanged()
     {
-        await InvokeAsync(async () =>
+        try
         {
-            if (!UserSessionService.IsLoggedIn)
+            await InvokeAsync(async () =>
             {
-                showGuestImport = false;
-                importMessage = null;
-            }
-            else
-            {
-                await UpdateGuestImportVisibilityAsync();
-            }
+                if (!UserSessionService.IsLoggedIn)
+                {
+                    showGuestImport = false;
+                    importMessage = null;
+                }
+                else
+                {
+                    await UpdateGuestImportVisibilityAsync();
+                }
 
-            StateHasChanged();
-        });
+                StateHasChanged();
+            });
+        }
+        catch (Exception)
+        {
+            showGuestImport = false;
+        }
     }
 
     private async Task UpdateGuestImportVisibilityAsync()
     {
-        showGuestImport = UserSessionService.IsLoggedIn
-            && await PlantService.HasGuestPlantsAsync();
+        try
+        {
+            showGuestImport = UserSessionService.IsLoggedIn
+                && await PlantService.HasGuestPlantsAsync();
+        }
+        catch (Exception)
+        {
+            // La proposition d'import est facultative : on ne bloque pas l'accueil.
+            showGuestImport = false;
+        }
     }
 
     private void RemindLater()

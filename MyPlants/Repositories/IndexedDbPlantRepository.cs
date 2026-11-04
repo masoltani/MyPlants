@@ -10,10 +10,10 @@ public class IndexedDbPlantRepository : IPlantRepository
 {
     private readonly IJSRuntime _jsRuntime;
     private readonly IUserSessionService _userSessionService;
-    
-    public IndexedDbPlantRepository(IJSRuntime jsRuntime, IUserSessionService userSessionService) 
+
+    public IndexedDbPlantRepository(IJSRuntime jsRuntime, IUserSessionService userSessionService)
     {
-        _jsRuntime = jsRuntime; 
+        _jsRuntime = jsRuntime;
         _userSessionService = userSessionService;
     }
 
@@ -141,11 +141,13 @@ public class IndexedDbPlantRepository : IPlantRepository
             targetProfileId);
     }
 
+    // Vrai s'il reste des plantes invitées à importer dans le compte courant.
     public async Task<bool> HasGuestPlantsAsync()
     {
-        //await GetProfileIdAsync();
+        var profileId = _userSessionService.ProfileId;
 
         return await _jsRuntime.InvokeAsync<bool>(
-            "myPlantsIndexedDb.hasGuestPlants");
+            "myPlantsIndexedDb.hasGuestPlants",
+            profileId);
     }
 }
