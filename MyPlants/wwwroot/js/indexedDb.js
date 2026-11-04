@@ -361,6 +361,49 @@ window.myPlantsIndexedDb = (function () {
             })));
     }
 
+    // ------------------------------------------- Synchronisation des arrosages
+
+    // Tous les arrosages du profil, avec leur état de synchronisation.
+    // Un arrosage sans champ isSynced est considéré comme à envoyer.
+    async function getAllWaterings(profileId) {
+        const waterings = await inTransaction(WATERINGS, "readonly", transaction =>
+            promisify(transaction.objectStore(WATERINGS).getAll()));
+
+        return waterings.filter(watering =>
+            (watering.profileId ?? GUEST) === profileId);
+    }
+
+    async function markWateringsAsSynced(ids, profileId) {
+        await inTransaction(WATERINGS, "readwrite", async transaction => {
+            const store = transaction.objectStore(WATERINGS);
+
+            for (const id of ids) {
+                const watering = await promisify(store.get(id));
+
+                if (watering && (watering.profileId ?? GUEST) === profileId) {
+                    await promisify(store.put({ ...watering, isSynced: true }));
+                }
+            }
+        });
+    }
+
+    // Une seule transaction : tous les arrosages arrivent, ou aucun.
+    async function upsertWateringsFromCloud(waterings, profileId) {
+        await inTransaction(WATERINGS, "readwrite", async transaction => {
+            const store = transaction.objectStore(WATERINGS);
+
+            for (const watering of waterings) {
+                await promisify(store.put({
+                    ...watering,
+                    id: watering.id.toString(),
+                    plantId: watering.plantId.toString(),
+                    profileId,
+                    isSynced: true
+                }));
+            }
+        });
+    }
+
     return {
         getAll,
         getById,
@@ -373,6 +416,9 @@ window.myPlantsIndexedDb = (function () {
         importGuestPlants,
         getUnsynced,
         markAsSynced,
-        upsertFromCloud
+        upsertFromCloud,
+        getAllWaterings,
+        markWateringsAsSynced,
+        upsertWateringsFromCloud
     };
 })();

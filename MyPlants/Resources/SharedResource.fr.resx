@@ -369,4 +369,25 @@
   <data name="PlantDetails_WateringDate_Label" xml:space="preserve">
     <value>Date de l’arrosage</value>
   </data>
+  <data name="Sync_Button" xml:space="preserve">
+    <value>Synchroniser</value>
+  </data>
+  <data name="Sync_InProgress" xml:space="preserve">
+    <value>Synchronisation…</value>
+  </data>
+  <data name="Sync_Success" xml:space="preserve">
+    <value>Synchronisé</value>
+  </data>
+  <data name="Sync_Error" xml:space="preserve">
+    <value>Échec de la synchronisation. Vérifie ta connexion.</value>
+  </data>
+  <data name="Auth_Login" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="Auth_Logout" xml:space="preserve">
+    <value>Se déconnecter</value>
+  </data>
+  <data name="About_Changelog_Title" xml:space="preserve">
+    <value>Journal des versions</value>
+  </data>
 </root>

@@ -1,0 +1,96 @@
+﻿@using MyPlants.Interfaces.IServices
+@using MyPlants.Resources
+
+@implements IDisposable
+
+@inject IPlantSyncService SyncService
+@inject IUserSessionService UserSession
+
+@* Bouton de synchronisation : visible seulement pour un compte connecté. *@
+@if (UserSession.IsLoggedIn)
+{
+    <div class="d-flex align-items-center gap-2">
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <span class="small @(isError ? "text-danger" : "text-success")" role="status">
+                @message
+            </span>
+        }
+
+        <button type="button"
+                class="btn btn-outline-primary"
+                @onclick="SyncAsync"
+                disabled="@syncing">
+
+            @if (syncing)
+            {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                <span>@SharedResource.Sync_InProgress</span>
+            }
+            else
+            {
+                <span>@SharedResource.Sync_Button</span>
+            }
+
+        </button>
+    </div>
+}
+
+@code {
+    /// <summary>Appelé après une synchronisation réussie, pour recharger les données affichées.</summary>
+    [Parameter]
+    public EventCallback OnSynced { get; set; }
+
+    private bool syncing;
+    private bool isError;
+    private string? message;
+
+    protected override void OnInitialized()
+    {
+        UserSession.OnSessionChanged += OnSessionChanged;
+    }
+
+    private async Task SyncAsync()
+    {
+        // Évite deux synchronisations simultanées (double clic).
+        if (syncing)
+            return;
+
+        syncing = true;
+        message = null;
+
+        try
+        {
+            await SyncService.SyncAsync();
+
+            isError = false;
+            message = SharedResource.Sync_Success;
+
+            await OnSynced.InvokeAsync();
+        }
+        catch (Exception)
+        {
+            // Réseau coupé, session expirée, erreur du serveur… : l'utilisateur peut réessayer,
+            // ses modifications locales restent en attente d'envoi.
+            isError = true;
+            message = SharedResource.Sync_Error;
+        }
+        finally
+        {
+            syncing = false;
+        }
+    }
+
+    // Une connexion ou une déconnexion change l'affichage du bouton et efface l'ancien message.
+    private void OnSessionChanged()
+    {
+        message = null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        UserSession.OnSessionChanged -= OnSessionChanged;
+    }
+}

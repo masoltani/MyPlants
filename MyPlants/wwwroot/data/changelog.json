@@ -1,0 +1,47 @@
+[
+  {
+    "version": "0.6.0",
+    "date": "2026-11-04",
+    "changes": {
+      "fr": [ "Nouveau journal des versions dans « À propos » : retrouvez ce qu'apporte chaque version" ],
+      "en": [ "New release notes in \"About\": see what each version brings" ],
+      "ar": [ "سجل إصدارات جديد في «حول»: اطّلع على ما تقدّمه كل نسخة" ]
+    }
+  },
+  {
+    "version": "0.5.0",
+    "date": "2026-11-04",
+    "changes": {
+      "fr": [ "Historique d'arrosage synchronisé entre appareils" ],
+      "en": [ "Watering history synced across devices" ],
+      "ar": [ "مزامنة سجل الري بين الأجهزة" ]
+    }
+  },
+  {
+    "version": "0.4.2",
+    "date": "2026-11-04",
+    "changes": {
+      "fr": [
+        "Connexion à un compte pour synchroniser ses plantes entre plusieurs appareils",
+        "Import des plantes saisies en mode invité dans son compte",
+        "Les plantes archivées peuvent de nouveau être affichées et restaurées",
+        "Le formulaire de plante vérifie le nom et l'intervalle d'arrosage",
+        "Démarrage plus fiable, y compris sans connexion Internet"
+      ],
+      "en": [
+        "Sign in to an account to sync your plants across devices",
+        "Import plants entered as a guest into your account",
+        "Archived plants can be shown and restored again",
+        "The plant form now checks the name and the watering interval",
+        "More reliable startup, even without an Internet connection"
+      ],
+      "ar": [
+        "تسجيل الدخول إلى حساب لمزامنة نباتاتك بين أجهزتك",
+        "استيراد النباتات المضافة في وضع الضيف إلى حسابك",
+        "يمكن الآن عرض النباتات المؤرشفة واستعادتها",
+        "يتحقق نموذج النبات من الاسم ومدة الري",
+        "تشغيل أكثر موثوقية للتطبيق حتى دون اتصال بالإنترنت"
+      ]
+    }
+  }
+]

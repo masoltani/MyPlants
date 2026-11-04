@@ -369,4 +369,25 @@
   <data name="PlantDetails_WateringDate_Label" xml:space="preserve">
     <value>تاريخ الري</value>
   </data>
+  <data name="Sync_Button" xml:space="preserve">
+    <value>مزامنة</value>
+  </data>
+  <data name="Sync_InProgress" xml:space="preserve">
+    <value>جارٍ المزامنة…</value>
+  </data>
+  <data name="Sync_Success" xml:space="preserve">
+    <value>تمت المزامنة</value>
+  </data>
+  <data name="Sync_Error" xml:space="preserve">
+    <value>فشلت المزامنة. تحقق من اتصالك.</value>
+  </data>
+  <data name="Auth_Login" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="Auth_Logout" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="About_Changelog_Title" xml:space="preserve">
+    <value>سجل الإصدارات</value>
+  </data>
 </root>

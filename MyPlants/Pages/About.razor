@@ -1,9 +1,14 @@
 ﻿@page "/about"
 
+@using System.Globalization
+@using MyPlants.Interfaces.IServices
+@using MyPlants.Models
 @using MyPlants.Services
 @using MyPlants.Resources
 
 @inject AppInfoService AppInfo
+@inject IChangelogService Changelog
+@inject LocalizationService Localization
 
 <PageTitle>@SharedResource.About_Title</PageTitle>
 
@@ -20,4 +25,53 @@
         <dd class="col-sm-8">@AppInfo.Version</dd>
     </dl>
 
+    @if (releaseNotes.Count > 0)
+    {
+        <h2 class="h4 mt-4 mb-3">@SharedResource.About_Changelog_Title</h2>
+
+        @foreach (var note in releaseNotes)
+        {
+            <section class="card mb-3 @(IsCurrentVersion(note) ? "border-primary" : null)">
+                <div class="card-body">
+
+                    <h3 class="h5 d-flex justify-content-between align-items-baseline">
+                        <span>v@(note.Version)</span>
+
+                        @if (note.Date is { } date)
+                        {
+                            @* Format fixe : le calendrier de certaines cultures (ar-SA) est hégirien. *@
+                            <small class="text-muted">@date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</small>
+                        }
+                    </h3>
+
+                    <ul class="mb-0">
+                        @foreach (var change in note.GetChanges(language))
+                        {
+                            <li>@change</li>
+                        }
+                    </ul>
+
+                </div>
+            </section>
+        }
+    }
+
 </div>
+
+@code {
+    private IReadOnlyList<ReleaseNote> releaseNotes = [];
+
+    private string language = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        language = Localization.CurrentCulture.TwoLetterISOLanguageName;
+        releaseNotes = await Changelog.GetReleaseNotesAsync();
+    }
+
+    // La version affichée peut porter un suffixe de build ("0.4.2+abc123") : on l'ignore.
+    private bool IsCurrentVersion(ReleaseNote note)
+    {
+        return $"{AppInfo.Version}".Split('+')[0] == note.Version;
+    }
+}

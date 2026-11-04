@@ -1,10 +1,12 @@
 ﻿@inherits LayoutComponentBase
 
+@implements IDisposable
+
+@using MyPlants.Components
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
-@using MyPlants.Services
+@using MyPlants.Resources
 
-@inject LocalizationService Localization
 @inject IUserSessionService UserSession
 @inject NavigationManager Navigation
 
@@ -14,34 +16,54 @@
     </div>
 
     <main>
-        @* <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div> *@
+        <div class="top-row px-4 d-flex justify-content-end align-items-center gap-3">
+            <SyncButton OnSynced="ReloadContent" />
 
-        <div class="top-row px-4 d-flex justify-content-end">
             @if (UserSession.IsLoggedIn)
             {
-                <button class="btn btn-outline-secondary"
+                <button type="button"
+                        class="btn btn-outline-secondary"
                         @onclick="LogoutAsync">
-                    Se déconnecter
+                    @SharedResource.Auth_Logout
                 </button>
             }
             else
             {
-                <button class="btn btn-primary"
+                <button type="button"
+                        class="btn btn-primary"
                         @onclick="GoToLogin">
-                    Se connecter
+                    @SharedResource.Auth_Login
                 </button>
             }
         </div>
 
-        <article class="content px-4">
+        @* Changer la clé recrée la page affichée : elle relit alors ses données
+           (utile après une synchronisation qui a pu modifier la liste des plantes). *@
+        <article class="content px-4" @key="contentVersion">
             @Body
         </article>
     </main>
 </div>
 
 @code {
+    private int contentVersion;
+
+    protected override void OnInitialized()
+    {
+        UserSession.OnSessionChanged += OnSessionChanged;
+    }
+
+    private void ReloadContent()
+    {
+        contentVersion++;
+    }
+
+    // Garde le bouton Se connecter / Se déconnecter à jour, quel que soit l'origine du changement.
+    private void OnSessionChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
     private void GoToLogin()
     {
         Navigation.NavigateToWithBaseUrl("login");
@@ -53,8 +75,8 @@
         Navigation.NavigateToWithBaseUrl("");
     }
 
-    protected override async Task OnInitializedAsync()
+    public void Dispose()
     {
-        await UserSession.InitializeAsync();
+        UserSession.OnSessionChanged -= OnSessionChanged;
     }
 }

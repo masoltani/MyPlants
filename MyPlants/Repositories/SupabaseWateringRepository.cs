@@ -16,15 +16,6 @@ public sealed class SupabaseWateringRepository
         _jsRuntime = jsRuntime;
     }
 
-    private async Task<IJSObjectReference> GetModuleAsync()
-    {
-        _module ??= await _jsRuntime.InvokeAsync<IJSObjectReference>(
-            "import",
-            "./js/supabaseWaterings.js");
-
-        return _module;
-    }
-
     public async Task<IReadOnlyList<Watering>> GetAllAsync()
     {
         var module = await GetModuleAsync();
@@ -39,11 +30,38 @@ public sealed class SupabaseWateringRepository
         await module.InvokeVoidAsync("upsert", watering);
     }
 
+    // Envoi groupé : une requête pour plusieurs arrosages.
+    public async Task UpsertManyAsync(IReadOnlyList<Watering> waterings)
+    {
+        if (waterings.Count == 0)
+            return;
+
+        var module = await GetModuleAsync();
+
+        await module.InvokeVoidAsync("upsertMany", waterings);
+    }
+
     public async ValueTask DisposeAsync()
     {
-        if (_module is not null)
+        if (_module is null)
+            return;
+
+        try
         {
             await _module.DisposeAsync();
         }
+        catch (JSDisconnectedException)
+        {
+            // Le runtime JavaScript peut déjà être déconnecté.
+        }
+    }
+
+    private async Task<IJSObjectReference> GetModuleAsync()
+    {
+        _module ??= await _jsRuntime.InvokeAsync<IJSObjectReference>(
+            "import",
+            "./js/supabaseWaterings.js");
+
+        return _module;
     }
 }

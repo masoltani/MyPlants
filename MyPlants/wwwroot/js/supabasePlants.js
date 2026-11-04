@@ -1,4 +1,5 @@
 ﻿import { getSupabase } from "./supabaseClient.js";
+import { toIsoOrNull } from "./dates.js";
 
 const COLUMNS = `
     id,
@@ -52,8 +53,8 @@ export async function upsert(plant) {
         user_id: userId,
         name: plant.name ?? null,
         species: plant.species ?? null,
-        date_planted: plant.datePlanted ?? null,
-        last_watered: plant.lastWatered ?? null,
+        date_planted: toIsoOrNull(plant.datePlanted),
+        last_watered: toIsoOrNull(plant.lastWatered),
         is_archived: plant.isArchived ?? false,
         watering_interval: plant.wateringInterval ?? null,
         client_updated_at: plant.updatedAt,

@@ -19,7 +19,8 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services
     .AddScoped<IPlantRepository, IndexedDbPlantRepository>()
     .AddScoped<ISupabasePlantRepository, SupabasePlantRepository>()
-    .AddScoped<ISupabaseWateringRepository, SupabaseWateringRepository>();
+    .AddScoped<ISupabaseWateringRepository, SupabaseWateringRepository>()
+    .AddScoped<ILocalWateringRepository, IndexedDbWateringRepository>();
 
 // Businesses
 builder.Services.AddScoped<IPlantBusiness, PlantBusiness>();
@@ -30,7 +31,8 @@ builder.Services
     .AddSingleton<AppInfoService>()
     .AddSingleton<LocalizationService>()
     .AddScoped<IUserSessionService, UserSessionService>()
-    .AddScoped<IPlantSyncService, PlantSyncService>();
+    .AddScoped<IPlantSyncService, PlantSyncService>()
+    .AddScoped<IChangelogService, ChangelogService>();
 
 var app = builder.Build();
 

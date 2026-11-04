@@ -70,6 +70,15 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Release notes.
+        /// </summary>
+        public static string About_Changelog_Title {
+            get {
+                return ResourceManager.GetString("About_Changelog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Plant management application.
         /// </summary>
         public static string About_Description {
@@ -84,6 +93,24 @@ namespace MyPlants.Resources {
         public static string About_Title {
             get {
                 return ResourceManager.GetString("About_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Log in.
+        /// </summary>
+        public static string Auth_Login {
+            get {
+                return ResourceManager.GetString("Auth_Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Log out.
+        /// </summary>
+        public static string Auth_Logout {
+            get {
+                return ResourceManager.GetString("Auth_Logout", resourceCulture);
             }
         }
         
@@ -795,6 +822,42 @@ namespace MyPlants.Resources {
         public static string Settings_Title {
             get {
                 return ResourceManager.GetString("Settings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sync.
+        /// </summary>
+        public static string Sync_Button {
+            get {
+                return ResourceManager.GetString("Sync_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sync failed. Check your connection..
+        /// </summary>
+        public static string Sync_Error {
+            get {
+                return ResourceManager.GetString("Sync_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Syncing….
+        /// </summary>
+        public static string Sync_InProgress {
+            get {
+                return ResourceManager.GetString("Sync_InProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Synced.
+        /// </summary>
+        public static string Sync_Success {
+            get {
+                return ResourceManager.GetString("Sync_Success", resourceCulture);
             }
         }
         

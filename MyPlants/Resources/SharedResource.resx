@@ -369,4 +369,25 @@
   <data name="PlantDetails_WateringDate_Label" xml:space="preserve">
     <value>Watering date</value>
   </data>
+  <data name="Sync_Button" xml:space="preserve">
+    <value>Sync</value>
+  </data>
+  <data name="Sync_InProgress" xml:space="preserve">
+    <value>Syncing…</value>
+  </data>
+  <data name="Sync_Success" xml:space="preserve">
+    <value>Synced</value>
+  </data>
+  <data name="Sync_Error" xml:space="preserve">
+    <value>Sync failed. Check your connection.</value>
+  </data>
+  <data name="Auth_Login" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Auth_Logout" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="About_Changelog_Title" xml:space="preserve">
+    <value>Release notes</value>
+  </data>
 </root>
