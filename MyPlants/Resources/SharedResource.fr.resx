@@ -390,4 +390,25 @@
   <data name="About_Changelog_Title" xml:space="preserve">
     <value>Journal des versions</value>
   </data>
+  <data name="Plants_Sort_Label" xml:space="preserve">
+    <value>Trier par</value>
+  </data>
+  <data name="Plants_Sort_Urgency" xml:space="preserve">
+    <value>À arroser en premier</value>
+  </data>
+  <data name="Plants_Sort_Name" xml:space="preserve">
+    <value>Nom (A–Z)</value>
+  </data>
+  <data name="Plants_Sort_DatePlanted" xml:space="preserve">
+    <value>Plantées récemment</value>
+  </data>
+  <data name="Plants_WaterToday" xml:space="preserve">
+    <value>À arroser aujourd’hui</value>
+  </data>
+  <data name="Plants_WaterOverdue" xml:space="preserve">
+    <value>En retard de {0} j</value>
+  </data>
+  <data name="About_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
 </root>

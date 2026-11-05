@@ -390,4 +390,25 @@
   <data name="About_Changelog_Title" xml:space="preserve">
     <value>سجل الإصدارات</value>
   </data>
+  <data name="Plants_Sort_Label" xml:space="preserve">
+    <value>ترتيب حسب</value>
+  </data>
+  <data name="Plants_Sort_Urgency" xml:space="preserve">
+    <value>الأولوية للري</value>
+  </data>
+  <data name="Plants_Sort_Name" xml:space="preserve">
+    <value>الاسم (أ–ي)</value>
+  </data>
+  <data name="Plants_Sort_DatePlanted" xml:space="preserve">
+    <value>الأحدث زراعة</value>
+  </data>
+  <data name="Plants_WaterToday" xml:space="preserve">
+    <value>يُسقى اليوم</value>
+  </data>
+  <data name="Plants_WaterOverdue" xml:space="preserve">
+    <value>متأخر بـ {0} يوم</value>
+  </data>
+  <data name="About_Version" xml:space="preserve">
+    <value>الإصدار</value>
+  </data>
 </root>

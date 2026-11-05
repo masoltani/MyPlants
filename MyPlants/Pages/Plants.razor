@@ -1,11 +1,13 @@
 ﻿@page "/plants"
 
+@using MyPlants.Businesses
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
 @using MyPlants.Resources
 
 @inject IPlantService PlantService
+@inject IPreferencesService Preferences
 @inject NavigationManager Navigation
 
 <PageTitle>@SharedResource.Plants_TitlePage</PageTitle>
@@ -29,16 +31,36 @@
         </button>
     </div>
 
-    <div class="form-check mb-3">
-        <input id="showArchived"
-               type="checkbox"
-               class="form-check-input"
-               @bind="showArchived"
-               @bind:after="ApplyFilter" />
+    <!-- Filtre et tri -->
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
 
-        <label for="showArchived" class="form-check-label">
-            @SharedResource.Plants_ShowArchived
-        </label>
+        <div class="form-check mb-0">
+            <input id="showArchived"
+                   type="checkbox"
+                   class="form-check-input"
+                   @bind="showArchived"
+                   @bind:after="ApplyFilter" />
+
+            <label for="showArchived" class="form-check-label">
+                @SharedResource.Plants_ShowArchived
+            </label>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 ms-auto">
+            <label for="sortOrder" class="form-label small text-muted mb-0">
+                @SharedResource.Plants_Sort_Label
+            </label>
+
+            <select id="sortOrder"
+                    class="form-select form-select-sm w-auto"
+                    @bind="sortOrder"
+                    @bind:after="OnSortOrderChangedAsync">
+                <option value="@PlantSortOrder.Urgency">@SharedResource.Plants_Sort_Urgency</option>
+                <option value="@PlantSortOrder.Name">@SharedResource.Plants_Sort_Name</option>
+                <option value="@PlantSortOrder.DatePlanted">@SharedResource.Plants_Sort_DatePlanted</option>
+            </select>
+        </div>
+
     </div>
 
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -90,6 +112,8 @@
 
             @foreach (var plant in plants)
             {
+                var wateringAlert = GetWateringAlert(plant);
+
                 <article class="plant-card @(plant.IsArchived ? "plant-card-archived" : null)">
 
                     <!-- Header -->
@@ -103,6 +127,12 @@
                                 {
                                     <span class="badge text-bg-secondary ms-2">
                                         @SharedResource.Plants_ArchivedBadge
+                                    </span>
+                                }
+                                else if (wateringAlert is { } alert)
+                                {
+                                    <span class="badge @alert.CssClass ms-2">
+                                        @alert.Text
                                     </span>
                                 }
                             </h2>
@@ -305,14 +335,19 @@
 </style>
 
 @code {
+    private const string SortOrderPreferenceKey = "plants-sort-order";
+
     private Guid? wateringPlantId;
 
-    // Toutes les plantes du profil (archivées comprises) ; `plants` est la liste affichée.
+    // Toutes les plantes du profil (archivées comprises) ; `plants` est la liste affichée, triée.
     private List<Plant> allPlants = new();
-    private List<Plant> plants = new();
+    private IReadOnlyList<Plant> plants = [];
+
+    private DateTime today = DateTime.Today;
 
     private bool loading = true;
     private bool showArchived;
+    private PlantSortOrder sortOrder = PlantSortOrder.Urgency;
     private string? errorMessage;
 
     private string plantsCount => plants.Count switch
@@ -324,7 +359,20 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await RestoreSortOrderAsync();
         await LoadPlants();
+    }
+
+    // Retrouve l'ordre de tri choisi lors d'une visite précédente (valeur inconnue : tri par défaut).
+    private async Task RestoreSortOrderAsync()
+    {
+        var saved = await Preferences.GetAsync(SortOrderPreferenceKey);
+
+        if (Enum.TryParse<PlantSortOrder>(saved, out var restored)
+            && Enum.IsDefined(restored))
+        {
+            sortOrder = restored;
+        }
     }
 
     private async Task LoadPlants()
@@ -345,11 +393,21 @@
         }
     }
 
+    private async Task OnSortOrderChangedAsync()
+    {
+        ApplyFilter();
+        await Preferences.SetAsync(SortOrderPreferenceKey, sortOrder.ToString());
+    }
+
     private void ApplyFilter()
     {
-        plants = showArchived
+        today = DateTime.Today;
+
+        var visible = showArchived
             ? allPlants
-            : allPlants.Where(plant => !plant.IsArchived).ToList();
+            : allPlants.Where(plant => !plant.IsArchived);
+
+        plants = PlantSorter.Sort(visible, sortOrder, today);
     }
 
     private void AddPlant()
@@ -387,6 +445,19 @@
         {
             wateringPlantId = null;
         }
+    }
+
+    // Pastille « À arroser aujourd'hui » ou « En retard de N j » ; rien si l'arrosage n'est pas urgent.
+    private (string Text, string CssClass)? GetWateringAlert(Plant plant)
+    {
+        var days = PlantSorter.GetDaysUntilWatering(plant, today);
+
+        return days switch
+        {
+            < 0 => (string.Format(SharedResource.Plants_WaterOverdue, -days), "text-bg-danger"),
+            0 => (SharedResource.Plants_WaterToday, "text-bg-warning"),
+            _ => null
+        };
     }
 
     private static string GetLastWateredText(Plant plant)

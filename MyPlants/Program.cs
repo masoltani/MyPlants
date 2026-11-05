@@ -32,7 +32,8 @@ builder.Services
     .AddSingleton<LocalizationService>()
     .AddScoped<IUserSessionService, UserSessionService>()
     .AddScoped<IPlantSyncService, PlantSyncService>()
-    .AddScoped<IChangelogService, ChangelogService>();
+    .AddScoped<IChangelogService, ChangelogService>()
+    .AddScoped<IPreferencesService, PreferencesService>();
 
 var app = builder.Build();
 

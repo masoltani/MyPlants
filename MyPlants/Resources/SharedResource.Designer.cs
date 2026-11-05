@@ -97,6 +97,15 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Version.
+        /// </summary>
+        public static string About_Version {
+            get {
+                return ResourceManager.GetString("About_Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Log in.
         /// </summary>
         public static string Auth_Login {
@@ -772,6 +781,42 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Recently planted.
+        /// </summary>
+        public static string Plants_Sort_DatePlanted {
+            get {
+                return ResourceManager.GetString("Plants_Sort_DatePlanted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sort by.
+        /// </summary>
+        public static string Plants_Sort_Label {
+            get {
+                return ResourceManager.GetString("Plants_Sort_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Name (A–Z).
+        /// </summary>
+        public static string Plants_Sort_Name {
+            get {
+                return ResourceManager.GetString("Plants_Sort_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Needs water first.
+        /// </summary>
+        public static string Plants_Sort_Urgency {
+            get {
+                return ResourceManager.GetString("Plants_Sort_Urgency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Species.
         /// </summary>
         public static string Plants_Species {
@@ -813,6 +858,24 @@ namespace MyPlants.Resources {
         public static string Plants_WateringInterval {
             get {
                 return ResourceManager.GetString("Plants_WateringInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} d overdue.
+        /// </summary>
+        public static string Plants_WaterOverdue {
+            get {
+                return ResourceManager.GetString("Plants_WaterOverdue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Water today.
+        /// </summary>
+        public static string Plants_WaterToday {
+            get {
+                return ResourceManager.GetString("Plants_WaterToday", resourceCulture);
             }
         }
         
