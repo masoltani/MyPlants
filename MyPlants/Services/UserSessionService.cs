@@ -1,6 +1,8 @@
 ﻿using Microsoft.JSInterop;
 
 using MyPlants.Interfaces.IServices;
+using MyPlants.Models;
+using MyPlants.Resources;
 
 namespace MyPlants.Services;
 
@@ -18,6 +20,9 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
     private const string SessionAuthenticated = "authenticated";
     private const string SessionAnonymous = "anonymous";
 
+    private const string LinkRecovery = "recovery";
+    private const string LinkExpired = "expired";
+
     private readonly IJSRuntime _js;
     private readonly IConfiguration _configuration;
 
@@ -29,6 +34,9 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
     public string ProfileId => UserId is null ? GuestProfileId : $"{AccountProfilePrefix}{UserId}";
     public bool IsLoggedIn => UserId is not null;
     public string? LastError { get; private set; }
+
+    /// <summary>Renseigné si la page a été ouverte depuis un lien de réinitialisation reçu par e-mail.</summary>
+    public AuthLinkStatus AuthLink { get; private set; } = AuthLinkStatus.None;
 
     public event Action? OnSessionChanged;
 
@@ -53,7 +61,7 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
             if (module is null)
                 return false;
 
-            var result = await module.InvokeAsync<LoginResult>("signIn", username, password);
+            var result = await module.InvokeAsync<AuthResult>("signIn", username, password);
 
             if (!result.Success || string.IsNullOrWhiteSpace(result.UserId))
             {
@@ -64,7 +72,7 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
             await SetUserAsync(result.UserId, result.Email);
             return true;
         }
-        catch (JSException ex)
+        catch (JSException)
         {
             LastError = "Impossible de contacter Supabase. Vérifie ta connexion Internet.";
             return false;
@@ -91,6 +99,36 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
         await SetUserAsync(null, null);
     }
 
+    /// <summary>Demande l'envoi d'un e-mail contenant un lien pour choisir un nouveau mot de passe.</summary>
+    public async Task<bool> RequestPasswordResetAsync(string email)
+    {
+        await InitializeAsync();
+        LastError = null;
+
+        var result = await InvokeAuthAsync("requestPasswordReset", email);
+
+        return result.Success;
+    }
+
+    /// <summary>Enregistre le nouveau mot de passe de l'utilisateur arrivé par un lien de réinitialisation.</summary>
+    public async Task<bool> UpdatePasswordAsync(string newPassword)
+    {
+        await InitializeAsync();
+        LastError = null;
+
+        var result = await InvokeAuthAsync("updatePassword", newPassword);
+
+        if (!result.Success)
+            return false;
+
+        AuthLink = AuthLinkStatus.None;
+
+        if (!string.IsNullOrWhiteSpace(result.UserId))
+            await SetUserAsync(result.UserId, result.Email);
+
+        return true;
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (_authModule is null)
@@ -108,16 +146,41 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
 
     private async Task InitializeCoreAsync()
     {
+        // L'adresse de la page doit être lue en premier : le client Supabase efface
+        // ensuite les informations qu'elle contient.
+        AuthLink = await ReadAuthLinkAsync();
+
         // 1. Restauration locale : fonctionne toujours, même hors ligne.
         UserId = await ReadLastUserIdAsync();
 
-        // 2. Confirmation auprès de Supabase, seulement si un compte était connecté.
-        //    Un invité ne déclenche aucun accès réseau au démarrage.
-        if (UserId is not null)
+        // 2. Confirmation auprès de Supabase, seulement si un compte était connecté, ou si
+        //    un lien de réinitialisation est à traiter (même pour un invité : le client
+        //    Supabase en tire alors une session). Un invité ordinaire ne déclenche aucun
+        //    accès réseau au démarrage.
+        if (UserId is not null || AuthLink == AuthLinkStatus.Recovery)
             await ConfirmSessionAsync();
 
         await SaveProfileAsync();
         OnSessionChanged?.Invoke();
+    }
+
+    private async Task<AuthLinkStatus> ReadAuthLinkAsync()
+    {
+        try
+        {
+            var status = await _js.InvokeAsync<string?>("myPlantsAuthLink.getStatus");
+
+            return status switch
+            {
+                LinkRecovery => AuthLinkStatus.Recovery,
+                LinkExpired => AuthLinkStatus.Expired,
+                _ => AuthLinkStatus.None
+            };
+        }
+        catch (JSException)
+        {
+            return AuthLinkStatus.None;
+        }
     }
 
     private async Task<string?> ReadLastUserIdAsync()
@@ -170,6 +233,44 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
         }
     }
 
+    // Appelle une fonction de supabaseAuth.js. En cas d'échec, LastError reçoit un message
+    // déjà traduit, prêt à être affiché.
+    private async Task<AuthResult> InvokeAuthAsync(string function, params object?[] arguments)
+    {
+        try
+        {
+            var module = await GetAuthModuleAsync();
+
+            if (module is null)
+                return new AuthResult();
+
+            var result = await module.InvokeAsync<AuthResult>(function, arguments);
+
+            if (!result.Success)
+                LastError = ToMessage(result);
+
+            return result;
+        }
+        catch (JSException)
+        {
+            LastError = SharedResource.Auth_Error_Network;
+            return new AuthResult();
+        }
+    }
+
+    private static string ToMessage(AuthResult result)
+    {
+        return result.Code switch
+        {
+            "network" => SharedResource.Auth_Error_Network,
+            "weak_password" => SharedResource.Auth_Error_WeakPassword,
+            "same_password" => SharedResource.Auth_Error_SamePassword,
+            "over_email_send_rate_limit" or "over_request_rate_limit" => SharedResource.Auth_Error_RateLimit,
+            "no_session" => SharedResource.Auth_LinkInvalid,
+            _ => SharedResource.Error_Generic
+        };
+    }
+
     // Charge Supabase à la demande ; renvoie null si la configuration est absente.
     private async Task<IJSObjectReference?> GetAuthModuleAsync()
     {
@@ -220,9 +321,11 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
         public string? Email { get; set; }
     }
 
-    private sealed class LoginResult
+    // Résultat commun des opérations d'authentification (voir supabaseAuth.js).
+    private sealed class AuthResult
     {
         public bool Success { get; set; }
+        public string? Code { get; set; }
         public string? Error { get; set; }
         public string? UserId { get; set; }
         public string? Email { get; set; }

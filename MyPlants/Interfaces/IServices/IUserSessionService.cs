@@ -1,4 +1,6 @@
-﻿namespace MyPlants.Interfaces.IServices;
+﻿using MyPlants.Models;
+
+namespace MyPlants.Interfaces.IServices;
 
 public interface IUserSessionService
 {
@@ -11,4 +13,7 @@ public interface IUserSessionService
     string? ProfileId { get; }
     string? LastError { get; }
     event Action? OnSessionChanged;
+    AuthLinkStatus AuthLink { get; }
+    Task<bool> RequestPasswordResetAsync(string email);
+    Task<bool> UpdatePasswordAsync(string newPassword);
 }

@@ -411,4 +411,61 @@
   <data name="About_Version" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="Auth_ForgotPassword" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="Auth_ForgotPassword_Title" xml:space="preserve">
+    <value>Forgot password</value>
+  </data>
+  <data name="Auth_ForgotPassword_Description" xml:space="preserve">
+    <value>Enter your account's email address. If it is known, you will receive a link to choose a new password.</value>
+  </data>
+  <data name="Auth_Email" xml:space="preserve">
+    <value>Email address</value>
+  </data>
+  <data name="Auth_SendResetLink" xml:space="preserve">
+    <value>Send the link</value>
+  </data>
+  <data name="Auth_ResetLinkSent" xml:space="preserve">
+    <value>If an account exists for this address, an email has just been sent. Remember to check your spam folder.</value>
+  </data>
+  <data name="Auth_BackToLogin" xml:space="preserve">
+    <value>Back to login</value>
+  </data>
+  <data name="Auth_ResetPassword_Title" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="Auth_NewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="Auth_ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Auth_SavePassword" xml:space="preserve">
+    <value>Save password</value>
+  </data>
+  <data name="Auth_PasswordUpdated" xml:space="preserve">
+    <value>Your password has been changed.</value>
+  </data>
+  <data name="Auth_LinkInvalid" xml:space="preserve">
+    <value>This link is invalid or has expired. Request a new one.</value>
+  </data>
+  <data name="Auth_Error_PasswordTooShort" xml:space="preserve">
+    <value>The password must be at least {0} characters long.</value>
+  </data>
+  <data name="Auth_Error_PasswordsDoNotMatch" xml:space="preserve">
+    <value>The passwords do not match.</value>
+  </data>
+  <data name="Auth_Error_Network" xml:space="preserve">
+    <value>Unable to reach the server. Check your Internet connection.</value>
+  </data>
+  <data name="Auth_Error_WeakPassword" xml:space="preserve">
+    <value>This password is too weak. Choose a longer or more varied one.</value>
+  </data>
+  <data name="Auth_Error_SamePassword" xml:space="preserve">
+    <value>The new password must be different from the old one.</value>
+  </data>
+  <data name="Auth_Error_RateLimit" xml:space="preserve">
+    <value>Too many requests. Try again in a few minutes.</value>
+  </data>
 </root>

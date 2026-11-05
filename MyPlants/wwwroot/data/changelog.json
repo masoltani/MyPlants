@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.8.0",
+    "date": "2026-11-05",
+    "changes": {
+      "fr": [ "Mot de passe oublié : réinitialisation par e-mail depuis la page de connexion" ],
+      "en": [ "Forgot password: reset it by email from the login page" ],
+      "ar": [ "نسيت كلمة المرور: إعادة تعيينها عبر البريد الإلكتروني من صفحة تسجيل الدخول" ]
+    }
+  },
+  {
     "version": "0.7.0",
     "date": "2026-11-05",
     "changes": {

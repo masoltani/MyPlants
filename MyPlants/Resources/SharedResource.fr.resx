@@ -411,4 +411,61 @@
   <data name="About_Version" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="Auth_ForgotPassword" xml:space="preserve">
+    <value>Mot de passe oublié ?</value>
+  </data>
+  <data name="Auth_ForgotPassword_Title" xml:space="preserve">
+    <value>Mot de passe oublié</value>
+  </data>
+  <data name="Auth_ForgotPassword_Description" xml:space="preserve">
+    <value>Saisis l'adresse e-mail de ton compte. Si elle est connue, tu recevras un lien pour choisir un nouveau mot de passe.</value>
+  </data>
+  <data name="Auth_Email" xml:space="preserve">
+    <value>Adresse e-mail</value>
+  </data>
+  <data name="Auth_SendResetLink" xml:space="preserve">
+    <value>Envoyer le lien</value>
+  </data>
+  <data name="Auth_ResetLinkSent" xml:space="preserve">
+    <value>Si un compte existe pour cette adresse, un e-mail vient d'être envoyé. Pense à vérifier tes courriers indésirables.</value>
+  </data>
+  <data name="Auth_BackToLogin" xml:space="preserve">
+    <value>Retour à la connexion</value>
+  </data>
+  <data name="Auth_ResetPassword_Title" xml:space="preserve">
+    <value>Nouveau mot de passe</value>
+  </data>
+  <data name="Auth_NewPassword" xml:space="preserve">
+    <value>Nouveau mot de passe</value>
+  </data>
+  <data name="Auth_ConfirmPassword" xml:space="preserve">
+    <value>Confirmer le mot de passe</value>
+  </data>
+  <data name="Auth_SavePassword" xml:space="preserve">
+    <value>Enregistrer le mot de passe</value>
+  </data>
+  <data name="Auth_PasswordUpdated" xml:space="preserve">
+    <value>Ton mot de passe a été modifié.</value>
+  </data>
+  <data name="Auth_LinkInvalid" xml:space="preserve">
+    <value>Ce lien est invalide ou a expiré. Demande un nouveau lien.</value>
+  </data>
+  <data name="Auth_Error_PasswordTooShort" xml:space="preserve">
+    <value>Le mot de passe doit contenir au moins {0} caractères.</value>
+  </data>
+  <data name="Auth_Error_PasswordsDoNotMatch" xml:space="preserve">
+    <value>Les mots de passe ne correspondent pas.</value>
+  </data>
+  <data name="Auth_Error_Network" xml:space="preserve">
+    <value>Impossible de contacter le serveur. Vérifie ta connexion Internet.</value>
+  </data>
+  <data name="Auth_Error_WeakPassword" xml:space="preserve">
+    <value>Ce mot de passe est trop faible. Choisis-en un plus long ou plus varié.</value>
+  </data>
+  <data name="Auth_Error_SamePassword" xml:space="preserve">
+    <value>Le nouveau mot de passe doit être différent de l'ancien.</value>
+  </data>
+  <data name="Auth_Error_RateLimit" xml:space="preserve">
+    <value>Trop de demandes. Réessaie dans quelques minutes.</value>
+  </data>
 </root>

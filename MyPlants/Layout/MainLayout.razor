@@ -5,6 +5,7 @@
 @using MyPlants.Components
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
+@using MyPlants.Models
 @using MyPlants.Resources
 
 @inject IUserSessionService UserSession
@@ -51,6 +52,8 @@
     protected override void OnInitialized()
     {
         UserSession.OnSessionChanged += OnSessionChanged;
+        if (UserSession.AuthLink != AuthLinkStatus.None) 
+            Navigation.NavigateToWithBaseUrl("reset-password");
     }
 
     private void ReloadContent()

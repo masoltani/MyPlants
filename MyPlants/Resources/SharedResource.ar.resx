@@ -411,4 +411,61 @@
   <data name="About_Version" xml:space="preserve">
     <value>الإصدار</value>
   </data>
+  <data name="Auth_ForgotPassword" xml:space="preserve">
+    <value>هل نسيت كلمة المرور؟</value>
+  </data>
+  <data name="Auth_ForgotPassword_Title" xml:space="preserve">
+    <value>نسيت كلمة المرور</value>
+  </data>
+  <data name="Auth_ForgotPassword_Description" xml:space="preserve">
+    <value>أدخل البريد الإلكتروني لحسابك. إذا كان معروفًا، ستتلقى رابطًا لاختيار كلمة مرور جديدة.</value>
+  </data>
+  <data name="Auth_Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Auth_SendResetLink" xml:space="preserve">
+    <value>إرسال الرابط</value>
+  </data>
+  <data name="Auth_ResetLinkSent" xml:space="preserve">
+    <value>إذا كان هناك حساب لهذا العنوان، فقد تم إرسال رسالة إلكترونية للتو. تحقق من مجلد الرسائل غير المرغوب فيها.</value>
+  </data>
+  <data name="Auth_BackToLogin" xml:space="preserve">
+    <value>العودة إلى تسجيل الدخول</value>
+  </data>
+  <data name="Auth_ResetPassword_Title" xml:space="preserve">
+    <value>كلمة مرور جديدة</value>
+  </data>
+  <data name="Auth_NewPassword" xml:space="preserve">
+    <value>كلمة المرور الجديدة</value>
+  </data>
+  <data name="Auth_ConfirmPassword" xml:space="preserve">
+    <value>تأكيد كلمة المرور</value>
+  </data>
+  <data name="Auth_SavePassword" xml:space="preserve">
+    <value>حفظ كلمة المرور</value>
+  </data>
+  <data name="Auth_PasswordUpdated" xml:space="preserve">
+    <value>تم تغيير كلمة المرور.</value>
+  </data>
+  <data name="Auth_LinkInvalid" xml:space="preserve">
+    <value>هذا الرابط غير صالح أو منتهي الصلاحية. اطلب رابطًا جديدًا.</value>
+  </data>
+  <data name="Auth_Error_PasswordTooShort" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على {0} أحرف على الأقل.</value>
+  </data>
+  <data name="Auth_Error_PasswordsDoNotMatch" xml:space="preserve">
+    <value>كلمتا المرور غير متطابقتين.</value>
+  </data>
+  <data name="Auth_Error_Network" xml:space="preserve">
+    <value>تعذّر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.</value>
+  </data>
+  <data name="Auth_Error_WeakPassword" xml:space="preserve">
+    <value>كلمة المرور هذه ضعيفة جدًا. اختر كلمة أطول أو أكثر تنوعًا.</value>
+  </data>
+  <data name="Auth_Error_SamePassword" xml:space="preserve">
+    <value>يجب أن تختلف كلمة المرور الجديدة عن القديمة.</value>
+  </data>
+  <data name="Auth_Error_RateLimit" xml:space="preserve">
+    <value>طلبات كثيرة جدًا. حاول مرة أخرى بعد بضع دقائق.</value>
+  </data>
 </root>

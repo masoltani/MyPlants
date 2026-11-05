@@ -19,7 +19,11 @@ export function initialize(url, publishableKey) {
         auth: {
             persistSession: true,
             autoRefreshToken: true,
-            detectSessionInUrl: true
+            detectSessionInUrl: true,
+            // Les liens reçus par e-mail ramènent la session dans l'adresse de la page
+            // (fragment « # »), ce que lit authLink.js. Fixé explicitement pour ne pas
+            // dépendre de la valeur par défaut d'une future version de la bibliothèque.
+            flowType: "implicit"
         }
     });
 }

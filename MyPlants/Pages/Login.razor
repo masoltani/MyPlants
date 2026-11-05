@@ -2,6 +2,7 @@
 
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Extensions
+@using MyPlants.Resources
 
 @inject IUserSessionService UserSession
 @inject NavigationManager Navigation
@@ -47,6 +48,7 @@
                                    @bind="password"
                                    autocomplete="current-password"
                                    required />
+                            <div class="mb-3 text-end"><a href="forgot-password">@SharedResource.Auth_ForgotPassword</a></div>
                         </div>
 
                         @if (!string.IsNullOrEmpty(errorMessage))

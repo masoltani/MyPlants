@@ -106,6 +106,123 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Back to login.
+        /// </summary>
+        public static string Auth_BackToLogin {
+            get {
+                return ResourceManager.GetString("Auth_BackToLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Confirm password.
+        /// </summary>
+        public static string Auth_ConfirmPassword {
+            get {
+                return ResourceManager.GetString("Auth_ConfirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Email address.
+        /// </summary>
+        public static string Auth_Email {
+            get {
+                return ResourceManager.GetString("Auth_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unable to reach the server. Check your Internet connection..
+        /// </summary>
+        public static string Auth_Error_Network {
+            get {
+                return ResourceManager.GetString("Auth_Error_Network", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The passwords do not match..
+        /// </summary>
+        public static string Auth_Error_PasswordsDoNotMatch {
+            get {
+                return ResourceManager.GetString("Auth_Error_PasswordsDoNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The password must be at least {0} characters long..
+        /// </summary>
+        public static string Auth_Error_PasswordTooShort {
+            get {
+                return ResourceManager.GetString("Auth_Error_PasswordTooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Too many requests. Try again in a few minutes..
+        /// </summary>
+        public static string Auth_Error_RateLimit {
+            get {
+                return ResourceManager.GetString("Auth_Error_RateLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The new password must be different from the old one..
+        /// </summary>
+        public static string Auth_Error_SamePassword {
+            get {
+                return ResourceManager.GetString("Auth_Error_SamePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This password is too weak. Choose a longer or more varied one..
+        /// </summary>
+        public static string Auth_Error_WeakPassword {
+            get {
+                return ResourceManager.GetString("Auth_Error_WeakPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Forgot your password?.
+        /// </summary>
+        public static string Auth_ForgotPassword {
+            get {
+                return ResourceManager.GetString("Auth_ForgotPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enter your account&apos;s email address. If it is known, you will receive a link to choose a new password..
+        /// </summary>
+        public static string Auth_ForgotPassword_Description {
+            get {
+                return ResourceManager.GetString("Auth_ForgotPassword_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Forgot password.
+        /// </summary>
+        public static string Auth_ForgotPassword_Title {
+            get {
+                return ResourceManager.GetString("Auth_ForgotPassword_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This link is invalid or has expired. Request a new one..
+        /// </summary>
+        public static string Auth_LinkInvalid {
+            get {
+                return ResourceManager.GetString("Auth_LinkInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Log in.
         /// </summary>
         public static string Auth_Login {
@@ -120,6 +237,60 @@ namespace MyPlants.Resources {
         public static string Auth_Logout {
             get {
                 return ResourceManager.GetString("Auth_Logout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à New password.
+        /// </summary>
+        public static string Auth_NewPassword {
+            get {
+                return ResourceManager.GetString("Auth_NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Your password has been changed..
+        /// </summary>
+        public static string Auth_PasswordUpdated {
+            get {
+                return ResourceManager.GetString("Auth_PasswordUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à If an account exists for this address, an email has just been sent. Remember to check your spam folder..
+        /// </summary>
+        public static string Auth_ResetLinkSent {
+            get {
+                return ResourceManager.GetString("Auth_ResetLinkSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à New password.
+        /// </summary>
+        public static string Auth_ResetPassword_Title {
+            get {
+                return ResourceManager.GetString("Auth_ResetPassword_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Save password.
+        /// </summary>
+        public static string Auth_SavePassword {
+            get {
+                return ResourceManager.GetString("Auth_SavePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Send the link.
+        /// </summary>
+        public static string Auth_SendResetLink {
+            get {
+                return ResourceManager.GetString("Auth_SendResetLink", resourceCulture);
             }
         }
         
