@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.9.0",
+    "date": "2026-11-06",
+    "changes": {
+      "fr": [ "Création de compte depuis l'application (validation manuelle des comptes)" ],
+      "en": [ "Create an account from the app (accounts are approved manually)" ],
+      "ar": [ "إنشاء حساب من التطبيق (تتم الموافقة على الحسابات يدويًا)" ]
+    }
+  },
+  {
     "version": "0.8.0",
     "date": "2026-11-05",
     "changes": {

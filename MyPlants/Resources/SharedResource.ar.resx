@@ -468,4 +468,34 @@
   <data name="Auth_Error_RateLimit" xml:space="preserve">
     <value>طلبات كثيرة جدًا. حاول مرة أخرى بعد بضع دقائق.</value>
   </data>
+  <data name="Auth_SignUp" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="Auth_SignUp_Description" xml:space="preserve">
+    <value>تتم الموافقة على الحسابات يدويًا. ستتمكن من تسجيل الدخول بعد الموافقة على حسابك. وفي الأثناء، يبقى التطبيق قابلاً للاستخدام دون تسجيل دخول.</value>
+  </data>
+  <data name="Auth_SignUp_Success" xml:space="preserve">
+    <value>تم إنشاء الحساب. يجب الموافقة عليه يدويًا قبل أن تتمكن من تسجيل الدخول. وفي الأثناء، يمكنك متابعة استخدام التطبيق دون تسجيل دخول.</value>
+  </data>
+  <data name="Auth_SignUp_ConfirmEmail" xml:space="preserve">
+    <value>أكّد أولاً بريدك الإلكتروني عبر الرسالة التي وصلتك للتو.</value>
+  </data>
+  <data name="Auth_Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="Auth_Error_PendingApproval" xml:space="preserve">
+    <value>حسابك بانتظار الموافقة. ستتمكن من تسجيل الدخول فور الموافقة عليه.</value>
+  </data>
+  <data name="Auth_Error_EmailAlreadyUsed" xml:space="preserve">
+    <value>يوجد حساب بهذا البريد الإلكتروني بالفعل.</value>
+  </data>
+  <data name="Auth_Error_InvalidCredentials" xml:space="preserve">
+    <value>البريد الإلكتروني أو كلمة المرور غير صحيحة.</value>
+  </data>
+  <data name="Auth_ContinueWithoutAccount" xml:space="preserve">
+    <value>أكمل من دون حساب</value>
+  </data>
+  <data name="Auth_Login_Failed" xml:space="preserve">
+    <value>عطل خلال التسجيل</value>
+  </data>
 </root>

@@ -468,4 +468,34 @@
   <data name="Auth_Error_RateLimit" xml:space="preserve">
     <value>Too many requests. Try again in a few minutes.</value>
   </data>
+  <data name="Auth_SignUp" xml:space="preserve">
+    <value>Create an account</value>
+  </data>
+  <data name="Auth_SignUp_Description" xml:space="preserve">
+    <value>Accounts are validated manually. You will be able to log in once your account is approved. Meanwhile, the app stays usable without signing in.</value>
+  </data>
+  <data name="Auth_SignUp_Success" xml:space="preserve">
+    <value>Account created. It must be approved manually before you can log in. Meanwhile, you can keep using the app without signing in.</value>
+  </data>
+  <data name="Auth_SignUp_ConfirmEmail" xml:space="preserve">
+    <value>First confirm your email address using the message you just received.</value>
+  </data>
+  <data name="Auth_Password" xml:space="preserve">
+    <value> Password</value>
+  </data>
+  <data name="Auth_Error_PendingApproval" xml:space="preserve">
+    <value>Your account is awaiting approval. You will be able to log in as soon as it is approved.</value>
+  </data>
+  <data name="Auth_Error_EmailAlreadyUsed" xml:space="preserve">
+    <value>An account already exists with this email address.</value>
+  </data>
+  <data name="Auth_Error_InvalidCredentials" xml:space="preserve">
+    <value>Incorrect email address or password.</value>
+  </data>
+  <data name="Auth_ContinueWithoutAccount" xml:space="preserve">
+    <value>Continue without account</value>
+  </data>
+  <data name="Auth_Login_Failed" xml:space="preserve">
+    <value>Failed connection</value>
+  </data>
 </root>

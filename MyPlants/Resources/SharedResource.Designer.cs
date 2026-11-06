@@ -124,11 +124,38 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Continue without account.
+        /// </summary>
+        public static string Auth_ContinueWithoutAccount {
+            get {
+                return ResourceManager.GetString("Auth_ContinueWithoutAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Email address.
         /// </summary>
         public static string Auth_Email {
             get {
                 return ResourceManager.GetString("Auth_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à An account already exists with this email address..
+        /// </summary>
+        public static string Auth_Error_EmailAlreadyUsed {
+            get {
+                return ResourceManager.GetString("Auth_Error_EmailAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Incorrect email address or password..
+        /// </summary>
+        public static string Auth_Error_InvalidCredentials {
+            get {
+                return ResourceManager.GetString("Auth_Error_InvalidCredentials", resourceCulture);
             }
         }
         
@@ -156,6 +183,15 @@ namespace MyPlants.Resources {
         public static string Auth_Error_PasswordTooShort {
             get {
                 return ResourceManager.GetString("Auth_Error_PasswordTooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Your account is awaiting approval. You will be able to log in as soon as it is approved..
+        /// </summary>
+        public static string Auth_Error_PendingApproval {
+            get {
+                return ResourceManager.GetString("Auth_Error_PendingApproval", resourceCulture);
             }
         }
         
@@ -232,6 +268,15 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Failed connection.
+        /// </summary>
+        public static string Auth_Login_Failed {
+            get {
+                return ResourceManager.GetString("Auth_Login_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Log out.
         /// </summary>
         public static string Auth_Logout {
@@ -246,6 +291,15 @@ namespace MyPlants.Resources {
         public static string Auth_NewPassword {
             get {
                 return ResourceManager.GetString("Auth_NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à  Password.
+        /// </summary>
+        public static string Auth_Password {
+            get {
+                return ResourceManager.GetString("Auth_Password", resourceCulture);
             }
         }
         
@@ -291,6 +345,42 @@ namespace MyPlants.Resources {
         public static string Auth_SendResetLink {
             get {
                 return ResourceManager.GetString("Auth_SendResetLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Create an account.
+        /// </summary>
+        public static string Auth_SignUp {
+            get {
+                return ResourceManager.GetString("Auth_SignUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à First confirm your email address using the message you just received..
+        /// </summary>
+        public static string Auth_SignUp_ConfirmEmail {
+            get {
+                return ResourceManager.GetString("Auth_SignUp_ConfirmEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Accounts are validated manually. You will be able to log in once your account is approved. Meanwhile, the app stays usable without signing in..
+        /// </summary>
+        public static string Auth_SignUp_Description {
+            get {
+                return ResourceManager.GetString("Auth_SignUp_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Account created. It must be approved manually before you can log in. Meanwhile, you can keep using the app without signing in..
+        /// </summary>
+        public static string Auth_SignUp_Success {
+            get {
+                return ResourceManager.GetString("Auth_SignUp_Success", resourceCulture);
             }
         }
         

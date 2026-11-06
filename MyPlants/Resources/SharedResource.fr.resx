@@ -468,4 +468,34 @@
   <data name="Auth_Error_RateLimit" xml:space="preserve">
     <value>Trop de demandes. Réessaie dans quelques minutes.</value>
   </data>
+  <data name="Auth_SignUp" xml:space="preserve">
+    <value> Créer un compte</value>
+  </data>
+  <data name="Auth_SignUp_Description" xml:space="preserve">
+    <value>Les comptes sont validés manuellement. Tu pourras te connecter une fois ton compte validé. En attendant, l'application reste utilisable sans connexion.</value>
+  </data>
+  <data name="Auth_SignUp_Success" xml:space="preserve">
+    <value>Compte créé. Il doit être validé manuellement avant de pouvoir te connecter. En attendant, tu peux continuer à utiliser l'application hors connexion.</value>
+  </data>
+  <data name="Auth_SignUp_ConfirmEmail" xml:space="preserve">
+    <value>Confirme d'abord ton adresse e-mail grâce au message que tu viens de recevoir.</value>
+  </data>
+  <data name="Auth_Password" xml:space="preserve">
+    <value> Mot de passe</value>
+  </data>
+  <data name="Auth_Error_PendingApproval" xml:space="preserve">
+    <value>Ton compte est en attente de validation. Tu pourras te connecter dès qu'il sera validé.</value>
+  </data>
+  <data name="Auth_Error_EmailAlreadyUsed" xml:space="preserve">
+    <value>Un compte existe déjà avec cette adresse e-mail.</value>
+  </data>
+  <data name="Auth_Error_InvalidCredentials" xml:space="preserve">
+    <value>Adresse e-mail ou mot de passe incorrect.</value>
+  </data>
+  <data name="Auth_ContinueWithoutAccount" xml:space="preserve">
+    <value>Continuer sans compte</value>
+  </data>
+  <data name="Auth_Login_Failed" xml:space="preserve">
+    <value>Connexion échouée</value>
+  </data>
 </root>

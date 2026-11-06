@@ -23,21 +23,75 @@ function failure(error) {
 
     return {
         success: false,
-        code: isNetworkError ? "network" : (error.code ?? error.name ?? "unknown"),
+        code: isNetworkError ? "network" : (error.code || error.name || "unknown"),
         error: error.message,
         userId: null,
         email: null
     };
 }
 
-export async function signIn(email, password) {
-    const { data, error } =
-        await getSupabase().auth.signInWithPassword({
-            email,
-            password
-        });
+// Un compte doit être validé manuellement avant de pouvoir se connecter.
+// La base de données l'impose déjà (voir lot10-comptes.sql) ; ici on refuse aussi la
+// connexion côté application, avec un message clair.
+async function signOutLocally(supabase) {
+    await supabase.auth.signOut({ scope: "local" });
+}
 
-    return error ? failure(error) : success(data.user);
+export async function signIn(email, password) {
+    const supabase = getSupabase();
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if (error) {
+        return failure(error);
+    }
+
+    const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("is_approved")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+    if (profileError) {
+        // Dans le doute (réseau, table absente), on refuse plutôt que d'ouvrir l'accès.
+        await signOutLocally(supabase);
+        return failure(profileError);
+    }
+
+    if (!profile?.is_approved) {
+        await signOutLocally(supabase);
+        return { success: false, code: "pending_approval", error: null, userId: null, email: null };
+    }
+
+    return success(data.user);
+}
+
+// Crée un compte. Il ne permet pas de se connecter tant qu'il n'est pas validé :
+// on ferme donc immédiatement la session que Supabase peut ouvrir à la création.
+// needsEmailConfirmation : vrai si Supabase attend d'abord la confirmation de l'adresse e-mail.
+export async function signUp(email, password) {
+    const supabase = getSupabase();
+
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: document.baseURI }
+    });
+
+    if (error) {
+        return failure(error);
+    }
+
+    const needsEmailConfirmation = !data.session;
+
+    if (data.session) {
+        await signOutLocally(supabase);
+    }
+
+    return { ...success(), needsEmailConfirmation };
 }
 
 // status : "authenticated" | "anonymous" | "unavailable"

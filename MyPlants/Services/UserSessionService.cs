@@ -54,29 +54,36 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
         await InitializeAsync();
         LastError = null;
 
-        try
+        // Un compte non validé est refusé par supabaseAuth.js (code "pending_approval").
+        var result = await InvokeAuthAsync("signIn", username, password);
+
+        if (!result.Success || string.IsNullOrWhiteSpace(result.UserId))
         {
-            var module = await GetAuthModuleAsync();
-
-            if (module is null)
-                return false;
-
-            var result = await module.InvokeAsync<AuthResult>("signIn", username, password);
-
-            if (!result.Success || string.IsNullOrWhiteSpace(result.UserId))
-            {
-                LastError = result.Error ?? "La connexion a échoué.";
-                return false;
-            }
-
-            await SetUserAsync(result.UserId, result.Email);
-            return true;
-        }
-        catch (JSException)
-        {
-            LastError = "Impossible de contacter Supabase. Vérifie ta connexion Internet.";
+            LastError ??= SharedResource.Error_Generic;
             return false;
         }
+
+        await SetUserAsync(result.UserId, result.Email);
+        return true;
+    }
+
+    /// <summary>
+    /// Demande la création d'un compte. Le compte doit ensuite être validé manuellement :
+    /// aucune session n'est ouverte, l'utilisateur reste en mode invité.
+    /// </summary>
+    public async Task<SignUpResult> SignUpAsync(string email, string password)
+    {
+        await InitializeAsync();
+        LastError = null;
+
+        var result = await InvokeAuthAsync("signUp", email, password);
+
+        if (!result.Success)
+            return SignUpResult.Failed;
+
+        return result.NeedsEmailConfirmation
+            ? SignUpResult.CreatedNeedsEmailConfirmation
+            : SignUpResult.Created;
     }
 
     public async Task LogoutAsync()
@@ -267,6 +274,10 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
             "same_password" => SharedResource.Auth_Error_SamePassword,
             "over_email_send_rate_limit" or "over_request_rate_limit" => SharedResource.Auth_Error_RateLimit,
             "no_session" => SharedResource.Auth_LinkInvalid,
+            "invalid_credentials" => SharedResource.Auth_Error_InvalidCredentials,
+            "pending_approval" => SharedResource.Auth_Error_PendingApproval,
+            "user_already_exists" or "email_exists" => SharedResource.Auth_Error_EmailAlreadyUsed,
+            "email_not_confirmed" => SharedResource.Auth_SignUp_ConfirmEmail,
             _ => SharedResource.Error_Generic
         };
     }
@@ -325,6 +336,7 @@ public sealed class UserSessionService : IUserSessionService, IAsyncDisposable
     private sealed class AuthResult
     {
         public bool Success { get; set; }
+        public bool NeedsEmailConfirmation { get; set; }
         public string? Code { get; set; }
         public string? Error { get; set; }
         public string? UserId { get; set; }

@@ -26,7 +26,7 @@
                         <div class="mb-3">
                             <label for="username"
                                    class="form-label">
-                                Identifiant
+                                @SharedResource.Auth_Email
                             </label>
 
                             <input id="username"
@@ -39,7 +39,7 @@
                         <div class="mb-3">
                             <label for="password"
                                    class="form-label">
-                                Mot de passe
+                                @SharedResource.Auth_Password
                             </label>
 
                             <input id="password"
@@ -61,14 +61,16 @@
 
                         <button type="submit"
                                 class="btn btn-primary w-100 mb-2">
-                            Se connecter
+                            @SharedResource.Auth_Login
                         </button>
 
                     </form>
 
+                    <a href="signup">@SharedResource.Auth_SignUp</a>
+
                     <button class="btn btn-outline-secondary w-100"
                             @onclick="ContinueAsGuest">
-                        Continuer sans compte
+                        @SharedResource.Auth_ContinueWithoutAccount
                     </button>
 
                 </div>
@@ -95,7 +97,7 @@
         }
         else
         {
-            errorMessage = UserSession.LastError ?? "Connexion échouée.";
+            errorMessage = UserSession.LastError ?? @SharedResource.Auth_Login_Failed;
         }
     }
 

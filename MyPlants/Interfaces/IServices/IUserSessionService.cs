@@ -16,4 +16,5 @@ public interface IUserSessionService
     AuthLinkStatus AuthLink { get; }
     Task<bool> RequestPasswordResetAsync(string email);
     Task<bool> UpdatePasswordAsync(string newPassword);
+    Task<SignUpResult> SignUpAsync(string email, string password);
 }

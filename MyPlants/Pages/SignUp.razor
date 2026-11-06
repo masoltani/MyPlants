@@ -1,0 +1,158 @@
+﻿@page "/signup"
+
+@using MyPlants.Businesses
+@using MyPlants.Interfaces.IServices
+@using MyPlants.Models
+@using MyPlants.Resources
+
+@inject IUserSessionService UserSession
+
+<PageTitle>@SharedResource.Auth_SignUp - MyPlants</PageTitle>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-4">
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+
+                    <h1 class="h3 mb-3 text-center">
+                        @SharedResource.Auth_SignUp
+                    </h1>
+
+                    @if (result != SignUpResult.Failed)
+                    {
+                        <div class="alert alert-success" role="status">
+                            <p class="mb-0">@SharedResource.Auth_SignUp_Success</p>
+
+                            @if (result == SignUpResult.CreatedNeedsEmailConfirmation)
+                            {
+                                <p class="mt-2 mb-0">@SharedResource.Auth_SignUp_ConfirmEmail</p>
+                            }
+                        </div>
+
+                        <a class="btn btn-primary w-100 mb-2" href="plants">
+                            @SharedResource.NavMenu_Plants
+                        </a>
+                    }
+                    else
+                    {
+                        <p class="text-muted">
+                            @SharedResource.Auth_SignUp_Description
+                        </p>
+
+                        <form @onsubmit="SignUpAsync"
+                              @onsubmit:preventDefault="true">
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    @SharedResource.Auth_Email
+                                </label>
+
+                                <input id="email"
+                                       type="email"
+                                       class="form-control"
+                                       @bind="email"
+                                       @bind:event="oninput"
+                                       autocomplete="email"
+                                       required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    @SharedResource.Auth_Password
+                                </label>
+
+                                <input id="password"
+                                       type="password"
+                                       class="form-control"
+                                       @bind="password"
+                                       @bind:event="oninput"
+                                       autocomplete="new-password"
+                                       required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">
+                                    @SharedResource.Auth_ConfirmPassword
+                                </label>
+
+                                <input id="confirmPassword"
+                                       type="password"
+                                       class="form-control"
+                                       @bind="confirmPassword"
+                                       @bind:event="oninput"
+                                       autocomplete="new-password"
+                                       required />
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    @errorMessage
+                                </div>
+                            }
+
+                            <button type="submit"
+                                    class="btn btn-primary w-100 mb-2"
+                                    disabled="@sending">
+                                @if (sending)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"
+                                          aria-hidden="true"></span>
+                                }
+                                @SharedResource.Auth_SignUp
+                            </button>
+
+                        </form>
+
+                        <a class="btn btn-outline-secondary w-100" href="login">
+                            @SharedResource.Auth_BackToLogin
+                        </a>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private string email = string.Empty;
+    private string password = string.Empty;
+    private string confirmPassword = string.Empty;
+    private string? errorMessage;
+    private bool sending;
+
+    // Failed = formulaire encore à remplir ; sinon la demande a abouti.
+    private SignUpResult result = SignUpResult.Failed;
+
+    private async Task SignUpAsync()
+    {
+        // Évite de créer deux fois le compte en cas de double clic.
+        if (sending)
+            return;
+
+        errorMessage = PasswordRules.Validate(password, confirmPassword);
+
+        if (errorMessage is not null)
+            return;
+
+        sending = true;
+
+        try
+        {
+            result = await UserSession.SignUpAsync(email.Trim(), password);
+
+            if (result == SignUpResult.Failed)
+                errorMessage = UserSession.LastError ?? SharedResource.Error_Generic;
+            else
+                password = confirmPassword = string.Empty;
+        }
+        finally
+        {
+            sending = false;
+        }
+    }
+}
