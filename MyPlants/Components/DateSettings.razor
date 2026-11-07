@@ -1,0 +1,63 @@
+﻿@using MyPlants.Businesses
+@using MyPlants.Models
+@using MyPlants.Resources
+@using MyPlants.Services
+
+@inject DateDisplayService DateDisplay
+
+<div class="mb-3">
+    <h2 class="h5">@SharedResource.Settings_Date_Title</h2>
+
+    <label for="dateCalendar" class="form-label">@SharedResource.Settings_Calendar_Label</label>
+    <select id="dateCalendar" class="form-select mb-3" value="@calendar" @onchange="OnCalendarChanged">
+        <option value="@DateCalendar.Gregorian">@SharedResource.Settings_Calendar_Gregorian</option>
+        <option value="@DateCalendar.Hijri">@SharedResource.Settings_Calendar_Hijri</option>
+    </select>
+
+    <label for="datePattern" class="form-label">@SharedResource.Settings_DateFormat_Label</label>
+    <select id="datePattern" class="form-select" value="@pattern" @onchange="OnPatternChanged">
+        @foreach (var p in DateDisplaySettings.SupportedPatterns)
+        {
+            <option value="@p">@Preview(p)</option>
+        }
+    </select>
+</div>
+
+@code {
+    // Date d'exemple fixe, pour que chaque format soit lisible sans ambiguïté (25 ne peut être qu'un jour).
+    private static readonly DateTime SampleDate = new(2026, 11, 25);
+
+    private DateCalendar calendar;
+    private string pattern = DateDisplaySettings.Default.Pattern;
+
+    protected override void OnInitialized()
+    {
+        calendar = DateDisplay.Settings.Calendar;
+        pattern = DateDisplay.Settings.Pattern;
+    }
+
+    private string Preview(string p) =>
+        DateDisplayFormatter.Format(SampleDate, new DateDisplaySettings(calendar, p));
+
+    private async Task OnCalendarChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse<DateCalendar>(e.Value?.ToString(), out var value) && Enum.IsDefined(value))
+        {
+            calendar = value;
+            await SaveAsync();
+        }
+    }
+
+    private async Task OnPatternChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+
+        if (value is not null && DateDisplaySettings.SupportedPatterns.Contains(value))
+        {
+            pattern = value;
+            await SaveAsync();
+        }
+    }
+
+    private Task SaveAsync() => DateDisplay.UpdateAsync(new DateDisplaySettings(calendar, pattern));
+}

@@ -1,5 +1,6 @@
 ﻿@page "/plants/edit/{Id:guid}"
 
+@using MyPlants.Components
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
@@ -88,9 +89,9 @@
                             @SharedResource.PlantEdit_DatePlanted
                         </label>
 
-                        <InputDate id="datePlanted"
-                                   class="form-control"
-                                   @bind-Value="plant.DatePlanted" />
+                        <DateSelector Id="datePlanted"
+                                      Max="DateTime.Today"
+                                      @bind-Value="plant.DatePlanted" />
 
                         <ValidationMessage For="@(() => plant.DatePlanted)" />
                     </div>

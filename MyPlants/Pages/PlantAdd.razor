@@ -1,5 +1,6 @@
 ﻿@page "/plants/add"
 
+@using MyPlants.Components
 @using MyPlants.Extensions
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
@@ -49,9 +50,9 @@
 
                 <div class="mb-3">
                     <label for="datePlanted" class="form-label">@SharedResource.Plants_DatePlanted</label>
-                    <InputDate id="datePlanted"
-                               class="form-control"
-                               @bind-Value="plant.DatePlanted" />
+                    <DateSelector id="datePlanted" 
+                                  Max="DateTime.Today" 
+                                  @bind-Value="plant.DatePlanted"/>
 
                     <ValidationMessage For="@(() => plant.DatePlanted)" />
                 </div>

@@ -498,4 +498,19 @@
   <data name="Auth_Login_Failed" xml:space="preserve">
     <value>عطل خلال التسجيل</value>
   </data>
+  <data name="Settings_Date_Title" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Settings_Calendar_Label" xml:space="preserve">
+    <value>التقويم</value>
+  </data>
+  <data name="Settings_Calendar_Gregorian" xml:space="preserve">
+    <value>ميلادي</value>
+  </data>
+  <data name="Settings_Calendar_Hijri" xml:space="preserve">
+    <value>هجري</value>
+  </data>
+  <data name="Settings_DateFormat_Label" xml:space="preserve">
+    <value>صيغة التاريخ</value>
+  </data>
 </root>

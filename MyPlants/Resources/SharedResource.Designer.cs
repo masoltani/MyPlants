@@ -1141,6 +1141,51 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Gregorian.
+        /// </summary>
+        public static string Settings_Calendar_Gregorian {
+            get {
+                return ResourceManager.GetString("Settings_Calendar_Gregorian", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hijri.
+        /// </summary>
+        public static string Settings_Calendar_Hijri {
+            get {
+                return ResourceManager.GetString("Settings_Calendar_Hijri", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Calendar.
+        /// </summary>
+        public static string Settings_Calendar_Label {
+            get {
+                return ResourceManager.GetString("Settings_Calendar_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Date.
+        /// </summary>
+        public static string Settings_Date_Title {
+            get {
+                return ResourceManager.GetString("Settings_Date_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Date format.
+        /// </summary>
+        public static string Settings_DateFormat_Label {
+            get {
+                return ResourceManager.GetString("Settings_DateFormat_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Settings.
         /// </summary>
         public static string Settings_Title {

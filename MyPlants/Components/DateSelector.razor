@@ -1,0 +1,124 @@
+﻿@using System.Globalization
+@using MyPlants.Businesses
+@using MyPlants.Models
+@using MyPlants.Services
+
+@* Sélecteur de date qui suit le calendrier choisi dans les Réglages : trois listes (jour, mois, année),
+   dans l'ordre du format de date choisi, que le calendrier soit grégorien ou hégirien.
+   La valeur échangée est toujours une date grégorienne. *@
+
+<div id="@Id" class="d-flex gap-2" role="group">
+    @foreach (var part in PartsInOrder())
+    {
+        @switch (part)
+        {
+            case 'd':
+                <select class="form-select" aria-label="dd" @onchange="OnDayChanged">
+                    @for (var d = 1; d <= DaysInMonth; d++)
+                    {
+                        <option value="@d" selected="@(d == day)">@d.ToString("00")</option>
+                    }
+                </select>
+                break;
+
+            case 'M':
+                <select class="form-select" aria-label="MM" @onchange="OnMonthChanged">
+                    @for (var m = 1; m <= MonthsInYear; m++)
+                    {
+                        <option value="@m" selected="@(m == month)">@m.ToString("00")</option>
+                    }
+                </select>
+                break;
+
+            default:
+                <select class="form-select" aria-label="yyyy" @onchange="OnYearChanged">
+                    @for (var y = MaxYear; y >= MinYear; y--)
+                    {
+                        <option value="@y" selected="@(y == year)">@y</option>
+                    }
+                </select>
+                break;
+        }
+    }
+</div>
+
+@code {
+    private const int YEARS_BACK = 100;
+
+    private static readonly Calendar GregorianCalendar = new GregorianCalendar();
+    private static readonly Calendar HijriCalendar = DateDisplayFormatter.HijriCalendar;
+
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public DateTime? Value { get; set; }
+    [Parameter] public EventCallback<DateTime?> ValueChanged { get; set; }
+
+    /// <summary>Date maximale autorisée (par exemple aujourd'hui pour un arrosage).</summary>
+    [Parameter] public DateTime? Max { get; set; }
+
+    private int year, month, day;
+
+    // Hégirien si choisi dans les Réglages et si la date est dans la plage du calendrier ; sinon grégorien.
+    private Calendar Cal =>
+        DateDisplayService.Current.Calendar == DateCalendar.Hijri && InHijriRange(Value ?? DateTime.Today) && InHijriRange(UpperBound)
+            ? HijriCalendar
+            : GregorianCalendar;
+
+    private DateTime UpperBound => (Max ?? DateTime.Today).Date;
+
+    private int MaxYear => Cal.GetYear(UpperBound);
+    private int MinYear => MaxYear - YEARS_BACK;
+    private int MonthsInYear => Cal.GetMonthsInYear(year);
+    private int DaysInMonth => Cal.GetDaysInMonth(year, month);
+
+    protected override void OnParametersSet()
+    {
+        var date = Value ?? DateTime.Today;
+        year = Cal.GetYear(date);
+        month = Cal.GetMonth(date);
+        day = Cal.GetDayOfMonth(date);
+    }
+
+    private static bool InHijriRange(DateTime date) =>
+        date >= HijriCalendar.MinSupportedDateTime && date <= HijriCalendar.MaxSupportedDateTime;
+
+    // Ordre des listes = ordre jour / mois / année du format choisi.
+    private IEnumerable<char> PartsInOrder()
+    {
+        var pattern = DateDisplayService.Current.Pattern;
+
+        return new[] { ('d', pattern.IndexOf("dd", StringComparison.Ordinal)),
+                       ('M', pattern.IndexOf("MM", StringComparison.Ordinal)),
+                       ('y', pattern.IndexOf("yyyy", StringComparison.Ordinal)) }
+            .OrderBy(p => p.Item2)
+            .Select(p => p.Item1);
+    }
+
+    private Task OnDayChanged(ChangeEventArgs e) => Update(year, month, ToInt(e));
+
+    private Task OnMonthChanged(ChangeEventArgs e) => Update(year, ToInt(e), day);
+
+    private Task OnYearChanged(ChangeEventArgs e) => Update(ToInt(e), month, day);
+
+    private static int ToInt(ChangeEventArgs e) => int.Parse(e.Value?.ToString() ?? "1", CultureInfo.InvariantCulture);
+
+    private async Task Update(int newYear, int newMonth, int newDay)
+    {
+        try
+        {
+            // Un mois compte 28 à 31 jours : on ramène le jour dans le mois choisi.
+            newDay = Math.Min(newDay, Cal.GetDaysInMonth(newYear, newMonth));
+
+            var date = Cal.ToDateTime(newYear, newMonth, newDay, 0, 0, 0, 0);
+
+            // Jamais au-delà de la date maximale.
+            if (date > UpperBound)
+                date = UpperBound;
+
+            await ValueChanged.InvokeAsync(date);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            // Date hors du calendrier : on ignore le choix, la valeur reste inchangée.
+        }
+    }
+}

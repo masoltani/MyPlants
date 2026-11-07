@@ -26,8 +26,8 @@ public class LocalizationService
     public bool IsRtl =>
         CurrentCulture.Name.StartsWith(CULTURE_ARABIC, StringComparison.OrdinalIgnoreCase);
 
-    public string Direction => IsRtl 
-        ? LANGUAGE_DIRECTION_RIGHT 
+    public string Direction => IsRtl
+        ? LANGUAGE_DIRECTION_RIGHT
         : LANGUAGE_DIRECTION_LEFT;
 
     public event Action? OnCultureChanged;

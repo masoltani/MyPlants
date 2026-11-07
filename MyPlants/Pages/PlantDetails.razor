@@ -4,6 +4,7 @@
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
 @using MyPlants.Resources
+@using MyPlants.Components
 
 @inject IPlantService PlantService
 @inject NavigationManager Navigation
@@ -99,7 +100,7 @@ else
                             </dt>
 
                             <dd class="col-sm-7">
-                                @plant.DatePlanted?.ToShortDateString()
+                                @plant.DatePlanted?.ToDisplayDate()
                             </dd>
 
                         </dl>
@@ -124,7 +125,7 @@ else
                             </dt>
 
                             <dd class="col-sm-6">
-                                @(plant.LastWatered?.ToShortDateString() ?? SharedResource.PlantDetails_LastWatered_Never)
+                                @(plant.LastWatered?.ToDisplayDate() ?? SharedResource.PlantDetails_LastWatered_Never)
                             </dd>
 
                             <dt class="col-sm-6">
@@ -271,11 +272,10 @@ else
                     Date de l'arrosage
                 </label>
 
-                <input id="wateringDate"
-                       type="date"
-                       class="form-control"
-                       max="@MaxWateringDate"
-                       @bind="selectedWateringDate" />
+                <DateSelector id="wateringDate"
+                              max="DateTime.Today"
+                              @bind="selectedWateringDate"
+                              ValueChanged="@(d => selectedWateringDate = d ?? DateTime.Today)" />
 
                 <div class="d-flex justify-content-end gap-2 mt-4">
                     <button type="button"
@@ -399,7 +399,7 @@ else
             plant.LastWatered.Value.Date
                 .AddDays(plant.WateringInterval.Value);
 
-        return nextWatering.ToShortDateString();
+        return nextWatering.ToDisplayDate();
     }
 
     private static bool HasTime(DateTime date)

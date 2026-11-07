@@ -33,12 +33,14 @@ builder.Services
     .AddScoped<IUserSessionService, UserSessionService>()
     .AddScoped<IPlantSyncService, PlantSyncService>()
     .AddScoped<IChangelogService, ChangelogService>()
-    .AddScoped<IPreferencesService, PreferencesService>();
+    .AddScoped<IPreferencesService, PreferencesService>()
+    .AddScoped<DateDisplayService>();
 
 var app = builder.Build();
 
 var localizationService = app.Services.GetRequiredService<LocalizationService>();
 await localizationService.InitializeAsync();
+await app.Services.GetRequiredService<DateDisplayService>().InitializeAsync();
 
 var userSessionService = app.Services.GetRequiredService<IUserSessionService>();
 await userSessionService.InitializeAsync();
