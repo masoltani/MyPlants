@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.10.1",
+    "date": "2026-11-07",
+    "changes": {
+      "fr": [ "Correction dans le changelog" ],
+      "en": [ "Fix in changelog" ],
+      "ar": [ "تعديل في سجل الإصدارات" ]
+    }
+  },
+  {
     "version": "0.10.0",
     "date": "2026-11-07",
     "changes": {
