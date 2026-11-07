@@ -6,8 +6,8 @@
       "fr": [ "Dates affichées en dd/MM/yyyy en français et en anglais, et en calendrier hégirien en arabe" ],
       "en": [ "Dates shown as dd/MM/yyyy in French and English, and in the Hijri calendar in Arabic" ],
       "ar": [ "عرض التواريخ بصيغة يوم/شهر/سنة بالفرنسية والإنجليزية، وبالتقويم الهجري بالعربية" ]
-    }",
-  }
+    }
+  },
   {
     "version": "0.9.0",
     "date": "2026-11-06",
