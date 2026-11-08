@@ -223,7 +223,7 @@
     <value>Plant management application</value>
   </data>
   <data name="Home_Title" xml:space="preserve">
-    <value>Home</value>
+    <value>To water today</value>
   </data>
   <data name="NotFound_Title" xml:space="preserve">
     <value>Not found</value>
@@ -530,5 +530,11 @@
   </data>
   <data name="Settings_FullSync_Description" xml:space="preserve">
     <value>Use it if in doubt: reads all the account data again. Slower and more costly than a normal synchronization.</value>
+  </data>
+  <data name="Home_AllDone" xml:space="preserve">
+    <value>Nothing to water right now.</value>
+  </data>
+  <data name="Home_SeeAllPlants" xml:space="preserve">
+    <value> See all plants</value>
   </data>
 </root>

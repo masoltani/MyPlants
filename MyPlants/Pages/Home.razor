@@ -1,6 +1,8 @@
 ﻿@page "/"
 
+@using MyPlants.Businesses
 @using MyPlants.Interfaces.IServices
+@using MyPlants.Models
 @using MyPlants.Resources
 
 @implements IDisposable
@@ -10,9 +12,46 @@
 
 <PageTitle>@SharedResource.About_ApplicationName</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1 class="mb-3">@SharedResource.Home_Title</h1>
 
-Welcome to your new app.
+@if (loadingDue)
+{
+    <p>@SharedResource.PlantEdit_Loading</p>
+}
+else if (dueError)
+{
+    <div class="alert alert-danger" role="alert">@SharedResource.Error_Generic</div>
+}
+else if (duePlants.Count == 0)
+{
+    <p class="text-muted">@SharedResource.Home_AllDone</p>
+}
+else
+{
+    <ul class="list-group mb-3">
+        @foreach (var item in duePlants)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                <div>
+                    <a href="@($"plants/{item.Plant.Id}")">@item.Plant.Name</a>
+                    <span class="badge @item.CssClass ms-2">@item.Text</span>
+                </div>
+
+                <button type="button"
+                        class="btn btn-secondary btn-sm"
+                        @onclick="() => WaterAsync(item.Plant.Id)"
+                        disabled="@(wateringId is not null)">
+                    <span aria-hidden="true">💧</span>
+                    @SharedResource.Plants_Water
+                </button>
+            </li>
+        }
+    </ul>
+}
+
+<p>
+    <a href="plants">@SharedResource.Home_SeeAllPlants</a>
+</p>
 
 @if (isCheckingSession)
 {
@@ -66,13 +105,20 @@ else if (!string.IsNullOrWhiteSpace(importMessage))
 }
 
 @code {
+    private sealed record DueItem(Plant Plant, string Text, string CssClass);
+
     private bool isCheckingSession = true;
     private bool showGuestImport;
     private bool isImporting;
     private string? importMessage;
+    private List<DueItem> duePlants = [];
+    private bool loadingDue = true;
+    private bool dueError;
+    private Guid? wateringId;
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadDueAsync();
         UserSessionService.OnSessionChanged += OnSessionChanged;
 
         try
@@ -104,6 +150,7 @@ else if (!string.IsNullOrWhiteSpace(importMessage))
                     await UpdateGuestImportVisibilityAsync();
                 }
 
+                await LoadDueAsync();
                 StateHasChanged();
             });
         }
@@ -152,6 +199,59 @@ else if (!string.IsNullOrWhiteSpace(importMessage))
         finally
         {
             isImporting = false;
+        }
+    }
+
+    private async Task LoadDueAsync()
+    {
+        try
+        {
+            var today = DateTime.Today;
+            var plants = await PlantService.GetPlantsAsync();
+
+            duePlants = plants
+                .Select(plant => (Plant: plant, Days: PlantSorter.GetDaysUntilWatering(plant, today)))
+                .Where(item => item.Days is <= 0)
+                .OrderBy(item => item.Days)
+                .ThenBy(item => item.Plant.Name ?? string.Empty, StringComparer.CurrentCultureIgnoreCase)
+                .Select(item => item.Days < 0
+                    ? new DueItem(item.Plant, string.Format(SharedResource.Plants_WaterOverdue, -item.Days), "text-bg-danger")
+                    : new DueItem(item.Plant, SharedResource.Plants_WaterToday, "text-bg-warning"))
+                .ToList();
+
+            dueError = false;
+        }
+        catch (Exception)
+        {
+            dueError = true;
+        }
+        finally
+        {
+            loadingDue = false;
+        }
+    }
+
+    private async Task WaterAsync(Guid id)
+    {
+        if (wateringId is not null)
+            return;
+
+        wateringId = id;
+
+        try
+        {
+            if (await PlantService.WaterPlantAsync(id))
+                await LoadDueAsync();
+            else
+                dueError = true;
+        }
+        catch (Exception)
+        {
+            dueError = true;
+        }
+        finally
+        {
+            wateringId = null;
         }
     }
 

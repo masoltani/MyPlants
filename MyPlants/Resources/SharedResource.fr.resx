@@ -223,7 +223,7 @@
     <value>Application de gestion de plantes</value>
   </data>
   <data name="Home_Title" xml:space="preserve">
-    <value>Accueil</value>
+    <value>À arroser aujourd'hui</value>
   </data>
   <data name="NotFound_Title" xml:space="preserve">
     <value>Introuvable</value>
@@ -530,5 +530,11 @@
   </data>
   <data name="Settings_FullSync_Description" xml:space="preserve">
     <value>À utiliser en cas de doute : relit toutes les données du compte. Plus lent et plus coûteux qu'une synchronisation normale.</value>
+  </data>
+  <data name="Home_AllDone" xml:space="preserve">
+    <value>Rien à arroser pour le moment.</value>
+  </data>
+  <data name="Home_SeeAllPlants" xml:space="preserve">
+    <value>Voir toutes les plantes</value>
   </data>
 </root>

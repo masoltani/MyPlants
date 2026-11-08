@@ -223,7 +223,7 @@
     <value>تطبيق التصرف في النباتات</value>
   </data>
   <data name="Home_Title" xml:space="preserve">
-    <value>الإستقبال</value>
+    <value>للسقي اليوم</value>
   </data>
   <data name="NotFound_Title" xml:space="preserve">
     <value>مفقود</value>
@@ -530,5 +530,11 @@
   </data>
   <data name="Settings_FullSync_Description" xml:space="preserve">
     <value>استخدمها عند الشك: تعيد قراءة كل بيانات الحساب. أبطأ وأكثر كلفة من المزامنة العادية.</value>
+  </data>
+  <data name="Home_AllDone" xml:space="preserve">
+    <value>لا شيء للسقي في الوقت الحالي.</value>
+  </data>
+  <data name="Home_SeeAllPlants" xml:space="preserve">
+    <value>عرض كل النباتات</value>
   </data>
 </root>

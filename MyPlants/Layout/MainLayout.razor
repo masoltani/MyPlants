@@ -12,6 +12,7 @@
 @inject IUserSessionService UserSession
 @inject NavigationManager Navigation
 @inject AutoSyncService AutoSync
+@inject DueCountService DueCount
 
 <div class="page">
     <div class="sidebar">
@@ -55,6 +56,7 @@
 
     protected override void OnInitialized()
     {
+        Navigation.LocationChanged += OnLocationChanged;
         UserSession.OnSessionChanged += OnSessionChanged;
         AutoSync.OnLocalDataChanged += OnAutoSynced;
         if (UserSession.AuthLink != AuthLinkStatus.None) 
@@ -64,6 +66,7 @@
     private void ReloadContent()
     {
         contentVersion++;
+        DueCount.RequestRefresh();
     }
 
     // Garde le bouton Se connecter / Se déconnecter à jour, quel que soit l'origine du changement.
@@ -97,9 +100,13 @@
         });
     }
 
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+        => DueCount.RequestRefresh();
+
     public void Dispose()
     {
         UserSession.OnSessionChanged -= OnSessionChanged;
         AutoSync.OnLocalDataChanged -= OnAutoSynced;
+        Navigation.LocationChanged -= OnLocationChanged;
     }
 }

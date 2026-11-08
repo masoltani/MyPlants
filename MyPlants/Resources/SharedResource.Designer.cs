@@ -394,7 +394,25 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Home.
+        ///   Recherche une chaîne localisée semblable à Nothing to water right now..
+        /// </summary>
+        public static string Home_AllDone {
+            get {
+                return ResourceManager.GetString("Home_AllDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à  See all plants.
+        /// </summary>
+        public static string Home_SeeAllPlants {
+            get {
+                return ResourceManager.GetString("Home_SeeAllPlants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à To water today.
         /// </summary>
         public static string Home_Title {
             get {

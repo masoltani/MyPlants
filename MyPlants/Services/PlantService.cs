@@ -10,12 +10,18 @@ public sealed class PlantService : IPlantService
     private readonly IPlantRepository _repository;
     private readonly IPlantBusiness _business;
     private readonly IUserSessionService _userSessionService;
+    private readonly IDueCountRefresher _dueCount;
 
-    public PlantService(IPlantRepository repository, IPlantBusiness business, IUserSessionService userSessionService)
+    public PlantService(
+        IPlantRepository repository,
+        IPlantBusiness business,
+        IUserSessionService userSessionService,
+        IDueCountRefresher dueCount)
     {
         _repository = repository;
         _business = business;
         _userSessionService = userSessionService;
+        _dueCount = dueCount;
     }
 
     public Task<IReadOnlyList<Plant>> GetPlantsAsync()
@@ -28,19 +34,23 @@ public sealed class PlantService : IPlantService
         return _repository.GetByIdAsync(id);
     }
 
-    public Task AddPlantAsync(Plant plant)
+    public async Task AddPlantAsync(Plant plant)
     {
         if (plant.Id == Guid.Empty)
         {
             plant.Id = Guid.NewGuid();
         }
 
-        return _repository.AddAsync(plant);
+        await _repository.AddAsync(plant);
+
+        _dueCount.RequestRefresh();
     }
 
-    public Task UpdatePlantAsync(Plant plant)
+    public async Task UpdatePlantAsync(Plant plant)
     {
-        return _repository.UpdateAsync(plant);
+        await _repository.UpdateAsync(plant);
+
+        _dueCount.RequestRefresh();
     }
 
     public async Task ArchivePlantAsync(Guid id)
@@ -55,8 +65,10 @@ public sealed class PlantService : IPlantService
         plant.IsArchived = true;
 
         await _repository.UpdateAsync(plant);
+
+        _dueCount.RequestRefresh();
     }
-    
+
     public async Task<bool> WaterPlantAsync(Guid id)
     {
         var plant = await _repository.GetByIdAsync(id);
@@ -70,6 +82,9 @@ public sealed class PlantService : IPlantService
         await _repository.AddWateringAsync(watering);
         plant.LastWatered = watering.Date;
         await _repository.UpdateAsync(plant);
+
+        _dueCount.RequestRefresh();
+
         return true;
     }
 
@@ -86,6 +101,9 @@ public sealed class PlantService : IPlantService
         await _repository.AddWateringAsync(watering);
         _business.SetLastWateringDate(plant, date);
         await _repository.UpdateAsync(plant);
+
+        _dueCount.RequestRefresh();
+
         return true;
     }
 
@@ -104,7 +122,12 @@ public sealed class PlantService : IPlantService
                 "Il faut être connecté pour importer les plantes invitées.");
         }
 
-        return await _repository.ImportGuestPlantsAsync(_userSessionService.ProfileId);
+        var imported = await _repository.ImportGuestPlantsAsync(_userSessionService.ProfileId);
+
+        if (imported > 0)
+            _dueCount.RequestRefresh();
+
+        return imported;
     }
 
     public async Task<bool> HasGuestPlantsAsync()

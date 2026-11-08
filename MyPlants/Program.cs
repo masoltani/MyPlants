@@ -36,7 +36,9 @@ builder.Services
     .AddScoped<IPreferencesService, PreferencesService>()
     .AddScoped<DateDisplayService>()
     .AddScoped<AutoSyncService>()
-    .AddScoped<SyncCursorStore>();
+    .AddScoped<SyncCursorStore>()
+    .AddScoped<DueCountService>()
+    .AddScoped<IDueCountRefresher>(sp => sp.GetRequiredService<DueCountService>()); ;
 
 var app = builder.Build();
 
@@ -48,5 +50,6 @@ var userSessionService = app.Services.GetRequiredService<IUserSessionService>();
 await userSessionService.InitializeAsync();
 
 await app.Services.GetRequiredService<AutoSyncService>().InitializeAsync();
+await app.Services.GetRequiredService<DueCountService>().InitializeAsync();
 
 await app.RunAsync();

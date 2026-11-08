@@ -1,5 +1,23 @@
 [
   {
+    "version": "0.13.0",
+    "date": "2026-11-08",
+    "changes": {
+      "fr": [
+        "Nouvel accueil : les plantes à arroser aujourd'hui ou en retard, avec un bouton pour les arroser",
+        "Badge sur l'icône de l'application avec le nombre de plantes à arroser (selon l'appareil)"
+      ],
+      "en": [
+        "New home page: the plants to water today or overdue, with a button to water them",
+        "Badge on the app icon showing the number of plants to water (depending on the device)"
+      ],
+      "ar": [
+        "صفحة رئيسية جديدة: النباتات التي تحتاج إلى سقي اليوم أو المتأخرة، مع زر لسقيها",
+        "شارة على أيقونة التطبيق تعرض عدد النباتات التي تحتاج إلى سقي (حسب الجهاز)"
+      ]
+    }
+  },
+  {
     "version": "0.12.0",
     "date": "2026-11-08",
     "changes": {
