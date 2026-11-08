@@ -38,7 +38,8 @@ builder.Services
     .AddScoped<AutoSyncService>()
     .AddScoped<SyncCursorStore>()
     .AddScoped<DueCountService>()
-    .AddScoped<IDueCountRefresher>(sp => sp.GetRequiredService<DueCountService>()); ;
+    .AddScoped<IDueCountRefresher>(sp => sp.GetRequiredService<DueCountService>())
+    .AddScoped<BackupService>();
 
 var app = builder.Build();
 

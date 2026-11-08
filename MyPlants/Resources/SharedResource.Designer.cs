@@ -1195,6 +1195,60 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Export your plants and their watering history to a file, and restore them from that file. Restoring only adds what is missing: nothing is changed or deleted..
+        /// </summary>
+        public static string Settings_Backup_Description {
+            get {
+                return ResourceManager.GetString("Settings_Backup_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Export a backup.
+        /// </summary>
+        public static string Settings_Backup_Export {
+            get {
+                return ResourceManager.GetString("Settings_Backup_Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Restore from a file.
+        /// </summary>
+        public static string Settings_Backup_Import {
+            get {
+                return ResourceManager.GetString("Settings_Backup_Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} plant(s) added, {1} already present, {2} watering(s) added..
+        /// </summary>
+        public static string Settings_Backup_ImportDone {
+            get {
+                return ResourceManager.GetString("Settings_Backup_ImportDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This file is not a valid MyPlants backup..
+        /// </summary>
+        public static string Settings_Backup_ImportInvalid {
+            get {
+                return ResourceManager.GetString("Settings_Backup_ImportInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Backup.
+        /// </summary>
+        public static string Settings_Backup_Title {
+            get {
+                return ResourceManager.GetString("Settings_Backup_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Gregorian.
         /// </summary>
         public static string Settings_Calendar_Gregorian {

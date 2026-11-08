@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.15.0",
+    "date": "2026-11-08",
+    "changes": {
+      "fr": [ "Sauvegarde et restauration de tes plantes et de leur historique d'arrosage dans un fichier (Réglages)" ],
+      "en": [ "Back up and restore your plants and their watering history to a file (Settings)" ],
+      "ar": [ "نسخ نباتاتك وسجل ريّها احتياطيًا واستعادتها من ملف (الإعدادات)" ]
+    }
+  },
+  {
     "version": "0.14.0",
     "date": "2026-11-08",
     "changes": {

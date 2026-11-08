@@ -546,4 +546,22 @@
   <data name="Update_Later" xml:space="preserve">
     <value>لاحقًا</value>
   </data>
+  <data name="Settings_Backup_Title" xml:space="preserve">
+    <value>النسخ الاحتياطي</value>
+  </data>
+  <data name="Settings_Backup_Description" xml:space="preserve">
+    <value>صدّر نباتاتك وسجل ريّها إلى ملف، واستعدها منه. تضيف الاستعادة ما هو مفقود فقط: لا يتم تعديل أو حذف أي شيء.</value>
+  </data>
+  <data name="Settings_Backup_Export" xml:space="preserve">
+    <value>تصدير نسخة احتياطية</value>
+  </data>
+  <data name="Settings_Backup_Import" xml:space="preserve">
+    <value>الاستعادة من ملف</value>
+  </data>
+  <data name="Settings_Backup_ImportDone" xml:space="preserve">
+    <value>تمت إضافة {0} نبات، {1} موجود مسبقًا، وإضافة {2} عملية ري.</value>
+  </data>
+  <data name="Settings_Backup_ImportInvalid" xml:space="preserve">
+    <value>هذا الملف ليس نسخة احتياطية صالحة من MyPlants.</value>
+  </data>
 </root>

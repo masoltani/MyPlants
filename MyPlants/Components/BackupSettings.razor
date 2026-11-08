@@ -1,0 +1,129 @@
+﻿@using System.Globalization
+@using System.Text.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using MyPlants.Models
+@using MyPlants.Resources
+@using MyPlants.Services
+
+@inject BackupService Backup
+@inject IJSRuntime Js
+
+<div class="mb-3">
+    <h2 class="h5">@SharedResource.Settings_Backup_Title</h2>
+
+    <p class="form-text">@SharedResource.Settings_Backup_Description</p>
+
+    <div class="mb-3">
+        <button type="button"
+                class="btn btn-outline-primary"
+                @onclick="ExportAsync"
+                disabled="@busy">
+            @SharedResource.Settings_Backup_Export
+        </button>
+    </div>
+
+    <div class="mb-2">
+        <label for="backupFile" class="form-label">@SharedResource.Settings_Backup_Import</label>
+
+        @* Changer la clé recrée le champ : on peut ainsi choisir deux fois le même fichier. *@
+        <InputFile @key="inputVersion"
+                   id="backupFile"
+                   class="form-control"
+                   accept=".json,application/json"
+                   OnChange="ImportAsync"
+                   disabled="@busy" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <p class="small @(isError ? "text-danger" : "text-success")" role="status">@message</p>
+    }
+</div>
+
+@code {
+    private const long MaxFileSize = 5 * 1024 * 1024;
+
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        WriteIndented = true
+    };
+
+    private bool busy;
+    private bool isError;
+    private string? message;
+    private int inputVersion;
+
+    private async Task ExportAsync()
+    {
+        busy = true;
+        message = null;
+
+        try
+        {
+            var json = JsonSerializer.Serialize(await Backup.ExportAsync(), JsonOptions);
+            var fileName = $"myplants-{DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}.json";
+
+            await Js.InvokeVoidAsync("myPlantsFiles.download", fileName, json, "application/json");
+        }
+        catch (Exception)
+        {
+            Fail(SharedResource.Error_Generic);
+        }
+        finally
+        {
+            busy = false;
+        }
+    }
+
+    private async Task ImportAsync(InputFileChangeEventArgs e)
+    {
+        busy = true;
+        message = null;
+
+        try
+        {
+            BackupFile? backup;
+
+            try
+            {
+                await using var stream = e.File.OpenReadStream(MaxFileSize);
+                backup = await JsonSerializer.DeserializeAsync<BackupFile>(stream, JsonOptions);
+            }
+            catch (Exception ex) when (ex is JsonException or IOException)
+            {
+                // Fichier illisible, trop gros ou qui n'est pas du JSON.
+                backup = null;
+            }
+
+            if (!BackupService.IsValid(backup))
+            {
+                Fail(SharedResource.Settings_Backup_ImportInvalid);
+                return;
+            }
+
+            var result = await Backup.ImportAsync(backup!);
+
+            isError = false;
+            message = string.Format(
+                SharedResource.Settings_Backup_ImportDone,
+                result.PlantsAdded,
+                result.PlantsAlreadyPresent,
+                result.WateringsAdded);
+        }
+        catch (Exception)
+        {
+            Fail(SharedResource.Error_Generic);
+        }
+        finally
+        {
+            busy = false;
+            inputVersion++;
+        }
+    }
+
+    private void Fail(string text)
+    {
+        isError = true;
+        message = text;
+    }
+}

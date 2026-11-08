@@ -546,4 +546,22 @@
   <data name="Update_Later" xml:space="preserve">
     <value>Plus tard</value>
   </data>
+  <data name="Settings_Backup_Title" xml:space="preserve">
+    <value>Sauvegarde</value>
+  </data>
+  <data name="Settings_Backup_Description" xml:space="preserve">
+    <value>Exporte tes plantes et leur historique d'arrosage dans un fichier, et restaure-les depuis ce fichier. La restauration ajoute seulement ce qui manque : rien n'est modifié ni supprimé.</value>
+  </data>
+  <data name="Settings_Backup_Export" xml:space="preserve">
+    <value>Exporter une sauvegarde</value>
+  </data>
+  <data name="Settings_Backup_Import" xml:space="preserve">
+    <value>Restaurer depuis un fichier</value>
+  </data>
+  <data name="Settings_Backup_ImportDone" xml:space="preserve">
+    <value>{0} plante(s) ajoutée(s), {1} déjà présente(s), {2} arrosage(s) ajouté(s).</value>
+  </data>
+  <data name="Settings_Backup_ImportInvalid" xml:space="preserve">
+    <value>Ce fichier n'est pas une sauvegarde MyPlants valide.</value>
+  </data>
 </root>
