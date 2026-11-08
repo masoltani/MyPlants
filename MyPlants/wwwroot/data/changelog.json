@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.16.0",
+    "date": "2026-11-08",
+    "changes": {
+      "fr": [ "Tous les textes de l'application sont désormais traduits (français, anglais, arabe)" ],
+      "en": [  "All the app's texts are now translated (French, English, Arabic)" ],
+      "ar": [ "أصبحت جميع نصوص التطبيق مترجمة (الفرنسية والإنجليزية والعربية)" ]
+    }
+  },
+  {
     "version": "0.15.0",
     "date": "2026-11-08",
     "changes": {

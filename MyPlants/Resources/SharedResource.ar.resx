@@ -564,4 +564,28 @@
   <data name="Settings_Backup_ImportInvalid" xml:space="preserve">
     <value>هذا الملف ليس نسخة احتياطية صالحة من MyPlants.</value>
   </data>
+  <data name="GuestImport_Title" xml:space="preserve">
+    <value>نباتاتك في انتظارك!</value>
+  </data>
+  <data name="GuestImport_Description" xml:space="preserve">
+    <value>استرجع نباتاتك المضافة كضيف في حسابك. ستبقى بياناتك الأصلية محفوظة.</value>
+  </data>
+  <data name="GuestImport_Import" xml:space="preserve">
+    <value>استيراد</value>
+  </data>
+  <data name="GuestImport_Importing" xml:space="preserve">
+    <value>جارٍ الاستيراد...</value>
+  </data>
+  <data name="GuestImport_Later" xml:space="preserve">
+    <value>لاحقًا</value>
+  </data>
+  <data name="GuestImport_Done" xml:space="preserve">
+    <value>تم استيراد {0} نبات.</value>
+  </data>
+  <data name="GuestImport_Failed" xml:space="preserve">
+    <value>فشل الاستيراد. نباتاتك المضافة كضيف محفوظة.</value>
+  </data>
+  <data name="NavMenu_Toggle" xml:space="preserve">
+    <value>قائمة التنقل</value>
+  </data>
 </root>

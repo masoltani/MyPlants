@@ -469,7 +469,7 @@
     <value>Trop de demandes. Réessaie dans quelques minutes.</value>
   </data>
   <data name="Auth_SignUp" xml:space="preserve">
-    <value> Créer un compte</value>
+    <value>Créer un compte</value>
   </data>
   <data name="Auth_SignUp_Description" xml:space="preserve">
     <value>Les comptes sont validés manuellement. Tu pourras te connecter une fois ton compte validé. En attendant, l'application reste utilisable sans connexion.</value>
@@ -563,5 +563,29 @@
   </data>
   <data name="Settings_Backup_ImportInvalid" xml:space="preserve">
     <value>Ce fichier n'est pas une sauvegarde MyPlants valide.</value>
+  </data>
+  <data name="GuestImport_Title" xml:space="preserve">
+    <value>Vos plantes vous attendent !</value>
+  </data>
+  <data name="GuestImport_Description" xml:space="preserve">
+    <value>Retrouvez vos plantes invitées dans votre compte. Vos données originales seront conservées.</value>
+  </data>
+  <data name="GuestImport_Import" xml:space="preserve">
+    <value>Importer</value>
+  </data>
+  <data name="GuestImport_Importing" xml:space="preserve">
+    <value>Import...</value>
+  </data>
+  <data name="GuestImport_Later" xml:space="preserve">
+    <value>Plus tard</value>
+  </data>
+  <data name="GuestImport_Done" xml:space="preserve">
+    <value>{0} plante(s) importée(s).</value>
+  </data>
+  <data name="GuestImport_Failed" xml:space="preserve">
+    <value> L'import a échoué. Vos plantes invitées sont conservées.</value>
+  </data>
+  <data name="NavMenu_Toggle" xml:space="preserve">
+    <value>Menu de navigation</value>
   </data>
 </root>

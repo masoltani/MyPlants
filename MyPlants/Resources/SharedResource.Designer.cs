@@ -394,6 +394,69 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Find your guest plants in your account. Your original data will be kept..
+        /// </summary>
+        public static string GuestImport_Description {
+            get {
+                return ResourceManager.GetString("GuestImport_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} plant(s) imported..
+        /// </summary>
+        public static string GuestImport_Done {
+            get {
+                return ResourceManager.GetString("GuestImport_Done", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The import failed. Your guest plants are kept..
+        /// </summary>
+        public static string GuestImport_Failed {
+            get {
+                return ResourceManager.GetString("GuestImport_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Import.
+        /// </summary>
+        public static string GuestImport_Import {
+            get {
+                return ResourceManager.GetString("GuestImport_Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à  Importing....
+        /// </summary>
+        public static string GuestImport_Importing {
+            get {
+                return ResourceManager.GetString("GuestImport_Importing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Later.
+        /// </summary>
+        public static string GuestImport_Later {
+            get {
+                return ResourceManager.GetString("GuestImport_Later", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Your plants are waiting for you!.
+        /// </summary>
+        public static string GuestImport_Title {
+            get {
+                return ResourceManager.GetString("GuestImport_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Nothing to water right now..
         /// </summary>
         public static string Home_AllDone {
@@ -444,6 +507,15 @@ namespace MyPlants.Resources {
         public static string NavMenu_Settings {
             get {
                 return ResourceManager.GetString("NavMenu_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Navigation menu.
+        /// </summary>
+        public static string NavMenu_Toggle {
+            get {
+                return ResourceManager.GetString("NavMenu_Toggle", resourceCulture);
             }
         }
         

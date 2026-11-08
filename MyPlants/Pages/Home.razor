@@ -55,7 +55,7 @@ else
 
 @if (isCheckingSession)
 {
-    <p>Chargement...</p>
+    <p>@SharedResource.PlantEdit_Loading</p>
 }
 else if (showGuestImport)
 {
@@ -67,11 +67,10 @@ else if (showGuestImport)
             <div class="guest-import-icon">🪴</div>
 
             <div class="guest-import-text">
-                <h3 id="guest-import-title">Vos plantes vous attendent !</h3>
+                <h3 id="guest-import-title">@SharedResource.GuestImport_Title</h3>
 
                 <p id="guest-import-description">
-                    Retrouvez vos plantes invitées dans votre compte.
-                    Vos données originales seront conservées.
+                    @SharedResource.GuestImport_Description
                 </p>
 
                 @if (!string.IsNullOrWhiteSpace(importMessage))
@@ -85,13 +84,15 @@ else if (showGuestImport)
             <button class="guest-import-primary"
                     @onclick="ImportGuestPlants"
                     disabled="@isImporting">
-                @(isImporting ? "Import..." : "Importer")
+                @(isImporting 
+                    ? SharedResource.GuestImport_Importing 
+                    : SharedResource.GuestImport_Import)
             </button>
 
             <button class="guest-import-secondary"
                     @onclick="RemindLater"
                     disabled="@isImporting">
-                Plus tard
+                @SharedResource.GuestImport_Later
             </button>
         </div>
     </div>
@@ -189,12 +190,11 @@ else if (!string.IsNullOrWhiteSpace(importMessage))
             var count = await PlantService.ImportGuestPlantsAsync();
 
             showGuestImport = false;
-            importMessage = $"{count} plante(s) importée(s).";
+            importMessage = string.Format(SharedResource.GuestImport_Done, count);
         }
         catch (Exception)
         {
-            importMessage =
-                "L'import a échoué. Vos plantes invitées sont conservées.";
+            importMessage = SharedResource.GuestImport_Failed;
         }
         finally
         {
