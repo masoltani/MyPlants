@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.14.0",
+    "date": "2026-11-08",
+    "changes": {
+      "fr": [ "Un message signale qu'une nouvelle version de l'application est disponible, avec une mise à jour en un clic" ],
+      "en": [ "A message tells you when a new version of the app is available, with a one-click update" ],
+      "ar": [ "رسالة تُعلمك بتوفر إصدار جديد من التطبيق، مع تحديث بنقرة واحدة" ]
+    }
+  },
+  {
     "version": "0.13.0",
     "date": "2026-11-08",
     "changes": {

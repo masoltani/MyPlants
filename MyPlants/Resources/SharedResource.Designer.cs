@@ -1303,6 +1303,33 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Update.
+        /// </summary>
+        public static string Update_Apply {
+            get {
+                return ResourceManager.GetString("Update_Apply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à A new version of MyPlants is available..
+        /// </summary>
+        public static string Update_Available {
+            get {
+                return ResourceManager.GetString("Update_Available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Later.
+        /// </summary>
+        public static string Update_Later {
+            get {
+                return ResourceManager.GetString("Update_Later", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à The name is required..
         /// </summary>
         public static string Validation_NameRequired {

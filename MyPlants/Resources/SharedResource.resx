@@ -537,4 +537,13 @@
   <data name="Home_SeeAllPlants" xml:space="preserve">
     <value> See all plants</value>
   </data>
+  <data name="Update_Available" xml:space="preserve">
+    <value>A new version of MyPlants is available.</value>
+  </data>
+  <data name="Update_Apply" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Update_Later" xml:space="preserve">
+    <value>Later</value>
+  </data>
 </root>

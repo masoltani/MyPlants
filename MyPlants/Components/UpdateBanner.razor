@@ -1,0 +1,88 @@
+﻿@using MyPlants.Resources
+
+@implements IAsyncDisposable
+
+@inject IJSRuntime Js
+
+@if (updateAvailable && !dismissed)
+{
+    <div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center gap-2 m-0 rounded-0"
+         role="status">
+
+        <span>@SharedResource.Update_Available</span>
+
+        <span class="d-flex gap-2">
+            <button type="button" class="btn btn-primary btn-sm" @onclick="ApplyAsync">
+                @SharedResource.Update_Apply
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="Dismiss">
+                @SharedResource.Update_Later
+            </button>
+        </span>
+    </div>
+}
+
+@code {
+    private DotNetObjectReference<UpdateBanner>? self;
+    private bool updateAvailable;
+    private bool dismissed;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        try
+        {
+            self = DotNetObjectReference.Create(this);
+            updateAvailable = await Js.InvokeAsync<bool>("myPlantsUpdate.subscribe", self);
+
+            if (updateAvailable)
+                StateHasChanged();
+        }
+        catch (JSException)
+        {
+            // Sans le script de mise à jour, le bandeau n'apparaît simplement jamais.
+        }
+    }
+
+    // Appelée par appUpdate.js quand une nouvelle version vient d'être téléchargée.
+    [JSInvokable]
+    public Task OnUpdateAvailable()
+    {
+        updateAvailable = true;
+
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ApplyAsync()
+    {
+        try
+        {
+            // La page se recharge d'elle-même une fois la nouvelle version active.
+            await Js.InvokeVoidAsync("myPlantsUpdate.apply");
+        }
+        catch (JSException)
+        {
+            dismissed = true;
+        }
+    }
+
+    // « Plus tard » : le bandeau revient au prochain chargement de l'application.
+    private void Dismiss() => dismissed = true;
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await Js.InvokeVoidAsync("myPlantsUpdate.unsubscribe");
+        }
+        catch (Exception)
+        {
+            // Le runtime JavaScript peut déjà être déconnecté.
+        }
+
+        self?.Dispose();
+    }
+}
