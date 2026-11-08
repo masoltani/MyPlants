@@ -6,6 +6,8 @@
 
 @inject AutoSyncService AutoSync
 @inject IUserSessionService UserSession
+@inject IPlantSyncService SyncService
+@inject SyncCursorStore Cursors
 
 <div class="mb-3">
     <h2 class="h5">@SharedResource.Settings_AutoSync_Title</h2>
@@ -26,6 +28,20 @@
         </div>
 
         <p class="form-text">@SharedResource.Settings_AutoSync_Description</p>
+
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                @onclick="FullSyncAsync"
+                disabled="@fullSyncing">
+            @SharedResource.Settings_FullSync_Button
+        </button>
+
+        <p class="form-text">@SharedResource.Settings_FullSync_Description</p>
+
+        @if (!string.IsNullOrEmpty(fullSyncMessage))
+        {
+            <p class="small @(fullSyncFailed ? "text-danger" : "text-success")" role="status">@fullSyncMessage</p>
+        }
     }
     else
     {
@@ -34,6 +50,10 @@
 </div>
 
 @code {
+    private bool fullSyncing;
+    private bool fullSyncFailed;
+    private string? fullSyncMessage;
+
     protected override void OnInitialized()
     {
         UserSession.OnSessionChanged += OnSessionChanged;
@@ -41,6 +61,34 @@
 
     private Task OnChanged(ChangeEventArgs e) =>
         AutoSync.SetEnabledAsync(e.Value is true);
+
+    // Filet de sécurité : oublie les points de reprise, la synchronisation relit alors tout le cloud.
+    private async Task FullSyncAsync()
+    {
+        if (fullSyncing)
+            return;
+
+        fullSyncing = true;
+        fullSyncMessage = null;
+
+        try
+        {
+            await Cursors.ResetAsync();
+            await SyncService.SyncAsync();
+
+            fullSyncFailed = false;
+            fullSyncMessage = SharedResource.Sync_Success;
+        }
+        catch (Exception)
+        {
+            fullSyncFailed = true;
+            fullSyncMessage = SharedResource.Sync_Error;
+        }
+        finally
+        {
+            fullSyncing = false;
+        }
+    }
 
     // Une connexion ou une déconnexion change ce qui est affiché ici.
     private void OnSessionChanged()

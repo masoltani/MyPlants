@@ -6,4 +6,5 @@ public interface ISupabasePlantRepository
 {
     Task<IReadOnlyList<Plant>> GetAllAsync();
     Task UpsertAsync(Plant plant);
+    Task<CloudChanges<Plant>> GetChangesAsync(DateTime? since);
 }

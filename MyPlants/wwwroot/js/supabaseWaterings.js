@@ -27,7 +27,8 @@ function toRow(watering, userId) {
     };
 }
 
-export async function getAll() {
+// `since` (texte ISO, optionnel) : ne renvoie que les arrosages modifiés après cet instant (heure du serveur).
+export async function getAll(since) {
     const supabase = getSupabase();
     await requireUserId(supabase);
 
@@ -35,10 +36,16 @@ export async function getAll() {
 
     // Tri par id : indispensable pour que la pagination soit stable.
     for (let from = 0; ; from += PAGE_SIZE) {
-        const { data, error } = await supabase
+        let query = supabase
             .from("waterings")
             .select("id, plant_id, date, note, updated_at")
-            .is("deleted_at", null)
+            .is("deleted_at", null);
+
+        if (since) {
+            query = query.gt("updated_at", since);
+        }
+
+        const { data, error } = await query
             .order("id")
             .range(from, from + PAGE_SIZE - 1);
 

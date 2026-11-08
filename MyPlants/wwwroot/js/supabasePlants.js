@@ -1,6 +1,9 @@
 ﻿import { getSupabase } from "./supabaseClient.js";
 import { toIsoOrNull } from "./dates.js";
 
+// Nombre de lignes lues par requête (limite de PostgREST).
+const PAGE_SIZE = 1000;
+
 const COLUMNS = `
     id,
     name,
@@ -28,20 +31,38 @@ async function requireUserId(supabase) {
 
 // Renvoie aussi les plantes supprimées : c'est ce qui propage une suppression
 // faite sur un appareil vers les autres.
-export async function getAll() {
+// `since` (texte ISO, optionnel) : ne renvoie que les plantes modifiées après cet instant (heure du serveur).
+export async function getAll(since) {
     const supabase = getSupabase();
     await requireUserId(supabase);
 
-    const { data, error } = await supabase
-        .from("plants")
-        .select(COLUMNS)
-        .order("updated_at", { ascending: false });
+    const rows = [];
 
-    if (error) {
-        throw new Error(error.message);
+    // PostgREST renvoie au plus 1000 lignes par requête : on lit par pages, avec un tri stable.
+    for (let from = 0; ; from += PAGE_SIZE) {
+        let query = supabase.from("plants").select(COLUMNS);
+
+        if (since) {
+            query = query.gt("updated_at", since);
+        }
+
+        const { data, error } = await query
+            .order("updated_at", { ascending: true })
+            .order("id", { ascending: true })
+            .range(from, from + PAGE_SIZE - 1);
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        rows.push(...(data ?? []));
+
+        if (!data || data.length < PAGE_SIZE) {
+            break;
+        }
     }
 
-    return data ?? [];
+    return rows;
 }
 
 export async function upsert(plant) {

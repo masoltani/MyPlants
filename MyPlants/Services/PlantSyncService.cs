@@ -5,14 +5,22 @@ using MyPlants.Models;
 
 namespace MyPlants.Services;
 
-/// <summary>Synchronise les plantes, puis leurs arrosages, entre IndexedDB et Supabase.</summary>
+/// <summary>
+/// Synchronise les plantes, puis leurs arrosages, entre IndexedDB et Supabase.
+/// Incrémentale : seules les lignes du cloud modifiées depuis la dernière synchronisation sont téléchargées.
+/// </summary>
 public sealed class PlantSyncService : IPlantSyncService
 {
+    // Recul appliqué au point de reprise : une transaction du serveur peut être validée après une
+    // plus récente. Relire un peu de données déjà vues est sans danger (la comparaison les ignore).
+    private static readonly TimeSpan CursorOverlap = TimeSpan.FromMinutes(5);
+
     private readonly IPlantRepository _localPlants;
     private readonly ISupabasePlantRepository _cloudPlants;
     private readonly ILocalWateringRepository _localWaterings;
     private readonly ISupabaseWateringRepository _cloudWaterings;
     private readonly IUserSessionService _userSessionService;
+    private readonly SyncCursorStore _cursors;
 
     // Une seule synchronisation à la fois : le bouton manuel et la synchronisation automatique
     // peuvent se déclencher en même temps, la seconde attend alors la fin de la première.
@@ -23,13 +31,15 @@ public sealed class PlantSyncService : IPlantSyncService
         ISupabasePlantRepository cloudPlants,
         ILocalWateringRepository localWaterings,
         ISupabaseWateringRepository cloudWaterings,
-        IUserSessionService userSessionService)
+        IUserSessionService userSessionService,
+        SyncCursorStore cursors)
     {
         _localPlants = localPlants;
         _cloudPlants = cloudPlants;
         _localWaterings = localWaterings;
         _cloudWaterings = cloudWaterings;
         _userSessionService = userSessionService;
+        _cursors = cursors;
     }
 
     public async Task<SyncResult> SyncAsync()
@@ -46,8 +56,10 @@ public sealed class PlantSyncService : IPlantSyncService
                     "Une connexion est nécessaire pour synchroniser les plantes.");
             }
 
+            var localPlants = await GetLocalPlantsAsync();
+
             // Les plantes d'abord : le serveur refuse un arrosage dont la plante n'existe pas.
-            var (cloudPlantIds, plantsPulled) = await SyncPlantsAsync();
+            var (cloudPlantIds, plantsPulled) = await SyncPlantsAsync(localPlants);
 
             var wateringsPulled = await SyncWateringsAsync(cloudPlantIds);
 
@@ -59,16 +71,15 @@ public sealed class PlantSyncService : IPlantSyncService
         }
     }
 
-    // Renvoie les identifiants des plantes présentes dans le cloud après synchronisation,
-    // et si des plantes ont été enregistrées localement.
-    private async Task<(IReadOnlySet<Guid> CloudPlantIds, bool Pulled)> SyncPlantsAsync()
+    // Renvoie les identifiants des plantes présentes dans le cloud, et si des plantes ont été enregistrées localement.
+    private async Task<(IReadOnlySet<Guid> CloudPlantIds, bool Pulled)> SyncPlantsAsync(IReadOnlyList<Plant> localPlants)
     {
-        // 1. Lire les deux côtés avant de modifier quoi que ce soit.
-        var cloudPlants = await _cloudPlants.GetAllAsync();
-        var localPlants = await GetLocalPlantsAsync();
+        // 1. Lire avant de modifier quoi que ce soit : seulement ce qui a changé dans le cloud.
+        var since = await GetSinceAsync(SyncCursorStore.Plants, hasLocalData: localPlants.Count > 0);
+        var changes = await _cloudPlants.GetChangesAsync(since);
 
         // 2. Décider : la version modifiée le plus récemment l'emporte.
-        var plan = PlantSyncPlanner.Plan(localPlants, cloudPlants);
+        var plan = PlantSyncPlanner.Plan(localPlants, changes.Items);
 
         // 3. Appliquer.
         foreach (var plant in plan.ToPush)
@@ -82,9 +93,14 @@ public sealed class PlantSyncService : IPlantSyncService
             await _localPlants.UpsertFromCloudAsync(plant);
         }
 
-        var cloudIds = cloudPlants
-            .Select(plant => plant.Id)
+        // 4. Seulement une fois tout appliqué : mémoriser le point de reprise.
+        await SaveCursorAsync(SyncCursorStore.Plants, changes.Cursor);
+
+        // Le cloud ne renvoie plus toutes les plantes : on le déduit. Une plante locale déjà synchronisée
+        // existe dans le cloud (même supprimée), en plus de celles reçues ou envoyées maintenant.
+        var cloudIds = changes.Items.Select(plant => plant.Id)
             .Concat(plan.ToPush.Select(plant => plant.Id))
+            .Concat(localPlants.Where(plant => plant.IsSynced).Select(plant => plant.Id))
             .ToHashSet();
 
         return (cloudIds, plan.ToPull.Any());
@@ -93,10 +109,12 @@ public sealed class PlantSyncService : IPlantSyncService
     // Renvoie vrai si des arrosages ont été enregistrés localement.
     private async Task<bool> SyncWateringsAsync(IReadOnlySet<Guid> cloudPlantIds)
     {
-        var cloudWaterings = await _cloudWaterings.GetAllAsync();
         var localWaterings = await _localWaterings.GetAllAsync();
 
-        var plan = WateringSyncPlanner.Plan(localWaterings, cloudWaterings, cloudPlantIds);
+        var since = await GetSinceAsync(SyncCursorStore.Waterings, hasLocalData: localWaterings.Count > 0);
+        var changes = await _cloudWaterings.GetChangesAsync(since);
+
+        var plan = WateringSyncPlanner.Plan(localWaterings, changes.Items, cloudPlantIds);
 
         await _cloudWaterings.UpsertManyAsync(plan.ToPush);
 
@@ -109,12 +127,34 @@ public sealed class PlantSyncService : IPlantSyncService
             await _localWaterings.MarkAsSyncedAsync(syncedIds);
 
         if (plan.ToPull.Count > 0)
-        {
             await _localWaterings.UpsertManyFromCloudAsync(plan.ToPull);
-            return true;
-        }
 
-        return false;
+        await SaveCursorAsync(SyncCursorStore.Waterings, changes.Cursor);
+
+        return plan.ToPull.Count > 0;
+    }
+
+    // Point de départ de la lecture dans le cloud ; null = tout relire.
+    private async Task<DateTime?> GetSinceAsync(string table, bool hasLocalData)
+    {
+        // Rien en local : on ne se fie pas au point de reprise (données locales effacées, par exemple).
+        if (!hasLocalData)
+            return null;
+
+        var cursor = await _cursors.GetAsync(table);
+
+        return cursor is null ? null : cursor.Value - CursorOverlap;
+    }
+
+    private async Task SaveCursorAsync(string table, DateTime? newCursor)
+    {
+        if (newCursor is null)
+            return;
+
+        var current = await _cursors.GetAsync(table);
+
+        if (current is null || newCursor > current)
+            await _cursors.SetAsync(table, newCursor.Value);
     }
 
     // Plantes visibles + modifications en attente (y compris les suppressions

@@ -1,4 +1,6 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Globalization;
+
+using Microsoft.JSInterop;
 
 using MyPlants.Interfaces.IRepositories;
 using MyPlants.Models;
@@ -21,6 +23,23 @@ public sealed class SupabaseWateringRepository
         var module = await GetModuleAsync();
 
         return await module.InvokeAsync<Watering[]>("getAll");
+    }
+
+    // Arrosages modifiés depuis `since` ; tous si `since` est null.
+    public async Task<CloudChanges<Watering>> GetChangesAsync(DateTime? since)
+    {
+        var module = await GetModuleAsync();
+
+        var rows = await module.InvokeAsync<Watering[]>(
+            "getAll",
+            since?.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture));
+
+        // Watering.UpdatedAt contient ici l'heure du serveur (updated_at), renvoyée par le JavaScript.
+        DateTime? cursor = rows.Length == 0
+            ? null
+            : rows.Max(watering => watering.UpdatedAt.ToUniversalTime());
+
+        return new CloudChanges<Watering>(rows, cursor);
     }
 
     public async Task UpsertAsync(Watering watering)

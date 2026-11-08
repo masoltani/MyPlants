@@ -35,7 +35,8 @@ builder.Services
     .AddScoped<IChangelogService, ChangelogService>()
     .AddScoped<IPreferencesService, PreferencesService>()
     .AddScoped<DateDisplayService>()
-    .AddScoped<AutoSyncService>(); ;
+    .AddScoped<AutoSyncService>()
+    .AddScoped<SyncCursorStore>();
 
 var app = builder.Build();
 

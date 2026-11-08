@@ -1222,6 +1222,24 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Full synchronization.
+        /// </summary>
+        public static string Settings_FullSync_Button {
+            get {
+                return ResourceManager.GetString("Settings_FullSync_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use it if in doubt: reads all the account data again. Slower and more costly than a normal synchronization..
+        /// </summary>
+        public static string Settings_FullSync_Description {
+            get {
+                return ResourceManager.GetString("Settings_FullSync_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Settings.
         /// </summary>
         public static string Settings_Title {

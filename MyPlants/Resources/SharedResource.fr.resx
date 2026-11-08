@@ -514,7 +514,7 @@
     <value>Format de la date</value>
   </data>
   <data name="Settings_AutoSync_Title" xml:space="preserve">
-    <value>المزامنة</value>
+    <value>Synchronisation</value>
   </data>
   <data name="Settings_AutoSync_Label" xml:space="preserve">
     <value>Synchroniser automatiquement</value>
@@ -524,5 +524,11 @@
   </data>
   <data name="Settings_AutoSync_LoginRequired" xml:space="preserve">
     <value>La synchronisation automatique est disponible une fois connecté.</value>
+  </data>
+  <data name="Settings_FullSync_Button" xml:space="preserve">
+    <value>Synchronisation complète</value>
+  </data>
+  <data name="Settings_FullSync_Description" xml:space="preserve">
+    <value>À utiliser en cas de doute : relit toutes les données du compte. Plus lent et plus coûteux qu'une synchronisation normale.</value>
   </data>
 </root>

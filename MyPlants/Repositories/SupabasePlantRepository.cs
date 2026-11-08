@@ -1,4 +1,6 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Globalization;
+
+using Microsoft.JSInterop;
 
 using MyPlants.Dtos;
 using MyPlants.Interfaces.IRepositories;
@@ -24,6 +26,23 @@ public class SupabasePlantRepository : ISupabasePlantRepository, IAsyncDisposabl
         var rows = await module.InvokeAsync<List<SupabasePlantDto>>("getAll");
 
         return rows.Select(MapToPlant).ToList();
+    }
+
+    // Plantes (y compris supprimées) modifiées depuis `since` ; tout si `since` est null.
+    public async Task<CloudChanges<Plant>> GetChangesAsync(DateTime? since)
+    {
+        var module = await GetModuleAsync();
+
+        var rows = await module.InvokeAsync<List<SupabasePlantDto>>(
+            "getAll",
+            since?.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture));
+
+        // Point de reprise : heure du serveur (UpdatedAt du DTO), pas l'heure de modification du client.
+        DateTime? cursor = rows.Count == 0
+            ? null
+            : rows.Max(row => row.UpdatedAt.ToUniversalTime());
+
+        return new CloudChanges<Plant>(rows.Select(MapToPlant).ToList(), cursor);
     }
 
     public async Task UpsertAsync(Plant plant)

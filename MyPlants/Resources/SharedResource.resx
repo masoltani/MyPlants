@@ -525,4 +525,10 @@
   <data name="Settings_AutoSync_LoginRequired" xml:space="preserve">
     <value>Automatic synchronization is available once you are signed in.</value>
   </data>
+  <data name="Settings_FullSync_Button" xml:space="preserve">
+    <value>Full synchronization</value>
+  </data>
+  <data name="Settings_FullSync_Description" xml:space="preserve">
+    <value>Use it if in doubt: reads all the account data again. Slower and more costly than a normal synchronization.</value>
+  </data>
 </root>
