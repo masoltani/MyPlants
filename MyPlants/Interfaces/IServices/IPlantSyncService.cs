@@ -1,6 +1,8 @@
-﻿namespace MyPlants.Interfaces.IServices;
+﻿using MyPlants.Models;
+
+namespace MyPlants.Interfaces.IServices;
 
 public interface IPlantSyncService
 {
-    Task SyncAsync();
+    Task<SyncResult> SyncAsync();
 }

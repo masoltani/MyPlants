@@ -511,6 +511,18 @@
     <value>Hégirien</value>
   </data>
   <data name="Settings_DateFormat_Label" xml:space="preserve">
-    <value> Format de la date</value>
+    <value>Format de la date</value>
+  </data>
+  <data name="Settings_AutoSync_Title" xml:space="preserve">
+    <value>المزامنة</value>
+  </data>
+  <data name="Settings_AutoSync_Label" xml:space="preserve">
+    <value>Synchroniser automatiquement</value>
+  </data>
+  <data name="Settings_AutoSync_Description" xml:space="preserve">
+    <value>Synchronise tes plantes au démarrage, au retour du réseau et régulièrement tant que l'application est ouverte.</value>
+  </data>
+  <data name="Settings_AutoSync_LoginRequired" xml:space="preserve">
+    <value>La synchronisation automatique est disponible une fois connecté.</value>
   </data>
 </root>

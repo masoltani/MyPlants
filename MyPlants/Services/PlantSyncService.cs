@@ -14,6 +14,10 @@ public sealed class PlantSyncService : IPlantSyncService
     private readonly ISupabaseWateringRepository _cloudWaterings;
     private readonly IUserSessionService _userSessionService;
 
+    // Une seule synchronisation à la fois : le bouton manuel et la synchronisation automatique
+    // peuvent se déclencher en même temps, la seconde attend alors la fin de la première.
+    private readonly SemaphoreSlim _gate = new(1, 1);
+
     public PlantSyncService(
         IPlantRepository localPlants,
         ISupabasePlantRepository cloudPlants,
@@ -28,24 +32,36 @@ public sealed class PlantSyncService : IPlantSyncService
         _userSessionService = userSessionService;
     }
 
-    public async Task SyncAsync()
+    public async Task<SyncResult> SyncAsync()
     {
-        await _userSessionService.InitializeAsync();
+        await _gate.WaitAsync();
 
-        if (!_userSessionService.IsLoggedIn)
+        try
         {
-            throw new InvalidOperationException(
-                "Une connexion est nécessaire pour synchroniser les plantes.");
+            await _userSessionService.InitializeAsync();
+
+            if (!_userSessionService.IsLoggedIn)
+            {
+                throw new InvalidOperationException(
+                    "Une connexion est nécessaire pour synchroniser les plantes.");
+            }
+
+            // Les plantes d'abord : le serveur refuse un arrosage dont la plante n'existe pas.
+            var (cloudPlantIds, plantsPulled) = await SyncPlantsAsync();
+
+            var wateringsPulled = await SyncWateringsAsync(cloudPlantIds);
+
+            return new SyncResult(plantsPulled || wateringsPulled);
         }
-
-        // Les plantes d'abord : le serveur refuse un arrosage dont la plante n'existe pas.
-        var cloudPlantIds = await SyncPlantsAsync();
-
-        await SyncWateringsAsync(cloudPlantIds);
+        finally
+        {
+            _gate.Release();
+        }
     }
 
-    // Renvoie les identifiants des plantes présentes dans le cloud après synchronisation.
-    private async Task<IReadOnlySet<Guid>> SyncPlantsAsync()
+    // Renvoie les identifiants des plantes présentes dans le cloud après synchronisation,
+    // et si des plantes ont été enregistrées localement.
+    private async Task<(IReadOnlySet<Guid> CloudPlantIds, bool Pulled)> SyncPlantsAsync()
     {
         // 1. Lire les deux côtés avant de modifier quoi que ce soit.
         var cloudPlants = await _cloudPlants.GetAllAsync();
@@ -66,13 +82,16 @@ public sealed class PlantSyncService : IPlantSyncService
             await _localPlants.UpsertFromCloudAsync(plant);
         }
 
-        return cloudPlants
+        var cloudIds = cloudPlants
             .Select(plant => plant.Id)
             .Concat(plan.ToPush.Select(plant => plant.Id))
             .ToHashSet();
+
+        return (cloudIds, plan.ToPull.Any());
     }
 
-    private async Task SyncWateringsAsync(IReadOnlySet<Guid> cloudPlantIds)
+    // Renvoie vrai si des arrosages ont été enregistrés localement.
+    private async Task<bool> SyncWateringsAsync(IReadOnlySet<Guid> cloudPlantIds)
     {
         var cloudWaterings = await _cloudWaterings.GetAllAsync();
         var localWaterings = await _localWaterings.GetAllAsync();
@@ -90,7 +109,12 @@ public sealed class PlantSyncService : IPlantSyncService
             await _localWaterings.MarkAsSyncedAsync(syncedIds);
 
         if (plan.ToPull.Count > 0)
+        {
             await _localWaterings.UpsertManyFromCloudAsync(plan.ToPull);
+            return true;
+        }
+
+        return false;
     }
 
     // Plantes visibles + modifications en attente (y compris les suppressions

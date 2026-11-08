@@ -7,9 +7,11 @@
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
 @using MyPlants.Resources
+@using MyPlants.Services
 
 @inject IUserSessionService UserSession
 @inject NavigationManager Navigation
+@inject AutoSyncService AutoSync
 
 <div class="page">
     <div class="sidebar">
@@ -49,9 +51,12 @@
 @code {
     private int contentVersion;
 
+    private static readonly string[] AutoReloadPaths = ["", "plants"];
+
     protected override void OnInitialized()
     {
         UserSession.OnSessionChanged += OnSessionChanged;
+        AutoSync.OnLocalDataChanged += OnAutoSynced;
         if (UserSession.AuthLink != AuthLinkStatus.None) 
             Navigation.NavigateToWithBaseUrl("reset-password");
     }
@@ -78,8 +83,23 @@
         Navigation.NavigateToWithBaseUrl("");
     }
 
+    private void OnAutoSynced()
+    {
+        var path = Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
+
+        if (!AutoReloadPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
+            return;
+
+        InvokeAsync(() =>
+        {
+            contentVersion++;
+            StateHasChanged();
+        });
+    }
+
     public void Dispose()
     {
         UserSession.OnSessionChanged -= OnSessionChanged;
+        AutoSync.OnLocalDataChanged -= OnAutoSynced;
     }
 }

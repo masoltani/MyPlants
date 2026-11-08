@@ -1,0 +1,55 @@
+﻿@using MyPlants.Interfaces.IServices
+@using MyPlants.Resources
+@using MyPlants.Services
+
+@implements IDisposable
+
+@inject AutoSyncService AutoSync
+@inject IUserSessionService UserSession
+
+<div class="mb-3">
+    <h2 class="h5">@SharedResource.Settings_AutoSync_Title</h2>
+
+    @if (UserSession.IsLoggedIn)
+    {
+        <div class="form-check form-switch">
+            <input id="autoSync"
+                   class="form-check-input"
+                   type="checkbox"
+                   role="switch"
+                   checked="@AutoSync.Enabled"
+                   @onchange="OnChanged" />
+
+            <label class="form-check-label" for="autoSync">
+                @SharedResource.Settings_AutoSync_Label
+            </label>
+        </div>
+
+        <p class="form-text">@SharedResource.Settings_AutoSync_Description</p>
+    }
+    else
+    {
+        <p class="text-muted">@SharedResource.Settings_AutoSync_LoginRequired</p>
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        UserSession.OnSessionChanged += OnSessionChanged;
+    }
+
+    private Task OnChanged(ChangeEventArgs e) =>
+        AutoSync.SetEnabledAsync(e.Value is true);
+
+    // Une connexion ou une déconnexion change ce qui est affiché ici.
+    private void OnSessionChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        UserSession.OnSessionChanged -= OnSessionChanged;
+    }
+}

@@ -513,4 +513,16 @@
   <data name="Settings_DateFormat_Label" xml:space="preserve">
     <value>صيغة التاريخ</value>
   </data>
+  <data name="Settings_AutoSync_Title" xml:space="preserve">
+    <value>Synchronisation</value>
+  </data>
+  <data name="Settings_AutoSync_Label" xml:space="preserve">
+    <value>المزامنة تلقائيًا</value>
+  </data>
+  <data name="Settings_AutoSync_Description" xml:space="preserve">
+    <value>تتم مزامنة نباتاتك عند بدء التطبيق وعند عودة الشبكة وبشكل دوري أثناء فتح التطبيق.</value>
+  </data>
+  <data name="Settings_AutoSync_LoginRequired" xml:space="preserve">
+    <value>المزامنة التلقائية متاحة بعد تسجيل الدخول.</value>
+  </data>
 </root>

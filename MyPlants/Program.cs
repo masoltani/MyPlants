@@ -34,7 +34,8 @@ builder.Services
     .AddScoped<IPlantSyncService, PlantSyncService>()
     .AddScoped<IChangelogService, ChangelogService>()
     .AddScoped<IPreferencesService, PreferencesService>()
-    .AddScoped<DateDisplayService>();
+    .AddScoped<DateDisplayService>()
+    .AddScoped<AutoSyncService>(); ;
 
 var app = builder.Build();
 
@@ -44,5 +45,7 @@ await app.Services.GetRequiredService<DateDisplayService>().InitializeAsync();
 
 var userSessionService = app.Services.GetRequiredService<IUserSessionService>();
 await userSessionService.InitializeAsync();
+
+await app.Services.GetRequiredService<AutoSyncService>().InitializeAsync();
 
 await app.RunAsync();

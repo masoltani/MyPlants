@@ -1141,6 +1141,42 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Synchronizes your plants at startup, when the network comes back and regularly while the app is open..
+        /// </summary>
+        public static string Settings_AutoSync_Description {
+            get {
+                return ResourceManager.GetString("Settings_AutoSync_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Synchronize automatically.
+        /// </summary>
+        public static string Settings_AutoSync_Label {
+            get {
+                return ResourceManager.GetString("Settings_AutoSync_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Automatic synchronization is available once you are signed in..
+        /// </summary>
+        public static string Settings_AutoSync_LoginRequired {
+            get {
+                return ResourceManager.GetString("Settings_AutoSync_LoginRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Synchronization.
+        /// </summary>
+        public static string Settings_AutoSync_Title {
+            get {
+                return ResourceManager.GetString("Settings_AutoSync_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Gregorian.
         /// </summary>
         public static string Settings_Calendar_Gregorian {

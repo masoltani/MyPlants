@@ -513,4 +513,16 @@
   <data name="Settings_DateFormat_Label" xml:space="preserve">
     <value>Date format</value>
   </data>
+  <data name="Settings_AutoSync_Title" xml:space="preserve">
+    <value>Synchronization</value>
+  </data>
+  <data name="Settings_AutoSync_Label" xml:space="preserve">
+    <value>Synchronize automatically</value>
+  </data>
+  <data name="Settings_AutoSync_Description" xml:space="preserve">
+    <value>Synchronizes your plants at startup, when the network comes back and regularly while the app is open.</value>
+  </data>
+  <data name="Settings_AutoSync_LoginRequired" xml:space="preserve">
+    <value>Automatic synchronization is available once you are signed in.</value>
+  </data>
 </root>
