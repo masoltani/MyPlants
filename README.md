@@ -170,5 +170,6 @@ Voir le fichier `LICENSE` pour les détails complets.
 - Le dépôt est public pour la publication GitHub Pages et la diffusion de l’instance officielle.
 - L’objectif est de garder un accès public au site sans autoriser la réutilisation ou le déploiement non autorisé du code.
 - Les éléments sensibles, secrets ou clés d’authentification doivent toujours rester hors du dépôt public.
+- Le workflow Keep Supabase alive évite la mise en pause du projet Supabase gratuit. GitHub le désactive après 60 jours sans activité sur le dépôt : le relancer depuis l'onglet Actions si besoin.
 
 
