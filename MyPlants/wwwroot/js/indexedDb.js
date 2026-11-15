@@ -338,7 +338,20 @@ window.myPlantsIndexedDb = (function () {
             plant.profileId === profileId && plant.isSynced !== true);
     }
 
-    async function markAsSynced(id, profileId) {
+    // Vrai si l'enregistrement n'a pas changé depuis que la synchronisation l'a lu (même instant de modification).
+    // Un ancien enregistrement sans updatedAt est considéré comme inchangé.
+    function isUnchanged(currentUpdatedAt, expectedUpdatedAt) {
+        if (!currentUpdatedAt || !expectedUpdatedAt) {
+            return true;
+        }
+
+        return new Date(currentUpdatedAt).getTime() === new Date(expectedUpdatedAt).getTime();
+    }
+
+    // `expectedUpdatedAt` : version de la plante qui vient d'être envoyée au cloud.
+    // Si l'utilisateur l'a modifiée pendant l'envoi, la plante reste « à envoyer » :
+    // sa nouvelle version partira à la prochaine synchronisation, au lieu d'être déclarée envoyée à tort.
+    async function markAsSynced(id, profileId, expectedUpdatedAt) {
         await inTransaction(PLANTS, "readwrite", async transaction => {
             const store = transaction.objectStore(PLANTS);
             const plant = await promisify(store.get(id));
@@ -347,18 +360,38 @@ window.myPlantsIndexedDb = (function () {
                 return;
             }
 
+            if (expectedUpdatedAt && !isUnchanged(plant.updatedAt, expectedUpdatedAt)) {
+                return;
+            }
+
             await promisify(store.put({ ...plant, isSynced: true }));
         });
     }
 
-    async function upsertFromCloud(plant, profileId) {
-        await inTransaction(PLANTS, "readwrite", transaction =>
-            promisify(transaction.objectStore(PLANTS).put({
+    // `expectedLocalUpdatedAt` : version locale que la synchronisation a comparée au cloud (null si aucune).
+    // Si l'utilisateur a modifié la plante entre-temps, sa modification n'est jamais écrasée :
+    // elle sera comparée au cloud à la prochaine synchronisation.
+    async function upsertFromCloud(plant, profileId, expectedLocalUpdatedAt) {
+        await inTransaction(PLANTS, "readwrite", async transaction => {
+            const store = transaction.objectStore(PLANTS);
+            const existing = await promisify(store.get(plant.id.toString()));
+
+            const hasPendingLocalChange = existing
+                && existing.profileId === profileId
+                && existing.isSynced !== true;
+
+            if (hasPendingLocalChange
+                && (!expectedLocalUpdatedAt || !isUnchanged(existing.updatedAt, expectedLocalUpdatedAt))) {
+                return;
+            }
+
+            await promisify(store.put({
                 ...plant,
                 id: plant.id.toString(),
                 profileId,
                 isSynced: true
-            })));
+            }));
+        });
     }
 
     // ------------------------------------------- Synchronisation des arrosages

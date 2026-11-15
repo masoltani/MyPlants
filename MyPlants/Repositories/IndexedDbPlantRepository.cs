@@ -45,17 +45,21 @@ public class IndexedDbPlantRepository : IPlantRepository
             profileId);
     }
 
-    public async Task MarkAsSyncedAsync(Guid id)
+    // expectedUpdatedAt : version envoyée au cloud. Si la plante a changé depuis, elle reste à envoyer.
+    public async Task MarkAsSyncedAsync(Guid id, DateTime? expectedUpdatedAt = null)
     {
         var profileId = _userSessionService.ProfileId;
 
         await _jsRuntime.InvokeVoidAsync(
             "myPlantsIndexedDb.markAsSynced",
             id.ToString(),
-            profileId);
+            profileId,
+            ToJsInstant(expectedUpdatedAt));
     }
 
-    public async Task UpsertFromCloudAsync(Plant plant)
+    // expectedLocalUpdatedAt : version locale comparée au cloud. Si la plante a changé depuis,
+    // la version du cloud n'écrase pas la modification de l'utilisateur.
+    public async Task UpsertFromCloudAsync(Plant plant, DateTime? expectedLocalUpdatedAt = null)
     {
         var profileId = _userSessionService.ProfileId;
 
@@ -65,7 +69,8 @@ public class IndexedDbPlantRepository : IPlantRepository
         await _jsRuntime.InvokeVoidAsync(
             "myPlantsIndexedDb.upsertFromCloud",
             plant,
-            profileId);
+            profileId,
+            ToJsInstant(expectedLocalUpdatedAt));
     }
 
     public async Task AddAsync(Plant plant)
@@ -150,4 +155,8 @@ public class IndexedDbPlantRepository : IPlantRepository
             "myPlantsIndexedDb.hasGuestPlants",
             profileId);
     }
+
+    // Instant au format ISO à la milliseconde, comme les dates écrites par indexedDb.js.
+    private static string? ToJsInstant(DateTime? value) =>
+        value?.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", System.Globalization.CultureInfo.InvariantCulture);
 }

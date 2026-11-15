@@ -10,8 +10,8 @@ public interface IPlantRepository
     Task UpdateAsync(Plant plant);
     Task DeleteAsync(Guid id);
     Task<IReadOnlyList<Plant>> GetUnsyncedAsync();
-    Task MarkAsSyncedAsync(Guid id);
-    Task UpsertFromCloudAsync(Plant plant);
+    Task MarkAsSyncedAsync(Guid id, DateTime? expectedUpdatedAt = null);
+    Task UpsertFromCloudAsync(Plant plant, DateTime? expectedLocalUpdatedAt = null);
     Task<IReadOnlyList<Watering>> GetWateringHistoryAsync(Guid plantId);
     Task AddWateringAsync(Watering watering);
     Task<int> ImportGuestPlantsAsync(string targetProfileId);

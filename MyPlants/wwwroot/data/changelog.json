@@ -1,10 +1,19 @@
 [
   {
+    "version": "0.16.1",
+    "date": "2026-11-15",
+    "changes": {
+      "fr": [ "Fiabilité : une plante modifiée pendant une synchronisation n'est plus jamais perdue ni écrasée" ],
+      "en": [ "Reliability: a plant edited during a synchronization is no longer lost or overwritten" ],
+      "ar": [ "الموثوقية: لم يعد النبات الذي يُعدَّل أثناء المزامنة يضيع أو يُستبدل" ]
+    }
+  },
+  {
     "version": "0.16.0",
     "date": "2026-11-08",
     "changes": {
       "fr": [ "Tous les textes de l'application sont désormais traduits (français, anglais, arabe)" ],
-      "en": [  "All the app's texts are now translated (French, English, Arabic)" ],
+      "en": [ "All the app's texts are now translated (French, English, Arabic)" ],
       "ar": [ "أصبحت جميع نصوص التطبيق مترجمة (الفرنسية والإنجليزية والعربية)" ]
     }
   },

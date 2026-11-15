@@ -81,16 +81,21 @@ public sealed class PlantSyncService : IPlantSyncService
         // 2. Décider : la version modifiée le plus récemment l'emporte.
         var plan = PlantSyncPlanner.Plan(localPlants, changes.Items);
 
-        // 3. Appliquer.
+        // 3. Appliquer. Les écritures locales sont conditionnelles : si l'utilisateur modifie une plante
+        //    pendant la synchronisation, sa modification n'est ni écrasée ni déclarée envoyée à tort.
+        var localById = localPlants.ToDictionary(plant => plant.Id);
+
         foreach (var plant in plan.ToPush)
         {
             await _cloudPlants.UpsertAsync(plant);
-            await _localPlants.MarkAsSyncedAsync(plant.Id);
+            await _localPlants.MarkAsSyncedAsync(plant.Id, plant.UpdatedAt);
         }
 
         foreach (var plant in plan.ToPull)
         {
-            await _localPlants.UpsertFromCloudAsync(plant);
+            localById.TryGetValue(plant.Id, out var local);
+
+            await _localPlants.UpsertFromCloudAsync(plant, local?.UpdatedAt);
         }
 
         // 4. Seulement une fois tout appliqué : mémoriser le point de reprise.
