@@ -12,11 +12,13 @@ public sealed class ChangelogService : IChangelogService
     private const string ChangelogPath = "data/changelog.json";
 
     private readonly HttpClient _httpClient;
+    private readonly OnlineOfflineService _onlineOffline;
     private IReadOnlyList<ReleaseNote>? _releaseNotes;
 
-    public ChangelogService(HttpClient httpClient)
+    public ChangelogService(HttpClient httpClient, OnlineOfflineService onlineOffline)
     {
         _httpClient = httpClient;
+        _onlineOffline = onlineOffline;
     }
 
     public async Task<IReadOnlyList<ReleaseNote>> GetReleaseNotesAsync()
@@ -30,9 +32,11 @@ public sealed class ChangelogService : IChangelogService
         }
         catch (Exception ex) when (ex is HttpRequestException or JsonException or NotSupportedException)
         {
-            // Fichier introuvable ou illisible : pas de journal, mais la page reste utilisable.
-            // Rien n'est mis en cache, la lecture sera retentée à la prochaine visite.
-            return [];
+            // Fichier introuvable ou illisible en mode offline : pas de journal, mais la page reste utilisable.
+            // Rien n'est mis en cache, la lecture sera retentée à la prochaine visite si online.
+            Console.WriteLine($"⚠️ Impossible de charger le changelog: {ex.Message}");
+
+            _releaseNotes = [];
         }
 
         return _releaseNotes;

@@ -20,6 +20,7 @@ public sealed class PlantSyncService : IPlantSyncService
     private readonly ILocalWateringRepository _localWaterings;
     private readonly ISupabaseWateringRepository _cloudWaterings;
     private readonly IUserSessionService _userSessionService;
+    private readonly OnlineOfflineService _onlineOffline;
     private readonly SyncCursorStore _cursors;
 
     // Une seule synchronisation à la fois : le bouton manuel et la synchronisation automatique
@@ -32,6 +33,7 @@ public sealed class PlantSyncService : IPlantSyncService
         ILocalWateringRepository localWaterings,
         ISupabaseWateringRepository cloudWaterings,
         IUserSessionService userSessionService,
+        OnlineOfflineService onlineOffline,
         SyncCursorStore cursors)
     {
         _localPlants = localPlants;
@@ -39,6 +41,7 @@ public sealed class PlantSyncService : IPlantSyncService
         _localWaterings = localWaterings;
         _cloudWaterings = cloudWaterings;
         _userSessionService = userSessionService;
+        _onlineOffline = onlineOffline;
         _cursors = cursors;
     }
 
@@ -48,6 +51,13 @@ public sealed class PlantSyncService : IPlantSyncService
 
         try
         {
+            // Vérifier la connexion réseau avant de tenter la sync
+            if (!_onlineOffline.IsOnline)
+            {
+                throw new InvalidOperationException(
+                    "Application en mode hors ligne : impossible de synchroniser avec le cloud.");
+            }
+
             await _userSessionService.InitializeAsync();
 
             if (!_userSessionService.IsLoggedIn)
@@ -58,17 +68,36 @@ public sealed class PlantSyncService : IPlantSyncService
 
             var localPlants = await GetLocalPlantsAsync();
 
-            // Les plantes d'abord : le serveur refuse un arrosage dont la plante n'existe pas.
-            var (cloudPlantIds, plantsPulled) = await SyncPlantsAsync(localPlants);
+            try
+            {
+                // Les plantes d'abord : le serveur refuse un arrosage dont la plante n'existe pas.
+                var (cloudPlantIds, plantsPulled) = await SyncPlantsAsync(localPlants);
 
-            var wateringsPulled = await SyncWateringsAsync(cloudPlantIds);
+                var wateringsPulled = await SyncWateringsAsync(cloudPlantIds);
 
-            return new SyncResult(plantsPulled || wateringsPulled);
+                return new SyncResult(plantsPulled || wateringsPulled);
+            }
+            catch (Exception ex) when (IsNetworkError(ex))
+            {
+                // Erreur réseau pendant la sync : laisser l'utilisateur continuer avec les données locales
+                Console.WriteLine($"⚠️ Erreur réseau lors de la synchronisation: {ex.Message}");
+                throw new InvalidOperationException(
+                    "Erreur réseau : impossible de synchroniser. Continuez à utiliser l'application en mode local.",
+                    ex);
+            }
         }
         finally
         {
             _gate.Release();
         }
+    }
+
+    private static bool IsNetworkError(Exception ex)
+    {
+        return ex is HttpRequestException
+            || ex.Message.Contains("network", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("offline", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("503", StringComparison.OrdinalIgnoreCase);
     }
 
     // Renvoie les identifiants des plantes présentes dans le cloud, et si des plantes ont été enregistrées localement.

@@ -1,0 +1,29 @@
+@using MyPlants.Services
+
+@inject OnlineOfflineService OnlineOffline
+
+@if (!OnlineOffline.IsOnline)
+{
+    <div class="alert alert-warning d-flex align-items-center gap-2 mb-0">
+        <span>🔴</span>
+        <strong>Mode hors ligne</strong>
+        <span class="ms-auto text-muted small">Synchronisation désactivée</span>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        OnlineOffline.OnStatusChanged += OnStatusChanged;
+    }
+
+    private void OnStatusChanged(bool isOnline)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        OnlineOffline.OnStatusChanged -= OnStatusChanged;
+    }
+}

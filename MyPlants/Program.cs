@@ -30,6 +30,7 @@ builder.Services
     .AddScoped<IPlantService, PlantService>()
     .AddSingleton<AppInfoService>()
     .AddSingleton<LocalizationService>()
+    .AddSingleton<OnlineOfflineService>()
     .AddScoped<IUserSessionService, UserSessionService>()
     .AddScoped<IPlantSyncService, PlantSyncService>()
     .AddScoped<IChangelogService, ChangelogService>()
@@ -45,6 +46,10 @@ var app = builder.Build();
 
 var localizationService = app.Services.GetRequiredService<LocalizationService>();
 await localizationService.InitializeAsync();
+
+var onlineOfflineService = app.Services.GetRequiredService<OnlineOfflineService>();
+await onlineOfflineService.InitializeAsync();
+
 await app.Services.GetRequiredService<DateDisplayService>().InitializeAsync();
 
 var userSessionService = app.Services.GetRequiredService<IUserSessionService>();

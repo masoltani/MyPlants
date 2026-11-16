@@ -1,5 +1,29 @@
 [
   {
+    "version": "0.17.0",
+    "date": "2026-11-16",
+    "changes": {
+      "fr": [
+        "Mode hors ligne : l'application fonctionne complètement sans connexion réseau",
+        "Synchronisation intelligente : bascule automatique sur les données locales (IndexedDB) en cas d'erreur réseau",
+        "Indicateur visuel : affichage d'une alerte quand le mode offline est actif",
+        "Gestion des erreurs réseau améliorée pour plus de fiabilité"
+      ],
+      "en": [
+        "Offline mode: the application works fully without a network connection",
+        "Smart synchronization: automatically switches to local data (IndexedDB) if network fails",
+        "Visual indicator: displays an alert when offline mode is active",
+        "Improved network error handling for more reliability"
+      ],
+      "ar": [
+        "وضع غير متصل: يعمل التطبيق بالكامل بدون اتصال شبكي",
+        "المزامنة الذكية: تبديل تلقائي إلى البيانات المحلية (IndexedDB) عند حدوث خطأ شبكي",
+        "مؤشر بصري: عرض تنبيه عند تفعيل وضع عدم الاتصال",
+        "معالجة محسّنة لأخطاء الشبكة لمزيد من الموثوقية"
+      ]
+    }
+  },
+  {
     "version": "0.16.1",
     "date": "2026-11-15",
     "changes": {

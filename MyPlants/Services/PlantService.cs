@@ -8,25 +8,61 @@ namespace MyPlants.Services;
 public sealed class PlantService : IPlantService
 {
     private readonly IPlantRepository _repository;
+    private readonly ISupabasePlantRepository _cloudRepository;
+    private readonly OnlineOfflineService _onlineOffline;
     private readonly IPlantBusiness _business;
     private readonly IUserSessionService _userSessionService;
     private readonly IDueCountRefresher _dueCount;
 
     public PlantService(
         IPlantRepository repository,
+        ISupabasePlantRepository cloudRepository,
+        OnlineOfflineService onlineOffline,
         IPlantBusiness business,
         IUserSessionService userSessionService,
         IDueCountRefresher dueCount)
     {
         _repository = repository;
+        _cloudRepository = cloudRepository;
+        _onlineOffline = onlineOffline;
         _business = business;
         _userSessionService = userSessionService;
         _dueCount = dueCount;
     }
 
+    /// <summary>Essaie d'utiliser le cloud d'abord, puis bascule sur IndexedDB en cas d'erreur réseau.</summary>
+    private async Task<IReadOnlyList<Plant>> GetPlantsWithFallbackAsync()
+    {
+        // Si déjà détecté hors ligne, utiliser directement IndexedDB
+        if (!_onlineOffline.IsOnline)
+        {
+            return await _repository.GetAllAsync();
+        }
+
+        try
+        {
+            return await _cloudRepository.GetAllAsync();
+        }
+        catch (Exception ex) when (IsNetworkError(ex))
+        {
+            // Fallback sur IndexedDB si erreur réseau
+            Console.WriteLine($"⚠️ Erreur réseau cloud, basculement sur IndexedDB: {ex.Message}");
+            return await _repository.GetAllAsync();
+        }
+    }
+
+    private static bool IsNetworkError(Exception ex)
+    {
+        // Détecte les erreurs réseau communes
+        return ex is HttpRequestException
+            || ex.Message.Contains("network", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("offline", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("503", StringComparison.OrdinalIgnoreCase);
+    }
+
     public Task<IReadOnlyList<Plant>> GetPlantsAsync()
     {
-        return _repository.GetAllAsync();
+        return GetPlantsWithFallbackAsync();
     }
 
     public Task<Plant?> GetPlantAsync(Guid id)

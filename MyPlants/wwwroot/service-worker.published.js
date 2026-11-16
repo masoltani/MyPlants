@@ -55,5 +55,21 @@ async function onFetch(event) {
         cachedResponse = await cache.match(request);
     }
 
-    return cachedResponse || fetch(event.request);
+    return cachedResponse || fetch(event.request).catch(err => {
+        // Si la requête échoue (pas de réseau), retourner une réponse contrôlée
+        // au lieu de laisser l'erreur brute qui casse l'application
+        console.error('Service Worker: Erreur fetch', event.request.url, err);
+
+        // Pour les requêtes de navigation, retourner index.html en cache
+        if (event.request.mode === 'navigate') {
+            return caches.match('index.html');
+        }
+
+        // Pour les autres requêtes (API, assets), retourner un signal d'erreur gracieux
+        return new Response(
+            JSON.stringify({ error: 'offline', message: 'Application en mode hors ligne' }),
+            { status: 503, statusText: 'Service Unavailable', headers: { 'Content-Type': 'application/json' } }
+        );
+    });
 }
+
