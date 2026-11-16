@@ -59,6 +59,7 @@ MyPlants/
 ├── MyPlants.csproj  # Définition du projet
 ├── App.razor        # Point d’entrée applicatif
 ├── .github/workflows/deploy.yml
+├── .github/workflows/keep-alive.yml
 ├── LICENSE
 └── README.md
 ```
