@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.17.1",
+    "date": "2026-11-17",
+    "changes": {
+      "fr": [ "Correction de bugs mineurs lors du chargement des données" ],
+      "en": [ "Minor bug fixes when loading data" ],
+      "ar": [ "إصلاحات أخطاء طفيفة عند تحميل البيانات" ]
+    }
+  },
+  {
     "version": "0.17.0",
     "date": "2026-11-16",
     "changes": {

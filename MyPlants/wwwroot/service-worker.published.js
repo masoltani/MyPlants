@@ -24,11 +24,47 @@ async function onInstall(event) {
     console.info('Service worker: Install');
 
     // Fetch and cache all matching items from the assets manifest
+    // Essayer avec l'intégrité SRI d'abord, puis sans si cela échoue
     const assetsRequests = self.assetsManifest.assets
         .filter(asset => offlineAssetsInclude.some(pattern => pattern.test(asset.url)))
-        .filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset.url)))
-        .map(asset => new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' }));
-    await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
+        .filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset.url)));
+
+    const cache = await caches.open(cacheName);
+
+    for (const asset of assetsRequests) {
+        try {
+            // Essayer d'abord avec l'intégrité SRI
+            const request = new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' });
+            const response = await fetch(request);
+            if (response.ok) {
+                await cache.put(asset.url, response);
+            } else {
+                console.warn(`Failed to fetch ${asset.url} with integrity check, retrying without...`);
+                // Fallback : essayer sans intégrité
+                const fallbackRequest = new Request(asset.url, { cache: 'no-cache' });
+                const fallbackResponse = await fetch(fallbackRequest);
+                if (fallbackResponse.ok) {
+                    await cache.put(asset.url, fallbackResponse);
+                } else {
+                    console.error(`Failed to cache ${asset.url}`);
+                }
+            }
+        } catch (error) {
+            console.warn(`Error caching ${asset.url}: ${error.message}. Will try without integrity check...`);
+            try {
+                // Fallback final : sans intégrité
+                const fallbackRequest = new Request(asset.url, { cache: 'no-cache' });
+                const fallbackResponse = await fetch(fallbackRequest);
+                if (fallbackResponse.ok) {
+                    await cache.put(asset.url, fallbackResponse);
+                } else {
+                    console.error(`Failed to cache ${asset.url} on fallback`);
+                }
+            } catch (fallbackError) {
+                console.error(`Complete failure to cache ${asset.url}: ${fallbackError.message}`);
+            }
+        }
+    }
 }
 
 async function onActivate(event) {
