@@ -40,6 +40,13 @@ public sealed class PlantService : IPlantService
             return await _repository.GetAllAsync();
         }
 
+        // Si l'utilisateur n'est pas connecté à Supabase, utiliser IndexedDB (compte local)
+        if (!_userSessionService.IsLoggedIn)
+        {
+            LoggingService.LogInfo("Compte local : chargement des plantes depuis IndexedDB");
+            return await _repository.GetAllAsync();
+        }
+
         try
         {
             LoggingService.LogInfo("Tentative de chargement des plantes depuis Supabase...");
@@ -61,11 +68,16 @@ public sealed class PlantService : IPlantService
 
     private static bool IsNetworkError(Exception ex)
     {
-        // Détecte les erreurs réseau communes
+        // Détecte les erreurs réseau ET les erreurs d'initialisation Supabase
+        var message = ex.Message;
+
         return ex is HttpRequestException
-            || ex.Message.Contains("network", StringComparison.OrdinalIgnoreCase)
-            || ex.Message.Contains("offline", StringComparison.OrdinalIgnoreCase)
-            || ex.Message.Contains("503", StringComparison.OrdinalIgnoreCase);
+            || message.Contains("network", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("offline", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("503", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("supabase", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("n'est pas initialisé", StringComparison.OrdinalIgnoreCase)
+            || ex.GetType().Name.Contains("JSException"); // Erreurs JavaScript comme "Le client Supabase n'est pas initialisé"
     }
 
     public Task<IReadOnlyList<Plant>> GetPlantsAsync()
