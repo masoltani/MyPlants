@@ -5,6 +5,7 @@
 @using MyPlants.Interfaces.IServices
 @using MyPlants.Models
 @using MyPlants.Resources
+@using MyPlants.Services
 
 @inject IPlantService PlantService
 @inject IPreferencesService Preferences
@@ -382,8 +383,9 @@
             allPlants = (await PlantService.GetPlantsAsync()).ToList();
             errorMessage = null;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            LoggingService.LogError("Erreur lors du chargement des plantes", ex);
             errorMessage = SharedResource.Error_Generic;
         }
         finally
@@ -437,8 +439,9 @@
             else
                 errorMessage = SharedResource.Error_Generic;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            LoggingService.LogError("Erreur lors de l'arrosage de la plante", ex);
             errorMessage = SharedResource.Error_Generic;
         }
         finally

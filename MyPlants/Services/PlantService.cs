@@ -36,18 +36,26 @@ public sealed class PlantService : IPlantService
         // Si déjà détecté hors ligne, utiliser directement IndexedDB
         if (!_onlineOffline.IsOnline)
         {
+            LoggingService.LogInfo("Mode offline : chargement des plantes depuis IndexedDB");
             return await _repository.GetAllAsync();
         }
 
         try
         {
+            LoggingService.LogInfo("Tentative de chargement des plantes depuis Supabase...");
             return await _cloudRepository.GetAllAsync();
         }
         catch (Exception ex) when (IsNetworkError(ex))
         {
             // Fallback sur IndexedDB si erreur réseau
-            Console.WriteLine($"⚠️ Erreur réseau cloud, basculement sur IndexedDB: {ex.Message}");
+            LoggingService.LogWarning($"Erreur réseau Supabase, basculement sur IndexedDB: {ex.Message}");
             return await _repository.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            // Erreur non-réseau : re-lever l'exception
+            LoggingService.LogError($"Erreur non-réseau lors du chargement des plantes", ex);
+            throw;
         }
     }
 
