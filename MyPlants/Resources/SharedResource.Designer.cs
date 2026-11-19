@@ -1231,6 +1231,42 @@ namespace MyPlants.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} plants to water today.
+        /// </summary>
+        public static string Reminders_Notification_Many {
+            get {
+                return ResourceManager.GetString("Reminders_Notification_Many", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 1 plant to water today.
+        /// </summary>
+        public static string Reminders_Notification_One {
+            get {
+                return ResourceManager.GetString("Reminders_Notification_One", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Watering reminder.
+        /// </summary>
+        public static string Reminders_Notification_Title {
+            get {
+                return ResourceManager.GetString("Reminders_Notification_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Reminders work on this device..
+        /// </summary>
+        public static string Reminders_Test_Body {
+            get {
+                return ResourceManager.GetString("Reminders_Test_Body", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Synchronizes your plants at startup, when the network comes back and regularly while the app is open..
         /// </summary>
         public static string Settings_AutoSync_Description {
@@ -1380,6 +1416,96 @@ namespace MyPlants.Resources {
         public static string Settings_FullSync_Description {
             get {
                 return ResourceManager.GetString("Settings_FullSync_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Notifications are blocked for this site. Allow them in the browser settings..
+        /// </summary>
+        public static string Settings_Reminders_Denied {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_Denied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à One notification a day tells you which plants to water. The browser decides the exact moment: it may arrive after the chosen time, or not at all if the app is no longer used..
+        /// </summary>
+        public static string Settings_Reminders_Description {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Could not turn on reminders on this device..
+        /// </summary>
+        public static string Settings_Reminders_EnableFailed {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_EnableFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Not before.
+        /// </summary>
+        public static string Settings_Reminders_Hour {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_Hour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Reminders on this device.
+        /// </summary>
+        public static string Settings_Reminders_Label {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Install the app (browser menu, &quot;Install&quot;) to turn on reminders..
+        /// </summary>
+        public static string Settings_Reminders_NotInstalled {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_NotInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Send a test notification.
+        /// </summary>
+        public static string Settings_Reminders_Test {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_Test", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Test notification sent..
+        /// </summary>
+        public static string Settings_Reminders_TestSent {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_TestSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à  Watering reminders.
+        /// </summary>
+        public static string Settings_Reminders_Title {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This browser does not support reminders without a server. Use Chrome or Edge with the app installed..
+        /// </summary>
+        public static string Settings_Reminders_Unsupported {
+            get {
+                return ResourceManager.GetString("Settings_Reminders_Unsupported", resourceCulture);
             }
         }
         

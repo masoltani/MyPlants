@@ -588,4 +588,46 @@
   <data name="NavMenu_Toggle" xml:space="preserve">
     <value>قائمة التنقل</value>
   </data>
+  <data name="Settings_Reminders_Title" xml:space="preserve">
+    <value>تذكيرات الري</value>
+  </data>
+  <data name="Settings_Reminders_Label" xml:space="preserve">
+    <value>التذكيرات على هذا الجهاز</value>
+  </data>
+  <data name="Settings_Reminders_Description" xml:space="preserve">
+    <value>يُرسَل إشعار واحد يوميًا بالنباتات التي تحتاج إلى سقي. يحدد المتصفح اللحظة الدقيقة: قد يصل بعد الوقت المختار، أو لا يصل إطلاقًا إذا لم يعد التطبيق مستخدمًا.</value>
+  </data>
+  <data name="Settings_Reminders_Hour" xml:space="preserve">
+    <value>ليس قبل</value>
+  </data>
+  <data name="Settings_Reminders_Test" xml:space="preserve">
+    <value>إرسال إشعار تجريبي</value>
+  </data>
+  <data name="Settings_Reminders_TestSent" xml:space="preserve">
+    <value>تم إرسال الإشعار التجريبي.</value>
+  </data>
+  <data name="Settings_Reminders_Unsupported" xml:space="preserve">
+    <value>هذا المتصفح لا يدعم التذكيرات بدون خادم. استخدم Chrome أو Edge مع تثبيت التطبيق.</value>
+  </data>
+  <data name="Settings_Reminders_NotInstalled" xml:space="preserve">
+    <value>ثبّت التطبيق (قائمة المتصفح، «تثبيت») لتفعيل التذكيرات.</value>
+  </data>
+  <data name="Settings_Reminders_Denied" xml:space="preserve">
+    <value>الإشعارات محظورة لهذا الموقع. اسمح بها من إعدادات المتصفح.</value>
+  </data>
+  <data name="Settings_Reminders_EnableFailed" xml:space="preserve">
+    <value>تعذر تفعيل التذكيرات على هذا الجهاز.</value>
+  </data>
+  <data name="Reminders_Notification_Title" xml:space="preserve">
+    <value>تذكير بالري</value>
+  </data>
+  <data name="Reminders_Notification_One" xml:space="preserve">
+    <value>نبتة واحدة يحتاج إلى سقي اليوم</value>
+  </data>
+  <data name="Reminders_Notification_Many" xml:space="preserve">
+    <value>{0} نباتات تحتاج إلى سقي اليوم</value>
+  </data>
+  <data name="Reminders_Test_Body" xml:space="preserve">
+    <value>التذكيرات تعمل على هذا الجهاز.</value>
+  </data>
 </root>

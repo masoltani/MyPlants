@@ -1,5 +1,23 @@
 [
   {
+    "version": "0.18.0",
+    "date": "2026-11-17",
+    "changes": {
+      "fr": [
+        "Notifications de rappel d'arrosage (paramétrables dans les réglages)",
+        "Les rappels sont synchronisés entre appareils et fonctionnent même hors ligne"
+      ],
+      "en": [
+        "Watering reminder notifications (configurable in settings)",
+        "Reminders are synced across devices and work even offline"
+      ],
+      "ar": [
+        "إشعارات تذكير بالري (يمكن تكوينها في الإعدادات)",
+        "يتم مزامنة التذكيرات بين الأجهزة وتعمل حتى في وضع عدم الاتصال"
+      ]
+    }
+  },
+  {
     "version": "0.17.3",
     "date": "2026-11-17",
     "changes": {

@@ -40,7 +40,8 @@ builder.Services
     .AddScoped<SyncCursorStore>()
     .AddScoped<DueCountService>()
     .AddScoped<IDueCountRefresher>(sp => sp.GetRequiredService<DueCountService>())
-    .AddScoped<BackupService>();
+    .AddScoped<BackupService>()
+    .AddScoped<ReminderService>(); ;
 
 var app = builder.Build();
 
@@ -56,6 +57,7 @@ var userSessionService = app.Services.GetRequiredService<IUserSessionService>();
 await userSessionService.InitializeAsync();
 
 await app.Services.GetRequiredService<AutoSyncService>().InitializeAsync();
+await app.Services.GetRequiredService<ReminderService>().InitializeAsync();
 await app.Services.GetRequiredService<DueCountService>().InitializeAsync();
 
 await app.RunAsync();

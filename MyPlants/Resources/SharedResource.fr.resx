@@ -588,4 +588,46 @@
   <data name="NavMenu_Toggle" xml:space="preserve">
     <value>Menu de navigation</value>
   </data>
+  <data name="Settings_Reminders_Title" xml:space="preserve">
+    <value>Rappels d'arrosage</value>
+  </data>
+  <data name="Settings_Reminders_Label" xml:space="preserve">
+    <value>Rappels sur cet appareil</value>
+  </data>
+  <data name="Settings_Reminders_Description" xml:space="preserve">
+    <value>Une notification par jour indique les plantes à arroser. Le navigateur choisit le moment exact : elle peut arriver après l'heure choisie, voire pas du tout si l'application n'est plus utilisée.</value>
+  </data>
+  <data name="Settings_Reminders_Hour" xml:space="preserve">
+    <value>Pas avant</value>
+  </data>
+  <data name="Settings_Reminders_Test" xml:space="preserve">
+    <value>Envoyer une notification de test</value>
+  </data>
+  <data name="Settings_Reminders_TestSent" xml:space="preserve">
+    <value>Notification de test envoyée.</value>
+  </data>
+  <data name="Settings_Reminders_Unsupported" xml:space="preserve">
+    <value>Ce navigateur ne permet pas les rappels sans serveur. Utilise Chrome ou Edge avec l'application installée.</value>
+  </data>
+  <data name="Settings_Reminders_NotInstalled" xml:space="preserve">
+    <value>Installe l'application (menu du navigateur, « Installer ») pour activer les rappels.</value>
+  </data>
+  <data name="Settings_Reminders_Denied" xml:space="preserve">
+    <value> Les notifications sont bloquées pour ce site. Autorise-les dans les paramètres du navigateur.</value>
+  </data>
+  <data name="Settings_Reminders_EnableFailed" xml:space="preserve">
+    <value>Impossible d'activer les rappels sur cet appareil.</value>
+  </data>
+  <data name="Reminders_Notification_Title" xml:space="preserve">
+    <value>Rappel d'arrosage</value>
+  </data>
+  <data name="Reminders_Notification_One" xml:space="preserve">
+    <value>1 plante à arroser aujourd'hui</value>
+  </data>
+  <data name="Reminders_Notification_Many" xml:space="preserve">
+    <value>{0} plantes à arroser aujourd'hui</value>
+  </data>
+  <data name="Reminders_Test_Body" xml:space="preserve">
+    <value>Les rappels fonctionnent sur cet appareil.</value>
+  </data>
 </root>

@@ -18,6 +18,7 @@ public sealed class DueCountService : IDueCountRefresher, IDisposable
     private readonly IJSRuntime _js;
     private readonly AutoSyncService _autoSync;
     private readonly IUserSessionService _session;
+    private readonly ReminderService _reminders;
 
     public int Count { get; private set; }
 
@@ -25,12 +26,14 @@ public sealed class DueCountService : IDueCountRefresher, IDisposable
         IPlantRepository plants,
         IJSRuntime js,
         AutoSyncService autoSync,
-        IUserSessionService session)
+        IUserSessionService session,
+        ReminderService reminders)
     {
         _plants = plants;
         _js = js;
         _autoSync = autoSync;
         _session = session;
+        _reminders = reminders;
     }
 
     // À appeler au démarrage, après l'initialisation de la session et de la synchronisation automatique.
@@ -56,6 +59,9 @@ public sealed class DueCountService : IDueCountRefresher, IDisposable
             Count = plants.Count(plant => PlantSorter.GetDaysUntilWatering(plant, today) is <= 0);
 
             await _js.InvokeVoidAsync(JS_SET_BADGE, Count);
+
+            // Les rappels locaux (notification quotidienne) utilisent les mêmes plantes.
+            await _reminders.RefreshSnapshotAsync(plants);
         }
         catch (Exception)
         {
