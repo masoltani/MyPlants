@@ -1,5 +1,152 @@
-﻿<h3>ReminderSettings</h3>
+﻿@using MyPlants.Models
+@using MyPlants.Resources
+@using MyPlants.Services
+
+@inject ReminderService Reminders
+
+<div class="mb-3">
+    <h2 class="h5">@SharedResource.Settings_Reminders_Title</h2>
+
+    @if (status is null)
+    {
+        <p class="text-muted">@SharedResource.PlantEdit_Loading</p>
+    }
+    else if (!status.Supported)
+    {
+        <p class="text-muted">@SharedResource.Settings_Reminders_Unsupported</p>
+    }
+    else
+    {
+        <div class="form-check form-switch">
+            <input id="remindersLocal"
+                   class="form-check-input"
+                   type="checkbox"
+                   role="switch"
+                   checked="@Reminders.Enabled"
+                   disabled="@(busy || (!Reminders.Enabled && !status.Installed))"
+                   @onchange="OnToggleAsync" />
+
+            <label class="form-check-label" for="remindersLocal">
+                @SharedResource.Settings_Reminders_Label
+            </label>
+        </div>
+
+        <p class="form-text">@SharedResource.Settings_Reminders_Description</p>
+
+        @if (!status.Installed && !Reminders.Enabled)
+        {
+            <p class="form-text text-warning-emphasis">@SharedResource.Settings_Reminders_NotInstalled</p>
+        }
+
+        @if (status.Permission == "denied")
+        {
+            <p class="form-text text-danger">@SharedResource.Settings_Reminders_Denied</p>
+        }
+
+        @if (Reminders.Enabled)
+        {
+            <div class="mb-2">
+                <label for="remindersHour" class="form-label">@SharedResource.Settings_Reminders_Hour</label>
+
+                <select id="remindersHour" class="form-select w-auto" value="@Reminders.Hour" @onchange="OnHourChangedAsync">
+                    @for (var hour = 0; hour < 24; hour++)
+                    {
+                        <option value="@hour">@hour.ToString("00"):00</option>
+                    }
+                </select>
+            </div>
+
+            <button type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @onclick="TestAsync"
+                    disabled="@busy">
+                @SharedResource.Settings_Reminders_Test
+            </button>
+        }
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <p class="small mt-2 @(isError ? "text-danger" : "text-success")" role="status">@message</p>
+        }
+    }
+</div>
 
 @code {
+    private ReminderStatus? status;
+    private bool busy;
+    private bool isError;
+    private string? message;
 
+    protected override async Task OnInitializedAsync()
+    {
+        status = await Reminders.GetStatusAsync();
+    }
+
+    private async Task OnToggleAsync(ChangeEventArgs e)
+    {
+        message = null;
+
+        if (e.Value is true)
+        {
+            // Premier appel asynchrone = celui du navigateur : la demande d'autorisation exige ce clic.
+            var result = await Reminders.EnableAsync();
+
+            status = await Reminders.GetStatusAsync();
+
+            if (result != ReminderEnableResult.Ok)
+                Fail(result == ReminderEnableResult.Denied
+                    ? SharedResource.Settings_Reminders_Denied
+                    : SharedResource.Settings_Reminders_EnableFailed);
+        }
+        else
+        {
+            busy = true;
+
+            try
+            {
+                await Reminders.DisableAsync();
+            }
+            finally
+            {
+                busy = false;
+            }
+        }
+    }
+
+    private async Task OnHourChangedAsync(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var hour))
+            await Reminders.SetHourAsync(hour);
+    }
+
+    private async Task TestAsync()
+    {
+        busy = true;
+        message = null;
+
+        try
+        {
+            var result = await Reminders.SendTestAsync();
+
+            if (result == "ok")
+            {
+                isError = false;
+                message = SharedResource.Settings_Reminders_TestSent;
+            }
+            else
+            {
+                Fail(result == "denied" ? SharedResource.Settings_Reminders_Denied : SharedResource.Error_Generic);
+            }
+        }
+        finally
+        {
+            busy = false;
+        }
+    }
+
+    private void Fail(string text)
+    {
+        isError = true;
+        message = text;
+    }
 }

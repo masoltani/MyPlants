@@ -1,5 +1,20 @@
 [
   {
+    "version": "0.18.1",
+    "date": "2026-11-17",
+    "changes": {
+      "fr": [
+        "Correction d'un bug empêchant l'affichage des rappels d'arrosage sur certains appareils"
+      ],
+      "en": [
+        "Fix a bug preventing watering reminders from showing on some devices"
+      ],
+      "ar": [
+        "إصلاح خطأ يمنع عرض تذكيرات الري على بعض الأجهزة"
+      ]
+    }
+  },
+  {
     "version": "0.18.0",
     "date": "2026-11-17",
     "changes": {
