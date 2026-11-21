@@ -3,14 +3,14 @@
 /// <summary>Ce que apporte une version de l'application (une entrée du journal des versions).</summary>
 public sealed class ReleaseNote
 {
-    private const string FallbackLanguage = "en";
+    private const string FallbackLanguage = "fr";
 
     public string Version { get; set; } = string.Empty;
 
     public DateOnly? Date { get; set; }
 
     /// <summary>Nouveautés par langue : "fr", "en", "ar"…</summary>
-    public Dictionary<string, List<string>> Changes { get; set; } = new();
+    public Dictionary<string, List<string>> Changes { get; set; } = [];
 
     /// <summary>
     /// Nouveautés dans la langue demandée. Si elle n'est pas disponible,

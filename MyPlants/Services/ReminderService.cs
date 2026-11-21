@@ -14,7 +14,7 @@ namespace MyPlants.Services;
 /// que ce service y enregistre (reminders.js / remindersStore.js).
 /// Ne lève jamais d'exception : les rappels sont un confort, ils ne doivent pas gêner le reste de l'application.
 /// </summary>
-public sealed class ReminderService
+public sealed class ReminderService : IAsyncDisposable
 {
     private const string ENABLED_KEY = "reminders-local-enabled";
     private const string HOUR_KEY = "reminders-local-hour";
@@ -27,6 +27,7 @@ public sealed class ReminderService
     private readonly IPlantRepository _plants;
     private readonly IUserSessionService _session;
     private readonly IJSRuntime _js;
+    private readonly LocalizationService _localization;
 
     public bool Enabled { get; private set; }
 
@@ -36,12 +37,14 @@ public sealed class ReminderService
         IPreferencesService preferences,
         IPlantRepository plants,
         IUserSessionService session,
-        IJSRuntime js)
+        IJSRuntime js,
+        LocalizationService localization)
     {
         _preferences = preferences;
         _plants = plants;
         _session = session;
         _js = js;
+        _localization = localization;
     }
 
     // À appeler au démarrage, avant DueCountService.InitializeAsync().
@@ -54,7 +57,27 @@ public sealed class ReminderService
 
         // Les textes suivent la langue courante : on les réécrit à chaque démarrage.
         if (Enabled)
-            await SaveSettingsAsync();
+            //await SaveSettingsAsync();
+            _ = SaveSettingsDeferredAsync();
+
+        // S'abonner aux changements de langue
+        _localization.OnCultureChanged += OnCultureChangedAsync;
+    }
+
+    private async void OnCultureChangedAsync()
+    {
+        // Si les rappels sont activés, re-sauvegarder les textes avec la nouvelle langue
+        if (Enabled)
+        {
+            try
+            {
+                await SaveSettingsAsync();
+            }
+            catch (Exception)
+            {
+                // Les rappels sont un confort, ne pas laisser une erreur bloquer le changement de langue
+            }
+        }
     }
 
     public async Task<ReminderStatus> GetStatusAsync()
@@ -190,5 +213,21 @@ public sealed class ReminderService
         {
             // Voir RefreshSnapshotAsync.
         }
+    }
+
+    private async Task SaveSettingsDeferredAsync()
+    {
+        try
+        {
+            await Task.Delay(1500); // laisse l'app démarrer et la culture se stabiliser
+            await SaveSettingsAsync();
+        }
+        catch { /* best effort */ }
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _localization.OnCultureChanged -= OnCultureChangedAsync;
+        return ValueTask.CompletedTask;
     }
 }

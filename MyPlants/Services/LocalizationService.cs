@@ -47,12 +47,12 @@ public class LocalizationService
             ? DEFAULT_CULTURE_NAME
             : savedLanguage;
 
-        await ApplyCultureAsync(cultureName);
+        await ApplyCultureAsync(cultureName, raiseEvent: true);
     }
 
     public async Task SetCultureAsync(string cultureName)
     {
-        await ApplyCultureAsync(cultureName);
+        await ApplyCultureAsync(cultureName, raiseEvent: false);
 
         await _js.InvokeVoidAsync($"{LANGUAGE_STORAGE_KEY}.{SET_LANGUAGE_METHOD}",
                                   cultureName,
@@ -61,7 +61,7 @@ public class LocalizationService
         OnCultureChanged?.Invoke();
     }
 
-    private async Task ApplyCultureAsync(string cultureName)
+    private async Task ApplyCultureAsync(string cultureName, bool raiseEvent = false)
     {
         var culture = CultureInfo.GetCultureInfo(cultureName);
 
@@ -77,5 +77,8 @@ public class LocalizationService
         await _js.InvokeVoidAsync($"{DOCUMENT_LOCALIZATION}.{SET_DOCUMENT_LANGUAGE}",
                                   culture.Name,
                                   Direction);
+
+        if (raiseEvent)
+            OnCultureChanged?.Invoke();
     }
 }

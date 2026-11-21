@@ -45,19 +45,12 @@ builder.Services
 
 var app = builder.Build();
 
-var localizationService = app.Services.GetRequiredService<LocalizationService>();
-await localizationService.InitializeAsync();
-
-var onlineOfflineService = app.Services.GetRequiredService<OnlineOfflineService>();
-await onlineOfflineService.InitializeAsync();
-
+await app.Services.GetRequiredService<LocalizationService>().InitializeAsync();
+await app.Services.GetRequiredService<OnlineOfflineService>().InitializeAsync();
 await app.Services.GetRequiredService<DateDisplayService>().InitializeAsync();
-
-var userSessionService = app.Services.GetRequiredService<IUserSessionService>();
-await userSessionService.InitializeAsync();
-
+await app.Services.GetRequiredService<IUserSessionService>().InitializeAsync();
 await app.Services.GetRequiredService<AutoSyncService>().InitializeAsync();
 await app.Services.GetRequiredService<ReminderService>().InitializeAsync();
-await app.Services.GetRequiredService<DueCountService>().InitializeAsync();
+//await app.Services.GetRequiredService<DueCountService>().InitializeAsync();
 
 await app.RunAsync();
